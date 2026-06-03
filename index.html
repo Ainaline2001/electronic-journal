@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Электронный Журнал Колледжа</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="/eel.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h2>Электронный Журнал</h2>
+        <div class="controls">
+            <input type="file" id="txtFileInput" accept=".txt" style="display: none;" onchange="loadStudentsFromBrowser(event)">
+            <button onclick="document.getElementById('txtFileInput').click()">1. Загрузить список (.txt)</button>
+            
+            <button onclick="exportToExcel()" class="excel-btn">2. Экспорт Итогов в Excel</button>
+            
+            <div class="ro-selector">
+                <label>Всего РО в семестре (до 20):</label>
+                <input type="number" id="roCount" value="4" min="1" max="20" onchange="initApp()">
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-header" id="tabsHeader">
+        </div>
+
+    <div class="tabs-content" id="tabsContent">
+        </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

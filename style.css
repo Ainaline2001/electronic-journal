@@ -1,0 +1,223 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+.header {
+    display: flex; justify-content: space-between; align-items: center;
+    background: white; padding: 15px 25px; border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.header h2 { margin: 0; color: #2c3e50; }
+.controls { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+
+button {
+    padding: 10px 15px; background: #3498db; color: white;
+    border: none; border-radius: 5px; cursor: pointer;
+    font-weight: 600; transition: background 0.2s;
+}
+button:hover { background: #2980b9; }
+.excel-btn { background: #27ae60; }
+.excel-btn:hover { background: #219653; }
+
+.ro-selector input, .ro-col-selector input {
+    width: 50px; padding: 6px; border: 1px solid #bdc3c7;
+    border-radius: 4px; text-align: center; font-weight: bold;
+}
+
+/* === СТИЛИ ВКЛАДОК === */
+.tabs-header {
+    display: flex; border-bottom: 2px solid #bdc3c7; margin-bottom: 15px;
+    flex-wrap: wrap; gap: 5px;
+}
+.tab-btn {
+    padding: 10px 20px; background: #e8ecef; border: 1px solid #bdc3c7;
+    border-bottom: none; border-radius: 6px 6px 0 0; 
+    cursor: pointer; font-weight: bold; color: #7f8c8d;
+}
+.tab-btn:hover { background: #dcdde1; }
+.tab-btn.active {
+    background: white; color: #2c3e50;
+    border-top: 3px solid #3498db; margin-bottom: -2px; padding-bottom: 12px;
+}
+.tab-btn.final-tab { background: #fcf3cf; color: #d35400; }
+.tab-btn.final-tab.active { border-top: 3px solid #e67e22; background: white; }
+
+.tab-pane { display: none; animation: fadeIn 0.3s; }
+.tab-pane.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.ro-controls {
+    background: #e8f4f8; padding: 10px 15px; border-radius: 6px;
+    margin-bottom: 15px; display: flex; align-items: center; gap: 20px;
+    flex-wrap: wrap;
+}
+.ro-controls label {
+    font-weight: 600;
+}
+.edit-names-btn {
+    background: #f39c12;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+.edit-names-btn:hover {
+    background: #e67e22;
+}
+
+/* Модальное окно для редактирования названий */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ecf0f1;
+}
+.modal-header h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+.close {
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #7f8c8d;
+}
+.close:hover {
+    color: #e74c3c;
+}
+.column-names-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+.column-name-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 12px;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+.column-name-item label {
+    min-width: 80px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+.column-name-item input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.column-name-item input:focus {
+    border-color: #3498db;
+    outline: none;
+}
+.modal-footer {
+    margin-top: 20px;
+    text-align: right;
+}
+.modal-footer button {
+    padding: 8px 20px;
+}
+
+/* === ТАБЛИЦЫ === */
+.table-container {
+    background: white; border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow-x: auto;
+    max-height: calc(100vh - 220px);
+    position: relative;
+}
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    min-width: 600px;
+}
+th, td { 
+    border: 1px solid #ecf0f1; 
+    padding: 8px; 
+    text-align: center; 
+    min-width: 45px;
+}
+th { 
+    background-color: #f8f9fa; 
+    position: sticky; 
+    top: 0; 
+    z-index: 10;
+}
+/* ФИКСАЦИЯ КОЛОНКИ "№" и "ФИО Студента" */
+th:first-child,
+th:nth-child(2) {
+    position: sticky;
+    left: 0;
+    background-color: #f8f9fa;
+    z-index: 20;
+}
+
+td:first-child,
+td.name-col {
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 15;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+}
+
+th:first-child {
+    z-index: 30;
+}
+th:nth-child(2) {
+    z-index: 25;
+}
+
+.name-col { 
+    text-align: left; 
+    min-width: 250px; 
+    font-weight: 500; 
+}
+
+.score-input {
+    width: 45px; text-align: center; border: 1px solid #bdc3c7;
+    border-radius: 4px; padding: 6px; font-size: 14px;
+}
+.score-input:focus { border-color: #3498db; outline: none; background: #f0f8ff; }
+
+.result { font-weight: bold; background-color: #fcfcfc; }
+.result.avg { color: #2980b9; }
+.result.letter { color: #e67e22; }
+.result.gpa { color: #c0392b; }
+
+/* Стиль для ячеек заголовков с датами */
+th.editable-col {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+th.editable-col:hover {
+    background-color: #e8f4f8;
+}
