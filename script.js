@@ -1,30 +1,237 @@
-let students = [];
+// ============ СИСТЕМА ГРУПП ============
+let allGroups = {}; // { "ИС-21": { students, gradesData, gradesCountConfig, columnNames, activeROCount } }
+let currentGroup = "";
 let activeROCount = 4;
-let activeTab = 1; 
-let currentEditIndex = -1; // Для хранения индекса редактируемого студента
+let activeTab = 1;
+let currentEditIndex = -1;
 
 let gradesCountConfig = {}; 
 let gradesData = {}; 
 let columnNames = {};
+let students = [];
 
-// Сохранение в localStorage
-function saveToLocalStorage() {
+// Загрузка всех групп из localStorage
+function loadAllGroups() {
+    const saved = localStorage.getItem('journalGroups');
+    if (saved) {
+        try {
+            allGroups = JSON.parse(saved);
+            return true;
+        } catch(e) {
+            console.error('Ошибка загрузки групп:', e);
+        }
+    }
+    return false;
+}
+
+// Сохранение всех групп в localStorage
+function saveAllGroups() {
     try {
-        const dataToSave = {
-            students: students,
-            activeROCount: activeROCount,
-            gradesCountConfig: gradesCountConfig,
-            gradesData: gradesData,
-            columnNames: columnNames,
-            lastSaved: new Date().toISOString()
-        };
-        localStorage.setItem('journalData', JSON.stringify(dataToSave));
+        localStorage.setItem('journalGroups', JSON.stringify(allGroups));
         showSaveIndicator();
         return true;
     } catch(e) {
-        console.error('Ошибка сохранения:', e);
+        console.error('Ошибка сохранения групп:', e);
         return false;
     }
+}
+
+// Сохранение текущей группы
+function saveCurrentGroup() {
+    if (!currentGroup) return;
+    
+    allGroups[currentGroup] = {
+        students: students,
+        activeROCount: activeROCount,
+        gradesCountConfig: gradesCountConfig,
+        gradesData: gradesData,
+        columnNames: columnNames,
+        lastSaved: new Date().toISOString()
+    };
+    saveAllGroups();
+}
+
+// Загрузка группы
+function loadGroup(groupName) {
+    if (!allGroups[groupName]) return false;
+    
+    const group = allGroups[groupName];
+    students = group.students || [];
+    activeROCount = group.activeROCount || 4;
+    gradesCountConfig = group.gradesCountConfig || {};
+    gradesData = group.gradesData || {};
+    columnNames = group.columnNames || {};
+    
+    document.getElementById('roCount').value = activeROCount;
+    
+    updateInfoBar();
+    initApp();
+    return true;
+}
+
+// Переключение группы
+function switchGroup() {
+    const select = document.getElementById('groupSelect');
+    const newGroup = select.value;
+    
+    if (!newGroup) {
+        if (confirm('Выберите группу для работы')) {
+            openGroupModal();
+        }
+        return;
+    }
+    
+    // Сохраняем текущую группу если она есть
+    if (currentGroup) {
+        saveCurrentGroup();
+    }
+    
+    currentGroup = newGroup;
+    loadGroup(currentGroup);
+    
+    // Обновляем стиль выбранной группы
+    select.style.borderColor = '#27ae60';
+    setTimeout(() => {
+        select.style.borderColor = '#e0e0e0';
+    }, 500);
+}
+
+// Открыть модальное окно для создания группы
+function openGroupModal() {
+    document.getElementById('groupModalTitle').innerHTML = '➕ Создать новую группу';
+    document.getElementById('groupModalBtn').innerHTML = '➕ Создать';
+    document.getElementById('groupModalBtn').className = 'excel-btn';
+    document.getElementById('groupName').value = '';
+    document.getElementById('groupModal').style.display = 'block';
+}
+
+// Переименовать текущую группу
+function renameCurrentGroup() {
+    if (!currentGroup) {
+        alert('❌ Сначала выберите группу для переименования');
+        return;
+    }
+    
+    document.getElementById('groupModalTitle').innerHTML = '✏️ Переименовать группу';
+    document.getElementById('groupModalBtn').innerHTML = '💾 Сохранить';
+    document.getElementById('groupModalBtn').className = 'excel-btn';
+    document.getElementById('groupName').value = currentGroup;
+    document.getElementById('groupModal').style.display = 'block';
+}
+
+// Удалить текущую группу
+function deleteCurrentGroup() {
+    if (!currentGroup) {
+        alert('❌ Сначала выберите группу для удаления');
+        return;
+    }
+    
+    if (!confirm(`⚠️ Вы уверены, что хотите удалить группу "${currentGroup}"?\nВсе данные группы будут потеряны!`)) {
+        return;
+    }
+    
+    delete allGroups[currentGroup];
+    saveAllGroups();
+    
+    currentGroup = "";
+    students = [];
+    activeROCount = 4;
+    gradesCountConfig = {};
+    gradesData = {};
+    columnNames = {};
+    
+    updateGroupSelect();
+    initApp();
+    alert(`✅ Группа удалена!`);
+}
+
+// Сохранить группу (создать или переименовать)
+function saveGroup() {
+    const newName = document.getElementById('groupName').value.trim();
+    if (!newName) {
+        alert('❌ Введите название группы');
+        return;
+    }
+    
+    const isRename = currentGroup && document.getElementById('groupModalTitle').innerHTML.includes('Переименовать');
+    
+    if (isRename) {
+        // Переименование
+        if (newName === currentGroup) {
+            closeGroupModal();
+            return;
+        }
+        
+        if (allGroups[newName]) {
+            alert('❌ Группа с таким названием уже существует!');
+            return;
+        }
+        
+        // Сохраняем данные под новым именем
+        allGroups[newName] = allGroups[currentGroup];
+        delete allGroups[currentGroup];
+        
+        currentGroup = newName;
+        saveAllGroups();
+        updateGroupSelect();
+        alert(`✅ Группа переименована в "${newName}"!`);
+    } else {
+        // Создание новой группы
+        if (allGroups[newName]) {
+            alert('❌ Группа с таким названием уже существует!');
+            return;
+        }
+        
+        // Сохраняем текущую группу если есть
+        if (currentGroup) {
+            saveCurrentGroup();
+        }
+        
+        // Создаем новую группу
+        allGroups[newName] = {
+            students: [],
+            activeROCount: 4,
+            gradesCountConfig: {},
+            gradesData: {},
+            columnNames: {},
+            lastSaved: new Date().toISOString()
+        };
+        
+        currentGroup = newName;
+        saveAllGroups();
+        loadGroup(currentGroup);
+        alert(`✅ Группа "${newName}" создана!`);
+    }
+    
+    closeGroupModal();
+}
+
+// Обновить выпадающий список групп
+function updateGroupSelect() {
+    const select = document.getElementById('groupSelect');
+    const currentValue = currentGroup;
+    
+    select.innerHTML = '<option value="">-- Выберите группу --</option>';
+    
+    const groups = Object.keys(allGroups).sort();
+    for (const group of groups) {
+        const option = document.createElement('option');
+        option.value = group;
+        option.textContent = `${group} (${allGroups[group].students?.length || 0} студ.)`;
+        if (group === currentValue) {
+            option.selected = true;
+        }
+        select.appendChild(option);
+    }
+}
+
+function closeGroupModal() {
+    document.getElementById('groupModal').style.display = 'none';
+}
+
+// Сохранение в localStorage (для обратной совместимости)
+function saveToLocalStorage() {
+    saveCurrentGroup();
 }
 
 function showSaveIndicator() {
@@ -57,179 +264,92 @@ function showSaveIndicator() {
     }, 1500);
 }
 
+// Загрузка из localStorage (миграция старых данных)
 function loadFromLocalStorage() {
-    const savedData = localStorage.getItem('journalData');
-    if (savedData) {
+    // Сначала пробуем загрузить новые группы
+    if (loadAllGroups() && Object.keys(allGroups).length > 0) {
+        updateGroupSelect();
+        const firstGroup = Object.keys(allGroups)[0];
+        currentGroup = firstGroup;
+        loadGroup(firstGroup);
+        return true;
+    }
+    
+    // Миграция старых данных (если были)
+    const oldData = localStorage.getItem('journalData');
+    if (oldData) {
         try {
-            const data = JSON.parse(savedData);
-            students = data.students || [];
-            activeROCount = data.activeROCount || 4;
-            gradesCountConfig = data.gradesCountConfig || {};
-            gradesData = data.gradesData || {};
-            columnNames = data.columnNames || {};
-            
-            document.getElementById('roCount').value = activeROCount;
-            
-            if (data.lastSaved) {
-                const lastSavedTime = new Date(data.lastSaved).toLocaleString();
-                console.log(`Данные загружены от: ${lastSavedTime}`);
+            const data = JSON.parse(oldData);
+            if (data.students && data.students.length > 0) {
+                const defaultGroup = "Группа 1";
+                allGroups[defaultGroup] = {
+                    students: data.students,
+                    activeROCount: data.activeROCount || 4,
+                    gradesCountConfig: data.gradesCountConfig || {},
+                    gradesData: data.gradesData || {},
+                    columnNames: data.columnNames || {},
+                    lastSaved: data.lastSaved
+                };
+                saveAllGroups();
+                localStorage.removeItem('journalData');
+                
+                currentGroup = defaultGroup;
+                loadGroup(currentGroup);
+                updateGroupSelect();
+                return true;
             }
-            
-            return true;
         } catch(e) {
-            console.error('Ошибка загрузки:', e);
+            console.error('Ошибка миграции:', e);
         }
     }
+    
     return false;
 }
 
-// Функции для работы со студентами
-function openAddStudentModal() {
-    document.getElementById('newStudentName').value = '';
-    document.getElementById('addStudentModal').style.display = 'block';
-}
-
-function closeAddStudentModal() {
-    document.getElementById('addStudentModal').style.display = 'none';
-}
-
-function addStudent() {
-    const name = document.getElementById('newStudentName').value.trim();
-    if (!name) {
-        alert('❌ Введите ФИО студента!');
-        return;
-    }
-    
-    // Проверяем, нет ли уже такого студента
-    if (students.includes(name)) {
-        alert('❌ Студент с таким ФИО уже существует!');
-        return;
-    }
-    
-    // Добавляем нового студента
-    students.push(name);
-    
-    // Создаем структуру для оценок нового студента
-    const newIndex = students.length - 1;
-    gradesData[newIndex] = {};
-    for (let r = 1; r <= activeROCount; r++) {
-        gradesData[newIndex][r] = {};
-    }
-    
-    closeAddStudentModal();
-    initApp();
-    saveToLocalStorage();
-    updateInfoBar();
-    alert(`✅ Студент "${name}" успешно добавлен!`);
-}
-
-function openEditStudentModal(index) {
-    currentEditIndex = index;
-    document.getElementById('editStudentName').value = students[index];
-    document.getElementById('editStudentModal').style.display = 'block';
-}
-
-function closeEditStudentModal() {
-    document.getElementById('editStudentModal').style.display = 'none';
-    currentEditIndex = -1;
-}
-
-function updateStudent() {
-    const newName = document.getElementById('editStudentName').value.trim();
-    if (!newName) {
-        alert('❌ Введите ФИО студента!');
-        return;
-    }
-    
-    // Проверяем, не занято ли имя другим студентом
-    if (newName !== students[currentEditIndex] && students.includes(newName)) {
-        alert('❌ Студент с таким ФИО уже существует!');
-        return;
-    }
-    
-    const oldName = students[currentEditIndex];
-    students[currentEditIndex] = newName;
-    
-    closeEditStudentModal();
-    initApp();
-    saveToLocalStorage();
-    alert(`✅ Студент "${oldName}" изменен на "${newName}"!`);
-}
-
-function deleteStudent() {
-    if (!confirm(`⚠️ Вы уверены, что хотите удалить студента "${students[currentEditIndex]}"?\nВсе оценки этого студента будут потеряны!`)) {
-        return;
-    }
-    
-    // Удаляем студента
-    students.splice(currentEditIndex, 1);
-    
-    // Перестраиваем структуру данных
-    const newGradesData = {};
-    const newColumnNames = {};
-    
-    // Переносим данные остальных студентов
-    for (let i = 0; i < students.length; i++) {
-        const oldIndex = i < currentEditIndex ? i : i + 1;
-        newGradesData[i] = gradesData[oldIndex] || {};
-        
-        // Корректируем индексы в оценках (если нужно)
-        for (let r = 1; r <= activeROCount; r++) {
-            if (!newGradesData[i][r]) newGradesData[i][r] = {};
-            for (let c = 1; c <= 50; c++) {
-                if (gradesData[oldIndex] && gradesData[oldIndex][r] && gradesData[oldIndex][r][c] !== undefined) {
-                    newGradesData[i][r][c] = gradesData[oldIndex][r][c];
-                }
-            }
-        }
-    }
-    
-    gradesData = newGradesData;
-    
-    closeEditStudentModal();
-    initApp();
-    saveToLocalStorage();
-    updateInfoBar();
-    alert(`✅ Студент удален!`);
-}
-
-function updateInfoBar() {
-    const infoBar = document.getElementById('infoBar');
-    const studentCount = document.getElementById('studentCount');
-    if (studentCount && students.length > 0) {
-        studentCount.innerHTML = `👨‍🎓 Загружено студентов: ${students.length} | <button onclick="openAddStudentModal()" style="background: #9b59b6; padding: 2px 8px; font-size: 11px; margin-left: 5px;">➕ Добавить</button>`;
-        infoBar.style.display = 'flex';
-    } else if (students.length === 0) {
-        infoBar.style.display = 'none';
-    }
-}
-
+// Экспорт бэкапа всех групп
 function exportBackup() {
-    const data = localStorage.getItem('journalData');
-    if (!data) {
-        alert('❌ Нет данных для бэкапа! Сначала введите оценки.');
+    if (Object.keys(allGroups).length === 0) {
+        alert('❌ Нет данных для бэкапа!');
         return;
+    }
+    
+    // Запрашиваем название файла у пользователя
+    const now = new Date();
+    const defaultName = `бэкап_журнала_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    
+    let fileName = prompt('💾 Введите название файла для бэкапа:', defaultName);
+    
+    if (!fileName) {
+        // Если пользователь нажал Отмена, не сохраняем
+        return;
+    }
+    
+    // Очищаем имя файла от недопустимых символов
+    fileName = fileName.replace(/[\\/:*?"<>|]/g, '_').trim();
+    
+    if (fileName.length === 0) {
+        fileName = defaultName;
     }
     
     try {
+        const data = JSON.stringify(allGroups, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        const now = new Date();
-        const dateStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}`;
         a.href = url;
-        a.download = `journal_backup_${dateStr}.json`;
+        a.download = `${fileName}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        alert('✅ Бэкап успешно создан! Файл сохранен на ваш компьютер.');
+        alert(`✅ Бэкап сохранен как "${fileName}.json"`);
     } catch(e) {
         console.error('Ошибка экспорта:', e);
         alert('❌ Ошибка при создании бэкапа');
     }
 }
 
+// Импорт бэкапа
 function importBackup() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -238,25 +358,44 @@ function importBackup() {
         const file = e.target.files[0];
         if (!file) return;
         
+        // Показываем имя файла пользователю
+        if (!confirm(`📂 Восстановить данные из файла "${file.name}"?\nТекущие данные будут заменены!`)) {
+            return;
+        }
+        
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
                 const data = JSON.parse(event.target.result);
                 
-                if (!data.students || !data.gradesData) {
-                    throw new Error('Неверный формат файла бэкапа');
+                if (data && typeof data === 'object') {
+                    const firstKey = Object.keys(data)[0];
+                    if (data[firstKey] && data[firstKey].students !== undefined) {
+                        allGroups = data;
+                    } else if (data.students !== undefined) {
+                        allGroups = {
+                            "Группа 1": data
+                        };
+                    } else {
+                        throw new Error('Неверный формат файла');
+                    }
+                    
+                    saveAllGroups();
+                    updateGroupSelect();
+                    
+                    if (Object.keys(allGroups).length > 0) {
+                        currentGroup = Object.keys(allGroups)[0];
+                        loadGroup(currentGroup);
+                    }
+                    
+                    alert(`✅ Бэкап успешно восстановлен!\nЗагружено групп: ${Object.keys(allGroups).length}`);
+                } else {
+                    throw new Error('Неверный формат');
                 }
-                
-                localStorage.setItem('journalData', JSON.stringify(data));
-                alert('✅ Бэкап успешно восстановлен! Страница будет перезагружена.');
-                location.reload();
             } catch(e) {
                 console.error('Ошибка импорта:', e);
                 alert('❌ Ошибка при восстановлении бэкапа. Файл поврежден или имеет неверный формат.');
             }
-        };
-        reader.onerror = () => {
-            alert('❌ Ошибка чтения файла');
         };
         reader.readAsText(file);
     };
@@ -264,27 +403,30 @@ function importBackup() {
 }
 
 function resetAllData() {
-    if (confirm('⚠️ Вы уверены, что хотите сбросить ВСЕ оценки?\nЭто действие нельзя отменить!')) {
+    if (confirm('⚠️ Вы уверены, что хотите сбросить ВСЕ данные ВСЕХ групп?\nЭто действие нельзя отменить!')) {
+        localStorage.removeItem('journalGroups');
         localStorage.removeItem('journalData');
+        allGroups = {};
+        students = [];
+        currentGroup = "";
+        activeROCount = 4;
+        gradesCountConfig = {};
         gradesData = {};
         columnNames = {};
-        gradesCountConfig = {};
-        students = [];
-        activeROCount = 4;
-        activeTab = 1;
-        document.getElementById('roCount').value = 4;
+        
+        updateGroupSelect();
         initApp();
         alert('✅ Все данные сброшены!');
     }
 }
 
 function manualSave() {
-    if (students.length === 0) {
-        alert('❌ Нет данных для сохранения');
+    if (!currentGroup) {
+        alert('❌ Сначала выберите группу');
         return;
     }
-    saveToLocalStorage();
-    alert('✅ Данные сохранены!');
+    saveCurrentGroup();
+    alert('✅ Данные группы сохранены!');
 }
 
 function getGradeLetter(score) {
@@ -313,12 +455,19 @@ function getGradePoint(letter) {
 function loadStudentsFromBrowser(event) {
     const file = event.target.files[0];
     if (!file) return;
+    
+    if (!currentGroup) {
+        alert('❌ Сначала создайте или выберите группу!');
+        event.target.value = '';
+        return;
+    }
+    
     const reader = new FileReader();
     reader.onload = function(e) {
         const newStudents = e.target.result.split(/\r?\n/).map(s => s.trim()).filter(s => s.length > 0);
         
         if (students.length > 0 && newStudents.length > 0) {
-            if (!confirm(`⚠️ Загрузка нового списка заменит текущих студентов (${students.length}). Продолжить?`)) {
+            if (!confirm(`⚠️ Загрузка нового списка заменит текущих студентов группы "${currentGroup}" (${students.length}). Продолжить?`)) {
                 event.target.value = '';
                 return;
             }
@@ -327,15 +476,14 @@ function loadStudentsFromBrowser(event) {
         students = newStudents;
         event.target.value = '';
         
-        // Пересоздаем структуру данных
         gradesData = {};
         columnNames = {};
         gradesCountConfig = {};
         
         initApp();
-        saveToLocalStorage();
+        saveCurrentGroup();
         updateInfoBar();
-        alert(`✅ Загружено ${students.length} студентов(а)!`);
+        alert(`✅ Загружено ${students.length} студентов(а) в группу "${currentGroup}"!`);
     };
     reader.readAsText(file, 'UTF-8');
 }
@@ -364,7 +512,7 @@ function initApp() {
 
     renderTabsHeader();
     renderTabsContent();
-    saveToLocalStorage();
+    saveCurrentGroup();
 }
 
 function renderTabsHeader() {
@@ -443,20 +591,32 @@ function saveColumnNames(roIndex) {
     }
     closeModal();
     renderTabsContent();
-    saveToLocalStorage();
+    saveCurrentGroup();
 }
 
 function renderTabsContent() {
     let contentContainer = document.getElementById('tabsContent');
     contentContainer.innerHTML = '';
 
+    if (!currentGroup) {
+        contentContainer.innerHTML = `
+            <div class="empty-state">
+                <h3>📁 Начните с создания группы</h3>
+                <p>Нажмите "➕ Новая группа" чтобы создать первую группу</p>
+                <button onclick="openGroupModal()" style="margin-top: 15px; background: #3498db;">➕ Создать группу</button>
+            </div>
+        `;
+        return;
+    }
+
     if (students.length === 0) {
         contentContainer.innerHTML = `
             <div class="empty-state">
-                <h3>📋 Нет данных</h3>
+                <h3>📋 Нет студентов в группе "${currentGroup}"</h3>
                 <p>Нажмите "Загрузить список (.txt)" или "Добавить студента" чтобы начать работу</p>
                 <p>Формат файла: каждая строка - ФИО студента</p>
-                <button onclick="openAddStudentModal()" style="margin-top: 15px; background: #9b59b6;">➕ Добавить первого студента</button>
+                <button onclick="document.getElementById('txtFileInput').click()" style="margin-top: 15px;">📁 Загрузить список</button>
+                <button onclick="openAddStudentModal()" style="margin-top: 15px; margin-left: 10px; background: #9b59b6;">➕ Добавить студента</button>
             </div>
         `;
         return;
@@ -506,7 +666,7 @@ function renderTabsContent() {
                 paneHtml += `<td><input type="number" min="0" max="100" class="score-input" 
                              value="${val}" oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value)"></td>`;
             }
-            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}</td>
+            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}<\/td>
                         </tr>`;
         });
         
@@ -522,7 +682,7 @@ function renderTabsContent() {
         <div class="tab-pane ${isFinalActive}" id="pane_final">
             <div class="table-container">
                 <table id="finalTable">
-                </table>
+                <\/table>
             </div>
         </div>`;
         
@@ -551,7 +711,7 @@ function changeGradesCount(roIndex, newCount) {
     
     gradesCountConfig[roIndex] = count;
     renderTabsContent();
-    saveToLocalStorage();
+    saveCurrentGroup();
 }
 
 function saveGrade(sIdx, roIndex, colIndex, value) {
@@ -576,7 +736,7 @@ function saveGrade(sIdx, roIndex, colIndex, value) {
     if (avgElement) {
         avgElement.innerText = calcROAvg(sIdx, roIndex);
     }
-    saveToLocalStorage();
+    saveCurrentGroup();
 }
 
 function calcROAvg(sIdx, roIndex) {
@@ -602,7 +762,7 @@ function renderFinalTable() {
     if (!table) return;
 
     if (students.length === 0) {
-        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">Загрузите список студентов</td</tr>';
+        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">Загрузите список студентов<\/td><\/tr>';
         return;
     }
 
@@ -622,11 +782,11 @@ function renderFinalTable() {
         
         html += `<tr>
             <td>${sIdx + 1}</td>
-            <td class="name-col">${escapeHtml(student)}</td>`;
+            <td class="name-col">${escapeHtml(student)}<\/td>`;
         
         for(let r=1; r<=activeROCount; r++) {
             let avg = calcROAvg(sIdx, r);
-            html += `<td class="result">${avg}</td>`;
+            html += `<td class="result">${avg}<\/td>`;
             if (avg !== '') {
                 roSum += avg;
                 roCountValid++;
@@ -637,11 +797,11 @@ function renderFinalTable() {
             let semAvg = Math.round(roSum / activeROCount);
             let letter = getGradeLetter(semAvg);
             let gpa = getGradePoint(letter);
-            html += `<td class="result avg">${semAvg}</td>
-                     <td class="result letter">${letter}</td>
-                     <td class="result gpa">${gpa}</td>`;
+            html += `<td class="result avg">${semAvg}<\/td>
+                     <td class="result letter">${letter}<\/td>
+                     <td class="result gpa">${gpa}<\/td>`;
         } else {
-            html += `<td></td><td class="result letter"><td><td class="result gpa"></td>`;
+            html += `<td><\/td><td class="result letter"><\/td><td class="result gpa"><\/td>`;
         }
         html += `</tr>`;
     });
@@ -699,16 +859,28 @@ async function exportToExcel() {
             {wch:8}
         ];
         
-        XLSX.utils.book_append_sheet(wb, ws, "Итоговая ведомость");
+        XLSX.utils.book_append_sheet(wb, ws, `Итоговая ведомость_${currentGroup}`);
         
+        // Формируем понятное имя файла
         const now = new Date();
-        const dateStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
-        const filename = prompt("Введите название файла:", `Итоговая_Ведомость_${dateStr}`);
+        const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        const defaultName = `${currentGroup}_ведомость_${dateStr}`;
         
-        if (filename) {
-            XLSX.writeFile(wb, `${filename}.xlsx`);
-            alert(`✅ Файл "${filename}.xlsx" успешно создан и скачан!`);
+        let filename = prompt("📊 Введите название файла:", defaultName);
+        
+        if (!filename) {
+            return;
         }
+        
+        // Очищаем имя файла от недопустимых символов
+        filename = filename.replace(/[\\/:*?"<>|]/g, '_').trim();
+        
+        if (filename.length === 0) {
+            filename = defaultName;
+        }
+        
+        XLSX.writeFile(wb, `${filename}.xlsx`);
+        alert(`✅ Файл "${filename}.xlsx" успешно создан и скачан!`);
         
     } catch (error) {
         console.error('Ошибка экспорта:', error);
@@ -734,27 +906,130 @@ function loadSheetJSLibrary() {
     });
 }
 
-window.addEventListener('beforeunload', () => {
-    if (students.length > 0) {
-        saveToLocalStorage();
+// Функции для работы со студентами
+function openAddStudentModal() {
+    if (!currentGroup) {
+        alert('❌ Сначала создайте или выберите группу!');
+        return;
     }
-});
+    document.getElementById('newStudentName').value = '';
+    document.getElementById('addStudentModal').style.display = 'block';
+}
 
-// Инициализация
-if (loadFromLocalStorage()) {
-    console.log('Загружены сохраненные данные');
-    if (students.length > 0) {
-        updateInfoBar();
+function closeAddStudentModal() {
+    document.getElementById('addStudentModal').style.display = 'none';
+}
+
+function addStudent() {
+    const name = document.getElementById('newStudentName').value.trim();
+    if (!name) {
+        alert('❌ Введите ФИО студента!');
+        return;
+    }
+    
+    if (students.includes(name)) {
+        alert('❌ Студент с таким ФИО уже существует!');
+        return;
+    }
+    
+    students.push(name);
+    
+    const newIndex = students.length - 1;
+    gradesData[newIndex] = {};
+    for (let r = 1; r <= activeROCount; r++) {
+        gradesData[newIndex][r] = {};
+    }
+    
+    closeAddStudentModal();
+    initApp();
+    saveCurrentGroup();
+    updateInfoBar();
+    alert(`✅ Студент "${name}" успешно добавлен в группу "${currentGroup}"!`);
+}
+
+function openEditStudentModal(index) {
+    currentEditIndex = index;
+    document.getElementById('editStudentName').value = students[index];
+    document.getElementById('editStudentModal').style.display = 'block';
+}
+
+function closeEditStudentModal() {
+    document.getElementById('editStudentModal').style.display = 'none';
+    currentEditIndex = -1;
+}
+
+function updateStudent() {
+    const newName = document.getElementById('editStudentName').value.trim();
+    if (!newName) {
+        alert('❌ Введите ФИО студента!');
+        return;
+    }
+    
+    if (newName !== students[currentEditIndex] && students.includes(newName)) {
+        alert('❌ Студент с таким ФИО уже существует!');
+        return;
+    }
+    
+    const oldName = students[currentEditIndex];
+    students[currentEditIndex] = newName;
+    
+    closeEditStudentModal();
+    initApp();
+    saveCurrentGroup();
+    alert(`✅ Студент "${oldName}" изменен на "${newName}"!`);
+}
+
+function deleteStudent() {
+    if (!confirm(`⚠️ Вы уверены, что хотите удалить студента "${students[currentEditIndex]}"?\nВсе оценки этого студента будут потеряны!`)) {
+        return;
+    }
+    
+    students.splice(currentEditIndex, 1);
+    
+    const newGradesData = {};
+    
+    for (let i = 0; i < students.length; i++) {
+        const oldIndex = i < currentEditIndex ? i : i + 1;
+        newGradesData[i] = gradesData[oldIndex] || {};
+        
+        for (let r = 1; r <= activeROCount; r++) {
+            if (!newGradesData[i][r]) newGradesData[i][r] = {};
+            for (let c = 1; c <= 50; c++) {
+                if (gradesData[oldIndex] && gradesData[oldIndex][r] && gradesData[oldIndex][r][c] !== undefined) {
+                    newGradesData[i][r][c] = gradesData[oldIndex][r][c];
+                }
+            }
+        }
+    }
+    
+    gradesData = newGradesData;
+    
+    closeEditStudentModal();
+    initApp();
+    saveCurrentGroup();
+    updateInfoBar();
+    alert(`✅ Студент удален из группы "${currentGroup}"!`);
+}
+
+function updateInfoBar() {
+    const infoBar = document.getElementById('infoBar');
+    const studentCount = document.getElementById('studentCount');
+    if (studentCount && currentGroup && students.length > 0) {
+        studentCount.innerHTML = `🎓 Группа: ${currentGroup} | 👨‍🎓 Студентов: ${students.length} | <button onclick="openAddStudentModal()" style="background: #9b59b6; padding: 2px 8px; font-size: 11px; margin-left: 5px;">➕ Добавить</button>`;
+        infoBar.style.display = 'flex';
+    } else if (currentGroup && students.length === 0) {
+        studentCount.innerHTML = `🎓 Группа: ${currentGroup} | 👨‍🎓 Студентов: 0`;
+        infoBar.style.display = 'flex';
+    } else {
+        infoBar.style.display = 'none';
     }
 }
-initApp();
 
 // Функции для инструкции
 function showInstructions() {
     const modal = document.getElementById('instructionsModal');
     if (modal) {
         modal.style.display = 'block';
-        // Закрытие по клику вне модального окна
         modal.onclick = function(event) {
             if (event.target === modal) {
                 closeInstructions();
@@ -768,4 +1043,18 @@ function closeInstructions() {
     if (modal) {
         modal.style.display = 'none';
     }
+}
+
+// Сохранение перед закрытием страницы
+window.addEventListener('beforeunload', () => {
+    if (currentGroup && students.length > 0) {
+        saveCurrentGroup();
+    }
+});
+
+// Инициализация
+if (loadFromLocalStorage()) {
+    console.log('Загружены сохраненные данные');
+} else {
+    initApp();
 }

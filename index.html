@@ -10,12 +10,22 @@
     <div class="header">
         <h2>📚 Электронный Журнал Колледжа</h2>
         <div class="controls">
+            <div class="group-selector">
+                <label>📁 Группа:</label>
+                <select id="groupSelect" onchange="switchGroup()">
+                    <option value="">-- Выберите группу --</option>
+                </select>
+                <button onclick="openGroupModal()" style="background: #3498db; padding: 5px 10px;">➕ Новая группа</button>
+                <button onclick="renameCurrentGroup()" style="background: #f39c12; padding: 5px 10px;">✏️ Переименовать</button>
+                <button onclick="deleteCurrentGroup()" style="background: #e74c3c; padding: 5px 10px;">🗑️ Удалить группу</button>
+            </div>
+            
             <input type="file" id="txtFileInput" accept=".txt" style="display: none;" onchange="loadStudentsFromBrowser(event)">
-            <button onclick="document.getElementById('txtFileInput').click()">📁 1. Загрузить список (.txt)</button>
+            <button onclick="document.getElementById('txtFileInput').click()">📁 Загрузить список (.txt)</button>
             
-            <button onclick="openAddStudentModal()" style="background: #9b59b6;">➕ 2. Добавить студента</button>
+            <button onclick="openAddStudentModal()" style="background: #9b59b6;">➕ Добавить студента</button>
             
-            <button onclick="exportToExcel()" class="excel-btn">📊 3. Экспорт Итогов в Excel</button>
+            <button onclick="exportToExcel()" class="excel-btn">📊 Экспорт в Excel</button>
             
             <button onclick="showInstructions()" style="background: #f39c12;">❓ Инструкция</button>
             
@@ -30,7 +40,7 @@
         <span id="studentCount"></span>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
             <button onclick="manualSave()" style="background: #3498db; padding: 5px 12px;">💾 Сохранить</button>
-            <button onclick="exportBackup()" style="background: #27ae60; padding: 5px 12px;">📥 Бэкап</button>
+            <button onclick="exportBackup()" style="background: #27ae60; padding: 5px 12px;">📥 Бэкап всех групп</button>
             <button onclick="importBackup()" style="background: #f39c12; padding: 5px 12px;">📂 Восстановить</button>
             <button onclick="resetAllData()" class="reset-btn">🗑️ Сбросить всё</button>
         </div>
@@ -38,6 +48,26 @@
 
     <div class="tabs-header" id="tabsHeader"></div>
     <div class="tabs-content" id="tabsContent"></div>
+
+    <!-- Модальное окно для создания/переименования группы -->
+    <div id="groupModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header" id="groupModalHeader">
+                <h3 id="groupModalTitle">➕ Создать новую группу</h3>
+                <span class="close" onclick="closeGroupModal()">&times;</span>
+            </div>
+            <div style="padding: 20px 25px;">
+                <div class="column-name-item" style="margin-bottom: 20px;">
+                    <label style="min-width: 100px;">Название группы:</label>
+                    <input type="text" id="groupName" placeholder="Например: ИС-21, ПД-11, КС-22" style="flex: 1;">
+                </div>
+                <div class="modal-footer" style="justify-content: space-between; padding: 0;">
+                    <button onclick="closeGroupModal()" style="background: #95a5a6;">Отмена</button>
+                    <button onclick="saveGroup()" class="excel-btn" id="groupModalBtn">➕ Создать</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Модальное окно для добавления студента -->
     <div id="addStudentModal" class="modal" style="display: none;">
@@ -91,91 +121,56 @@
             </div>
             <div style="padding: 20px 25px;">
                 <div class="instruction-section">
-                    <h4>📋 1. Начало работы</h4>
+                    <h4>📁 1. Управление группами</h4>
                     <ul>
-                        <li><strong>Загрузка списка студентов:</strong> Нажмите "Загрузить список (.txt)" и выберите текстовый файл, где каждая строка - ФИО студента</li>
-                        <li><strong>Добавление вручную:</strong> Нажмите "Добавить студента" и введите ФИО в появившемся окне</li>
-                        <li><strong>Редактирование/Удаление:</strong> Нажмите кнопку "✏️" рядом с ФИО студента в любой таблице</li>
+                        <li><strong>Создание группы:</strong> Нажмите "➕ Новая группа", введите название (например, "ИС-21")</li>
+                        <li><strong>Переключение групп:</strong> Выберите группу из выпадающего списка</li>
+                        <li><strong>Переименование:</strong> Выберите группу, нажмите "✏️ Переименовать"</li>
+                        <li><strong>Удаление:</strong> Выберите группу, нажмите "🗑️ Удалить группу"</li>
                     </ul>
                 </div>
 
                 <div class="instruction-section">
-                    <h4>📊 2. Работа с оценками</h4>
+                    <h4>📋 2. Работа со студентами</h4>
                     <ul>
-                        <li><strong>Ввод оценок:</strong> Переключайтесь между вкладками РО-1, РО-2 и т.д. Введите оценки в ячейки (от 0 до 100)</li>
-                        <li><strong>Количество колонок:</strong> Измените число в поле "Оценок (колонок) в РО-X" для добавления/удаления колонок</li>
-                        <li><strong>Названия колонок:</strong> Нажмите "Редактировать названия" чтобы заменить "Оц.1" на реальные даты (например, "12.03")</li>
-                        <li><strong>Средний балл:</strong> Автоматически рассчитывается при заполнении всех колонок</li>
+                        <li><strong>Загрузка списка:</strong> Нажмите "Загрузить список (.txt)" - файл с ФИО построчно</li>
+                        <li><strong>Добавление вручную:</strong> Нажмите "➕ Добавить студента" и введите ФИО</li>
+                        <li><strong>Редактирование/Удаление:</strong> Нажмите кнопку "✏️" рядом с ФИО студента</li>
                     </ul>
                 </div>
 
                 <div class="instruction-section">
-                    <h4>🏆 3. Итоги и успеваемость</h4>
+                    <h4>📊 3. Работа с оценками</h4>
                     <ul>
-                        <li><strong>Просмотр итогов:</strong> Перейдите на вкладку "🏆 Итоги" для общей картины</li>
-                        <li><strong>Расчет семестра:</strong> Итоговый балл = среднее арифметическое всех РО</li>
-                        <li><strong>Буквенная оценка:</strong> Автоматически переводится по шкале от A (95-100) до F (менее 50)</li>
-                        <li><strong>GPA:</strong> Числовой эквивалент буквенной оценки (от 4,0 до 0)</li>
+                        <li><strong>Ввод оценок:</strong> Переключайтесь между вкладками РО-1, РО-2 и т.д.</li>
+                        <li><strong>Количество колонок:</strong> Измените число в поле "Оценок (колонок) в РО-X"</li>
+                        <li><strong>Названия колонок:</strong> Нажмите "✏️ Редактировать названия" чтобы заменить "Оц.1" на даты</li>
                     </ul>
                 </div>
 
                 <div class="instruction-section">
-                    <h4>💾 4. Сохранение и бэкапы</h4>
+                    <h4>🏆 4. Итоги и успеваемость</h4>
                     <ul>
-                        <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически прямо в браузере</li>
-                        <li><strong>Ручное сохранение:</strong> Нажмите "Сохранить" для гарантии</li>
-                        <li><strong>Бэкап:</strong> Нажмите "📥 Бэкап" чтобы скачать файл с данными на компьютер</li>
-                        <li><strong>Восстановление:</strong> Нажмите "📂 Восстановить" и выберите ранее сохраненный файл бэкапа</li>
-                        <li><strong>Сброс:</strong> "🗑️ Сбросить всё" - удаляет ВСЕ данные (осторожно!)</li>
+                        <li>Итоговый балл = среднее арифметическое всех РО</li>
+                        <li><strong>Шкала оценок:</strong> A (95-100) → F (менее 50)</li>
+                        <li><strong>GPA:</strong> Числовой эквивалент от 4,0 до 0</li>
                     </ul>
                 </div>
 
                 <div class="instruction-section">
-                    <h4>📎 5. Экспорт и печать</h4>
+                    <h4>💾 5. Сохранение и бэкапы</h4>
                     <ul>
-                        <li><strong>Экспорт в Excel:</strong> Нажмите "Экспорт Итогов в Excel" - создастся файл .xlsx со всеми данными</li>
-                        <li><strong>Печать:</strong> Нажмите Ctrl+P на вкладке "Итоги" для печати ведомости</li>
+                        <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически</li>
+                        <li><strong>Бэкап всех групп:</strong> Сохраняет все группы в один файл</li>
+                        <li><strong>Восстановление:</strong> Загрузите ранее сохраненный файл бэкапа</li>
                     </ul>
                 </div>
 
                 <div class="instruction-section">
-                    <h4>⚙️ 6. Дополнительные возможности</h4>
+                    <h4>📎 6. Экспорт</h4>
                     <ul>
-                        <li><strong>Количество РО:</strong> Измените число в поле "РО в семестре" (до 20)</li>
-                        <li><strong>Фиксация ФИО:</strong> При горизонтальной прокрутке таблицы колонка с ФИО всегда остается видимой</li>
-                        <li><strong>Адаптивность:</strong> Журнал работает на компьютерах, планшетах и телефонах</li>
-                    </ul>
-                </div>
-
-                <div class="instruction-section">
-                    <h4>📝 7. Шкала оценок</h4>
-                    <table style="width: 100%; margin-top: 10px; font-size: 12px;">
-                        <thead>
-                            <tr><th>Баллы</th><th>Буква</th><th>GPA</th><th>Описание</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>95-100</td><td>A</td><td>4,0</td><td>Отлично</td></tr>
-                            <tr><td>90-94</td><td>A-</td><td>3,67</td><td>Очень хорошо</td></tr>
-                            <tr><td>85-89</td><td>B+</td><td>3,33</td><td>Хорошо+</td></tr>
-                            <tr><td>80-84</td><td>B</td><td>3,0</td><td>Хорошо</td></tr>
-                            <tr><td>75-79</td><td>B-</td><td>2,67</td><td>Хорошо-</td></tr>
-                            <tr><td>70-74</td><td>C+</td><td>2,33</td><td>Удовлетворительно+</td></tr>
-                            <tr><td>65-69</td><td>C</td><td>2,0</td><td>Удовлетворительно</td></tr>
-                            <tr><td>60-64</td><td>C-</td><td>1,67</td><td>Удовлетворительно-</td></tr>
-                            <tr><td>55-59</td><td>D+</td><td>1,33</td><td>Слабо+</td></tr>
-                            <tr><td>50-54</td><td>D</td><td>1,0</td><td>Слабо</td></tr>
-                            <tr><td>0-49</td><td>F</td><td>0</td><td>Неудовлетворительно</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="instruction-section">
-                    <h4>💡 8. Советы</h4>
-                    <ul>
-                        <li>Регулярно создавайте бэкапы важных данных</li>
-                        <li>Используйте понятные названия для колонок с оценками</li>
-                        <li>Проверяйте итоговую таблицу перед экспортом</li>
-                        <li>Данные хранятся в вашем браузере - не очищайте кэш без бэкапа!</li>
+                        <li>Нажмите "📊 Экспорт в Excel" - создастся файл .xlsx</li>
+                        <li>Имя файла по умолчанию: "Группа_Итоговая_Ведомость_дата.xlsx"</li>
                     </ul>
                 </div>
 
