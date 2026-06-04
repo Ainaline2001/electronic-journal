@@ -2,32 +2,191 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Электронный Журнал Колледжа</title>
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="/eel.js"></script>
 </head>
 <body>
     <div class="header">
-        <h2>Электронный Журнал</h2>
+        <h2>📚 Электронный Журнал Колледжа</h2>
         <div class="controls">
             <input type="file" id="txtFileInput" accept=".txt" style="display: none;" onchange="loadStudentsFromBrowser(event)">
-            <button onclick="document.getElementById('txtFileInput').click()">1. Загрузить список (.txt)</button>
+            <button onclick="document.getElementById('txtFileInput').click()">📁 1. Загрузить список (.txt)</button>
             
-            <button onclick="exportToExcel()" class="excel-btn">2. Экспорт Итогов в Excel</button>
+            <button onclick="openAddStudentModal()" style="background: #9b59b6;">➕ 2. Добавить студента</button>
+            
+            <button onclick="exportToExcel()" class="excel-btn">📊 3. Экспорт Итогов в Excel</button>
+            
+            <button onclick="showInstructions()" style="background: #f39c12;">❓ Инструкция</button>
             
             <div class="ro-selector">
-                <label>Всего РО в семестре (до 20):</label>
+                <label>РО в семестре:</label>
                 <input type="number" id="roCount" value="4" min="1" max="20" onchange="initApp()">
             </div>
         </div>
     </div>
 
-    <div class="tabs-header" id="tabsHeader">
+    <div class="info-bar" id="infoBar" style="display: none;">
+        <span id="studentCount"></span>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button onclick="manualSave()" style="background: #3498db; padding: 5px 12px;">💾 Сохранить</button>
+            <button onclick="exportBackup()" style="background: #27ae60; padding: 5px 12px;">📥 Бэкап</button>
+            <button onclick="importBackup()" style="background: #f39c12; padding: 5px 12px;">📂 Восстановить</button>
+            <button onclick="resetAllData()" class="reset-btn">🗑️ Сбросить всё</button>
         </div>
+    </div>
 
-    <div class="tabs-content" id="tabsContent">
+    <div class="tabs-header" id="tabsHeader"></div>
+    <div class="tabs-content" id="tabsContent"></div>
+
+    <!-- Модальное окно для добавления студента -->
+    <div id="addStudentModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>➕ Добавить нового студента</h3>
+                <span class="close" onclick="closeAddStudentModal()">&times;</span>
+            </div>
+            <div style="padding: 20px 25px;">
+                <div class="column-name-item" style="margin-bottom: 20px;">
+                    <label style="min-width: 100px;">ФИО Студента:</label>
+                    <input type="text" id="newStudentName" placeholder="Введите ФИО студента" style="flex: 1;">
+                </div>
+                <div class="modal-footer" style="justify-content: space-between; padding: 0;">
+                    <button onclick="closeAddStudentModal()" style="background: #95a5a6;">Отмена</button>
+                    <button onclick="addStudent()" class="excel-btn">➕ Добавить</button>
+                </div>
+            </div>
         </div>
+    </div>
 
+    <!-- Модальное окно для редактирования/удаления студента -->
+    <div id="editStudentModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>✏️ Редактировать студента</h3>
+                <span class="close" onclick="closeEditStudentModal()">&times;</span>
+            </div>
+            <div style="padding: 20px 25px;">
+                <div class="column-name-item" style="margin-bottom: 20px;">
+                    <label style="min-width: 100px;">ФИО Студента:</label>
+                    <input type="text" id="editStudentName" placeholder="Введите ФИО студента" style="flex: 1;">
+                </div>
+                <div class="modal-footer" style="justify-content: space-between; padding: 0;">
+                    <button onclick="deleteStudent()" style="background: #e74c3c;">🗑️ Удалить</button>
+                    <div>
+                        <button onclick="closeEditStudentModal()" style="background: #95a5a6;">Отмена</button>
+                        <button onclick="updateStudent()" class="excel-btn">💾 Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно инструкции -->
+    <div id="instructionsModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+                <h3>📖 Подробная инструкция по работе с журналом</h3>
+                <span class="close" onclick="closeInstructions()">&times;</span>
+            </div>
+            <div style="padding: 20px 25px;">
+                <div class="instruction-section">
+                    <h4>📋 1. Начало работы</h4>
+                    <ul>
+                        <li><strong>Загрузка списка студентов:</strong> Нажмите "Загрузить список (.txt)" и выберите текстовый файл, где каждая строка - ФИО студента</li>
+                        <li><strong>Добавление вручную:</strong> Нажмите "Добавить студента" и введите ФИО в появившемся окне</li>
+                        <li><strong>Редактирование/Удаление:</strong> Нажмите кнопку "✏️" рядом с ФИО студента в любой таблице</li>
+                    </ul>
+                </div>
+
+                <div class="instruction-section">
+                    <h4>📊 2. Работа с оценками</h4>
+                    <ul>
+                        <li><strong>Ввод оценок:</strong> Переключайтесь между вкладками РО-1, РО-2 и т.д. Введите оценки в ячейки (от 0 до 100)</li>
+                        <li><strong>Количество колонок:</strong> Измените число в поле "Оценок (колонок) в РО-X" для добавления/удаления колонок</li>
+                        <li><strong>Названия колонок:</strong> Нажмите "Редактировать названия" чтобы заменить "Оц.1" на реальные даты (например, "12.03")</li>
+                        <li><strong>Средний балл:</strong> Автоматически рассчитывается при заполнении всех колонок</li>
+                    </ul>
+                </div>
+
+                <div class="instruction-section">
+                    <h4>🏆 3. Итоги и успеваемость</h4>
+                    <ul>
+                        <li><strong>Просмотр итогов:</strong> Перейдите на вкладку "🏆 Итоги" для общей картины</li>
+                        <li><strong>Расчет семестра:</strong> Итоговый балл = среднее арифметическое всех РО</li>
+                        <li><strong>Буквенная оценка:</strong> Автоматически переводится по шкале от A (95-100) до F (менее 50)</li>
+                        <li><strong>GPA:</strong> Числовой эквивалент буквенной оценки (от 4,0 до 0)</li>
+                    </ul>
+                </div>
+
+                <div class="instruction-section">
+                    <h4>💾 4. Сохранение и бэкапы</h4>
+                    <ul>
+                        <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически прямо в браузере</li>
+                        <li><strong>Ручное сохранение:</strong> Нажмите "Сохранить" для гарантии</li>
+                        <li><strong>Бэкап:</strong> Нажмите "📥 Бэкап" чтобы скачать файл с данными на компьютер</li>
+                        <li><strong>Восстановление:</strong> Нажмите "📂 Восстановить" и выберите ранее сохраненный файл бэкапа</li>
+                        <li><strong>Сброс:</strong> "🗑️ Сбросить всё" - удаляет ВСЕ данные (осторожно!)</li>
+                    </ul>
+                </div>
+
+                <div class="instruction-section">
+                    <h4>📎 5. Экспорт и печать</h4>
+                    <ul>
+                        <li><strong>Экспорт в Excel:</strong> Нажмите "Экспорт Итогов в Excel" - создастся файл .xlsx со всеми данными</li>
+                        <li><strong>Печать:</strong> Нажмите Ctrl+P на вкладке "Итоги" для печати ведомости</li>
+                    </ul>
+                </div>
+
+                <div class="instruction-section">
+                    <h4>⚙️ 6. Дополнительные возможности</h4>
+                    <ul>
+                        <li><strong>Количество РО:</strong> Измените число в поле "РО в семестре" (до 20)</li>
+                        <li><strong>Фиксация ФИО:</strong> При горизонтальной прокрутке таблицы колонка с ФИО всегда остается видимой</li>
+                        <li><strong>Адаптивность:</strong> Журнал работает на компьютерах, планшетах и телефонах</li>
+                    </ul>
+                </div>
+
+                <div class="instruction-section">
+                    <h4>📝 7. Шкала оценок</h4>
+                    <table style="width: 100%; margin-top: 10px; font-size: 12px;">
+                        <thead>
+                            <tr><th>Баллы</th><th>Буква</th><th>GPA</th><th>Описание</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>95-100</td><td>A</td><td>4,0</td><td>Отлично</td></tr>
+                            <tr><td>90-94</td><td>A-</td><td>3,67</td><td>Очень хорошо</td></tr>
+                            <tr><td>85-89</td><td>B+</td><td>3,33</td><td>Хорошо+</td></tr>
+                            <tr><td>80-84</td><td>B</td><td>3,0</td><td>Хорошо</td></tr>
+                            <tr><td>75-79</td><td>B-</td><td>2,67</td><td>Хорошо-</td></tr>
+                            <tr><td>70-74</td><td>C+</td><td>2,33</td><td>Удовлетворительно+</td></tr>
+                            <tr><td>65-69</td><td>C</td><td>2,0</td><td>Удовлетворительно</td></tr>
+                            <tr><td>60-64</td><td>C-</td><td>1,67</td><td>Удовлетворительно-</td></tr>
+                            <tr><td>55-59</td><td>D+</td><td>1,33</td><td>Слабо+</td></tr>
+                            <tr><td>50-54</td><td>D</td><td>1,0</td><td>Слабо</td></tr>
+                            <tr><td>0-49</td><td>F</td><td>0</td><td>Неудовлетворительно</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="instruction-section">
+                    <h4>💡 8. Советы</h4>
+                    <ul>
+                        <li>Регулярно создавайте бэкапы важных данных</li>
+                        <li>Используйте понятные названия для колонок с оценками</li>
+                        <li>Проверяйте итоговую таблицу перед экспортом</li>
+                        <li>Данные хранятся в вашем браузере - не очищайте кэш без бэкапа!</li>
+                    </ul>
+                </div>
+
+                <div class="instruction-footer">
+                    <button onclick="closeInstructions()" class="excel-btn" style="width: auto;">Понятно, спасибо!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

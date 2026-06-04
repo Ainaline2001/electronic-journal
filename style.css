@@ -1,75 +1,286 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #f0f2f5;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
     color: #333;
 }
 
 .header {
-    display: flex; justify-content: space-between; align-items: center;
-    background: white; padding: 15px 25px; border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 10px;
+    background: white;
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
 }
-.header h2 { margin: 0; color: #2c3e50; }
-.controls { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+
+.header h2 {
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    font-size: 24px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
 
 button {
-    padding: 10px 15px; background: #3498db; color: white;
-    border: none; border-radius: 5px; cursor: pointer;
-    font-weight: 600; transition: background 0.2s;
-}
-button:hover { background: #2980b9; }
-.excel-btn { background: #27ae60; }
-.excel-btn:hover { background: #219653; }
-
-.ro-selector input, .ro-col-selector input {
-    width: 50px; padding: 6px; border: 1px solid #bdc3c7;
-    border-radius: 4px; text-align: center; font-weight: bold;
-}
-
-/* === СТИЛИ ВКЛАДОК === */
-.tabs-header {
-    display: flex; border-bottom: 2px solid #bdc3c7; margin-bottom: 15px;
-    flex-wrap: wrap; gap: 5px;
-}
-.tab-btn {
-    padding: 10px 20px; background: #e8ecef; border: 1px solid #bdc3c7;
-    border-bottom: none; border-radius: 6px 6px 0 0; 
-    cursor: pointer; font-weight: bold; color: #7f8c8d;
-}
-.tab-btn:hover { background: #dcdde1; }
-.tab-btn.active {
-    background: white; color: #2c3e50;
-    border-top: 3px solid #3498db; margin-bottom: -2px; padding-bottom: 12px;
-}
-.tab-btn.final-tab { background: #fcf3cf; color: #d35400; }
-.tab-btn.final-tab.active { border-top: 3px solid #e67e22; background: white; }
-
-.tab-pane { display: none; animation: fadeIn 0.3s; }
-.tab-pane.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-.ro-controls {
-    background: #e8f4f8; padding: 10px 15px; border-radius: 6px;
-    margin-bottom: 15px; display: flex; align-items: center; gap: 20px;
-    flex-wrap: wrap;
-}
-.ro-controls label {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
     font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-size: 14px;
 }
-.edit-names-btn {
-    background: #f39c12;
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.excel-btn {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.reset-btn {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    padding: 5px 15px;
+    font-size: 12px;
+}
+
+.ro-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f8f9fa;
+    padding: 5px 15px;
+    border-radius: 8px;
+}
+
+.ro-selector input {
+    width: 60px;
+    padding: 6px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.info-bar {
+    background: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.info-bar button {
     padding: 5px 12px;
     font-size: 12px;
 }
-.edit-names-btn:hover {
-    background: #e67e22;
+
+.student-count {
+    font-weight: bold;
+    color: #667eea;
 }
 
-/* Модальное окно для редактирования названий */
+/* Стили вкладок */
+.tabs-header {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-weight: bold;
+    color: #666;
+    transition: all 0.3s;
+}
+
+.tab-btn:hover {
+    background: white;
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    background: white;
+    color: #667eea;
+    border-bottom: 3px solid #667eea;
+}
+
+.tab-btn.final-tab {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.tab-btn.final-tab.active {
+    background: white;
+    color: #f5576c;
+    border-bottom-color: #f5576c;
+}
+
+.tab-pane {
+    display: none;
+    animation: fadeIn 0.3s;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Элементы управления РО */
+.ro-controls {
+    background: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.ro-controls label {
+    font-weight: 600;
+    color: #555;
+}
+
+.edit-names-btn {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    padding: 6px 15px;
+    font-size: 12px;
+}
+
+/* Таблицы */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    max-height: calc(100vh - 300px);
+    position: relative;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+th, td {
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+}
+
+th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-weight: 600;
+}
+
+/* Фиксация первых колонок (№ и ФИО) */
+th:first-child,
+th:nth-child(2) {
+    position: sticky;
+    left: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    z-index: 20;
+}
+
+td:first-child,
+td.name-col {
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 15;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+    font-weight: 500;
+}
+
+th:first-child {
+    z-index: 30;
+}
+
+th:nth-child(2) {
+    z-index: 25;
+}
+
+.name-col {
+    text-align: left;
+    min-width: 250px;
+}
+
+.score-input {
+    width: 55px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 6px;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.score-input:focus {
+    border-color: #667eea;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+}
+
+.result {
+    font-weight: bold;
+}
+
+.result.avg {
+    color: #667eea;
+}
+
+.result.letter {
+    color: #f39c12;
+}
+
+.result.gpa {
+    color: #e74c3c;
+}
+
+/* Модальное окно */
 .modal {
     display: none;
     position: fixed;
@@ -79,145 +290,411 @@ button:hover { background: #2980b9; }
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.5);
+    animation: fadeIn 0.2s;
 }
+
 .modal-content {
-    background-color: white;
+    background: white;
     margin: 5% auto;
-    padding: 20px;
-    width: 80%;
+    padding: 0;
+    width: 90%;
     max-width: 600px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    animation: slideIn 0.3s;
 }
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #ecf0f1;
+    padding: 20px 25px;
+    border-bottom: 2px solid #f0f0f0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
 }
+
 .modal-header h3 {
     margin: 0;
-    color: #2c3e50;
 }
+
 .close {
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
-    color: #7f8c8d;
+    transition: transform 0.2s;
 }
+
 .close:hover {
-    color: #e74c3c;
+    transform: scale(1.1);
 }
+
 .column-names-list {
-    max-height: 400px;
+    padding: 20px 25px;
+    max-height: 500px;
     overflow-y: auto;
 }
+
 .column-name-item {
     display: flex;
     align-items: center;
     gap: 15px;
-    margin-bottom: 12px;
-    padding: 8px;
+    margin-bottom: 15px;
+    padding: 10px;
     background: #f8f9fa;
-    border-radius: 5px;
+    border-radius: 8px;
 }
+
 .column-name-item label {
-    min-width: 80px;
+    min-width: 90px;
     font-weight: bold;
-    color: #2c3e50;
+    color: #555;
 }
+
 .column-name-item input {
     flex: 1;
-    padding: 8px;
-    border: 1px solid #bdc3c7;
-    border-radius: 4px;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
     font-size: 14px;
+    transition: all 0.2s;
 }
+
 .column-name-item input:focus {
-    border-color: #3498db;
+    border-color: #667eea;
     outline: none;
 }
+
 .modal-footer {
-    margin-top: 20px;
+    padding: 15px 25px;
     text-align: right;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
 }
+
 .modal-footer button {
     padding: 8px 20px;
 }
 
-/* === ТАБЛИЦЫ === */
-.table-container {
-    background: white; border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow-x: auto;
-    max-height: calc(100vh - 220px);
-    position: relative;
-}
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    min-width: 600px;
-}
-th, td { 
-    border: 1px solid #ecf0f1; 
-    padding: 8px; 
-    text-align: center; 
-    min-width: 45px;
-}
-th { 
-    background-color: #f8f9fa; 
-    position: sticky; 
-    top: 0; 
-    z-index: 10;
-}
-/* ФИКСАЦИЯ КОЛОНКИ "№" и "ФИО Студента" */
-th:first-child,
-th:nth-child(2) {
-    position: sticky;
-    left: 0;
-    background-color: #f8f9fa;
-    z-index: 20;
+/* Пустое состояние */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 12px;
+    color: #999;
 }
 
-td:first-child,
-td.name-col {
-    position: sticky;
-    left: 0;
-    background-color: white;
-    z-index: 15;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+.empty-state h3 {
+    margin: 0 0 10px 0;
+    color: #667eea;
 }
 
-th:first-child {
-    z-index: 30;
-}
-th:nth-child(2) {
-    z-index: 25;
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .header {
+        padding: 15px;
+    }
+    
+    .header h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    button {
+        width: 100%;
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+    
+    .ro-selector {
+        justify-content: center;
+    }
+    
+    .info-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .info-bar button {
+        width: auto;
+    }
+    
+    .tab-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .ro-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .ro-controls button {
+        width: auto;
+    }
+    
+    th, td {
+        padding: 6px;
+        font-size: 11px;
+    }
+    
+    .score-input {
+        width: 40px;
+        font-size: 10px;
+        padding: 4px;
+    }
+    
+    .name-col {
+        min-width: 120px;
+    }
+    
+    th:first-child,
+    th:nth-child(2) {
+        min-width: 40px;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+    }
+    
+    .column-name-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .column-name-item label {
+        min-width: auto;
+    }
 }
 
-.name-col { 
-    text-align: left; 
-    min-width: 250px; 
-    font-weight: 500; 
+/* Стили для планшетов */
+@media (min-width: 769px) and (max-width: 1024px) {
+    body {
+        padding: 15px;
+    }
+    
+    .controls {
+        gap: 10px;
+    }
+    
+    button {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    th, td {
+        padding: 8px;
+        font-size: 12px;
+    }
+    
+    .score-input {
+        width: 48px;
+    }
+    
+    .name-col {
+        min-width: 180px;
+    }
 }
 
-.score-input {
-    width: 45px; text-align: center; border: 1px solid #bdc3c7;
-    border-radius: 4px; padding: 6px; font-size: 14px;
+/* Стили для больших экранов */
+@media (min-width: 1920px) {
+    body {
+        padding: 40px;
+    }
+    
+    .table-container {
+        max-height: calc(100vh - 350px);
+    }
+    
+    th, td {
+        padding: 12px;
+        font-size: 16px;
+    }
+    
+    .score-input {
+        width: 70px;
+        font-size: 16px;
+        padding: 8px;
+    }
+    
+    .name-col {
+        min-width: 350px;
+    }
 }
-.score-input:focus { border-color: #3498db; outline: none; background: #f0f8ff; }
 
-.result { font-weight: bold; background-color: #fcfcfc; }
-.result.avg { color: #2980b9; }
-.result.letter { color: #e67e22; }
-.result.gpa { color: #c0392b; }
-
-/* Стиль для ячеек заголовков с датами */
-th.editable-col {
-    cursor: pointer;
-    transition: background 0.2s;
+/* Кастомный скроллбар */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
 }
-th.editable-col:hover {
-    background-color: #e8f4f8;
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
+
+/* Стили для печати */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .header, .controls, .info-bar, .tabs-header, .ro-controls, .modal {
+        display: none;
+    }
+    
+    .table-container {
+        box-shadow: none;
+        max-height: none;
+        overflow: visible;
+    }
+    
+    th {
+        background: #f0f0f0;
+        color: black;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .tab-pane {
+        display: block !important;
+    }
+    
+    .tab-pane:not(#pane_final) {
+        display: none !important;
+    }
+}
+
+/* Стили для кнопки редактирования в таблице */
+td button {
+    margin: 0;
+    padding: 4px 8px;
+    font-size: 11px;
+    background: #3498db;
+}
+
+td button:hover {
+    transform: none;
+    box-shadow: none;
+    background: #2980b9;
+}
+
+/* Стили для кнопки в info-bar */
+#studentCount button {
+    background: #9b59b6;
+    padding: 2px 8px;
+    font-size: 11px;
+    margin-left: 8px;
+}
+
+#studentCount button:hover {
+    background: #8e44ad;
+}
+
+/* Стили для инструкции */
+.instruction-section {
+    margin-bottom: 25px;
+}
+
+.instruction-section h4 {
+    color: #e67e22;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border-left: 4px solid #f39c12;
+    padding-left: 10px;
+}
+
+.instruction-section ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.instruction-section li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.instruction-section li strong {
+    color: #2c3e50;
+}
+
+.instruction-section table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.instruction-section table th,
+.instruction-section table td {
+    border: 1px solid #e0e0e0;
+    padding: 6px;
+    text-align: center;
+}
+
+.instruction-section table th {
+    background: #f8f9fa;
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+.instruction-section table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.instruction-footer {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.instruction-footer button {
+    padding: 10px 30px;
+    font-size: 14px;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .instruction-section table {
+        font-size: 10px;
+    }
+    
+    .instruction-section table th,
+    .instruction-section table td {
+        padding: 4px;
+    }
+    
+    .instruction-section h4 {
+        font-size: 14px;
+    }
 }
