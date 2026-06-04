@@ -519,7 +519,7 @@ function exportBackup() {
     }
     
     const now = new Date();
-    const defaultName = `бэкап_журнала_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    const defaultName = `журнал_РО_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     
     let fileName = prompt('💾 Введите название файла для бэкапа:', defaultName);
     if (!fileName) return;
@@ -867,7 +867,7 @@ function renderTabsContent() {
         });
         
         paneHtml += `</tbody>
-                </table>
+                <table>
             </div>
         </div>`;
         contentContainer.innerHTML += paneHtml;
@@ -1059,7 +1059,7 @@ async function exportToExcel() {
         
         const now = new Date();
         const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-        const defaultName = `${currentGroup}_ведомость_${dateStr}`;
+        const defaultName = `${currentGroup}_ведомость_РО_${dateStr}`;
         
         let filename = prompt("📊 Введите название файла:", defaultName);
         if (!filename) return;

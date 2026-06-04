@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Электронный Журнал Колледжа</title>
+    <title>Журнал рубежных оценок (РО)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="header">
-        <h2>📚 Электронный Журнал Колледжа</h2>
+        <h2>📊 Журнал рубежных оценок (РО)</h2>
         <div class="controls">
             <div class="group-selector">
                 <label>📁 Группа:</label>
@@ -135,15 +135,15 @@
     <div id="instructionsModal" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
             <div class="modal-header" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
-                <h3>📖 Полная инструкция по работе с журналом</h3>
+                <h3>📖 Полная инструкция по работе с журналом рубежных оценок</h3>
                 <span class="close" onclick="closeInstructions()">&times;</span>
             </div>
             <div style="padding: 20px 25px;">
                 <div class="instruction-section">
                     <h4>📁 1. Управление группами</h4>
                     <ul>
-                        <li><strong>Создание группы:</strong> Нажмите "➕ Новая", введите название</li>
-                        <li><strong>Переключение:</strong> Выберите группу из списка</li>
+                        <li><strong>Создание группы:</strong> Нажмите "➕ Новая", введите название группы (например, "ИС-21")</li>
+                        <li><strong>Переключение:</strong> Выберите группу из выпадающего списка</li>
                         <li><strong>Переименование:</strong> Нажмите "✏️" рядом с группой</li>
                         <li><strong>Удаление:</strong> Нажмите "🗑️" - все данные группы будут удалены</li>
                     </ul>
@@ -167,11 +167,12 @@
                     </ul>
                 </div>
                 <div class="instruction-section">
-                    <h4>📊 4. Работа с оценками</h4>
+                    <h4>📊 4. Работа с рубежными оценками</h4>
                     <ul>
-                        <li><strong>Ввод:</strong> Вводите оценки от 0 до 100 в ячейки</li>
-                        <li><strong>Колонки:</strong> Меняйте количество колонок в РО</li>
-                        <li><strong>Названия:</strong> Редактируйте названия колонок (например, даты)</li>
+                        <li><strong>Ввод оценок:</strong> Вводите оценки от 0 до 100 в ячейки</li>
+                        <li><strong>Количество РО:</strong> Измените число в поле "РО в семестре" (до 20)</li>
+                        <li><strong>Колонки:</strong> Меняйте количество колонок в каждом РО</li>
+                        <li><strong>Названия:</strong> Редактируйте названия колонок (например, даты или темы)</li>
                     </ul>
                 </div>
                 <div class="instruction-section">
