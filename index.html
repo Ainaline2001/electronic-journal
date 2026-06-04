@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Электронный Журнал Колледжа</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -15,13 +15,13 @@
                 <select id="groupSelect" onchange="switchGroup()">
                     <option value="">-- Выберите группу --</option>
                 </select>
-                <button type="button" onclick="openGroupModal()" style="background: #3498db; padding: 5px 10px;">➕ Новая группа</button>
-                <button type="button" onclick="renameCurrentGroup()" style="background: #f39c12; padding: 5px 10px;">✏️ Переименовать</button>
-                <button type="button" onclick="deleteCurrentGroup()" style="background: #e74c3c; padding: 5px 10px;">🗑️ Удалить группу</button>
+                <button type="button" onclick="openGroupModal()" style="background: #3498db; padding: 5px 10px;">➕ Новая</button>
+                <button type="button" onclick="renameCurrentGroup()" style="background: #f39c12; padding: 5px 10px;">✏️</button>
+                <button type="button" onclick="deleteCurrentGroup()" style="background: #e74c3c; padding: 5px 10px;">🗑️</button>
             </div>
             
             <input type="file" id="txtFileInput" accept=".txt" style="display: none;" onchange="loadStudentsFromBrowser(event)">
-            <button type="button" onclick="document.getElementById('txtFileInput').click()">📁 Загрузить список (.txt)</button>
+            <button type="button" onclick="document.getElementById('txtFileInput').click()">📁 Загрузить список</button>
             
             <button type="button" onclick="openAddStudentModal()" style="background: #9b59b6;">➕ Добавить студента</button>
             
@@ -40,14 +40,33 @@
         <span id="studentCount"></span>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
             <button type="button" onclick="manualSave()" style="background: #3498db; padding: 5px 12px;">💾 Сохранить</button>
-            <button type="button" onclick="exportBackup()" style="background: #27ae60; padding: 5px 12px;">📥 Бэкап всех групп</button>
+            <button type="button" onclick="quickVoiceInput()" style="background: #9b59b6; padding: 5px 12px;">🎤 Быстрый ввод</button>
+            <button type="button" onclick="exportBackup()" style="background: #27ae60; padding: 5px 12px;">📥 Бэкап</button>
             <button type="button" onclick="importBackup()" style="background: #f39c12; padding: 5px 12px;">📂 Восстановить</button>
-            <button type="button" onclick="resetAllData()" class="reset-btn">🗑️ Сбросить всё</button>
+            <button type="button" onclick="resetAllData()" class="reset-btn">🗑️ Сброс</button>
         </div>
     </div>
 
     <div class="tabs-header" id="tabsHeader"></div>
     <div class="tabs-content" id="tabsContent"></div>
+
+    <!-- Панель голосового ввода -->
+    <div id="voicePanel" class="voice-panel" style="display: none;">
+        <div class="voice-panel-content">
+            <div class="voice-status">
+                <span class="voice-icon">🎤</span>
+                <span id="voiceStatusText">Нажмите для голосового ввода</span>
+            </div>
+            <div class="voice-buttons">
+                <button id="voiceStartBtn" class="voice-start-btn" onclick="startVoiceInput()">🎤 Начать</button>
+                <button onclick="closeVoicePanel()" style="background: #95a5a6;">✖️ Закрыть</button>
+            </div>
+            <div id="voiceResult" class="voice-result"></div>
+            <div class="voice-help">
+                <small>📌 Скажите: "Иванов 85" или "Петров 90" или "всем 75"</small>
+            </div>
+        </div>
+    </div>
 
     <!-- Модальное окно для создания/переименования группы -->
     <div id="groupModal" class="modal" style="display: none;">
@@ -59,7 +78,7 @@
             <div style="padding: 20px 25px;">
                 <div class="column-name-item" style="margin-bottom: 20px;">
                     <label style="min-width: 100px;">Название группы:</label>
-                    <input type="text" id="groupName" placeholder="Например: ИС-21, ПД-11, КС-22" style="flex: 1;">
+                    <input type="text" id="groupName" placeholder="Например: ИС-21, ПД-11" style="flex: 1;">
                 </div>
                 <div class="modal-footer" style="justify-content: space-between; padding: 0;">
                     <button type="button" onclick="closeGroupModal()" style="background: #95a5a6;">Отмена</button>
@@ -112,146 +131,86 @@
         </div>
     </div>
 
-    <!-- Модальное окно инструкции (ПОЛНАЯ ВЕРСИЯ) -->
+    <!-- Модальное окно инструкции -->
     <div id="instructionsModal" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
             <div class="modal-header" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
-                <h3>📖 Полная инструкция по работе с электронным журналом</h3>
+                <h3>📖 Полная инструкция по работе с журналом</h3>
                 <span class="close" onclick="closeInstructions()">&times;</span>
             </div>
             <div style="padding: 20px 25px;">
-                <!-- Раздел 1: Управление группами -->
                 <div class="instruction-section">
                     <h4>📁 1. Управление группами</h4>
                     <ul>
-                        <li><strong>Создание группы:</strong> Нажмите кнопку "➕ Новая группа", введите название (например, "ИС-21", "ПД-11") и нажмите "Создать"</li>
-                        <li><strong>Переключение между группами:</strong> Выберите нужную группу из выпадающего списка "Группа"</li>
-                        <li><strong>Переименование группы:</strong> Выберите группу, нажмите "✏️ Переименовать", введите новое название</li>
-                        <li><strong>Удаление группы:</strong> Выберите группу, нажмите "🗑️ Удалить группу" - все данные группы будут потеряны</li>
-                        <li><strong>Количество студентов в группе:</strong> Отображается в скобках рядом с названием группы</li>
+                        <li><strong>Создание группы:</strong> Нажмите "➕ Новая", введите название</li>
+                        <li><strong>Переключение:</strong> Выберите группу из списка</li>
+                        <li><strong>Переименование:</strong> Нажмите "✏️" рядом с группой</li>
+                        <li><strong>Удаление:</strong> Нажмите "🗑️" - все данные группы будут удалены</li>
                     </ul>
                 </div>
-
-                <!-- Раздел 2: Работа со студентами -->
                 <div class="instruction-section">
                     <h4>📋 2. Работа со студентами</h4>
                     <ul>
-                        <li><strong>Загрузка списка из файла:</strong> Нажмите "📁 Загрузить список (.txt)" - файл должен содержать ФИО студентов (каждый с новой строки)</li>
-                        <li><strong>Добавление студента вручную:</strong> Нажмите "➕ Добавить студента", введите ФИО в появившемся окне</li>
-                        <li><strong>Редактирование ФИО:</strong> Нажмите кнопку "✏️" рядом с ФИО студента в любой таблице</li>
-                        <li><strong>Удаление студента:</strong> В режиме редактирования нажмите "🗑️ Удалить" - все оценки студента будут удалены</li>
+                        <li><strong>Загрузка списка:</strong> Нажмите "Загрузить список (.txt)" - файл с ФИО построчно</li>
+                        <li><strong>Добавление:</strong> Нажмите "➕ Добавить студента"</li>
+                        <li><strong>Редактирование:</strong> Нажмите "✏️" рядом с ФИО</li>
+                        <li><strong>Удаление:</strong> В режиме редактирования нажмите "Удалить"</li>
                     </ul>
                 </div>
-
-                <!-- Раздел 3: Работа с оценками -->
                 <div class="instruction-section">
-                    <h4>📊 3. Работа с оценками</h4>
+                    <h4>🎤 3. Голосовой ввод оценок</h4>
                     <ul>
-                        <li><strong>Ввод оценок:</strong> Переключайтесь между вкладками (РО-1, РО-2 и т.д.), вводите оценки в ячейки (от 0 до 100)</li>
-                        <li><strong>Количество колонок:</strong> Измените число в поле "Оценок (колонок) в РО-X" - колонки добавятся или удалятся автоматически</li>
-                        <li><strong>Названия колонок:</strong> Нажмите "✏️ Редактировать названия" чтобы заменить "Оц.1" на реальные даты (например, "12.03", "Контрольная")</li>
-                        <li><strong>Средний балл по РО:</strong> Рассчитывается автоматически при заполнении всех колонок</li>
-                        <li><strong>Подсказка:</strong> При вводе оценки нажмите Enter для быстрого перехода к следующей ячейке</li>
+                        <li><strong>Быстрый ввод:</strong> Нажмите "🎤 Быстрый ввод" и скажите: "Иванов 85"</li>
+                        <li><strong>В ячейке:</strong> Нажмите кнопку 🎤 в любой ячейке оценки</li>
+                        <li><strong>Массовый ввод:</strong> Скажите "всем 75" для всей группы</li>
+                        <li><strong>Поддерживаются:</strong> числа и слова (пять, десять, двадцать)</li>
                     </ul>
                 </div>
-
-                <!-- Раздел 4: Итоги и успеваемость -->
                 <div class="instruction-section">
-                    <h4>🏆 4. Итоги и успеваемость</h4>
+                    <h4>📊 4. Работа с оценками</h4>
                     <ul>
-                        <li><strong>Просмотр итогов:</strong> Перейдите на вкладку "🏆 Итоги" для общей картины успеваемости</li>
-                        <li><strong>Расчет семестра:</strong> Итоговый балл = среднее арифметическое всех РО</li>
-                        <li><strong>Буквенная оценка:</strong> Автоматически переводится по шкале (см. таблицу ниже)</li>
-                        <li><strong>GPA:</strong> Числовой эквивалент буквенной оценки (от 4,0 до 0)</li>
+                        <li><strong>Ввод:</strong> Вводите оценки от 0 до 100 в ячейки</li>
+                        <li><strong>Колонки:</strong> Меняйте количество колонок в РО</li>
+                        <li><strong>Названия:</strong> Редактируйте названия колонок (например, даты)</li>
                     </ul>
                 </div>
-
-                <!-- Раздел 5: Шкала оценок -->
                 <div class="instruction-section">
-                    <h4>📈 5. Шкала оценок</h4>
-                    <table style="width: 100%; margin-top: 10px; font-size: 12px;">
-                        <thead>
-                            <tr><th>Баллы</th><th>Буква</th><th>GPA</th><th>Описание</th></tr>
-                        </thead>
+                    <h4>🏆 5. Итоги и успеваемость</h4>
+                    <ul>
+                        <li><strong>Итоговый балл:</strong> Среднее арифметическое всех РО</li>
+                        <li><strong>Буквенная оценка:</strong> A (95-100) → F (менее 50)</li>
+                        <li><strong>GPA:</strong> Числовой эквивалент от 4,0 до 0</li>
+                    </ul>
+                </div>
+                <div class="instruction-section">
+                    <h4>📈 6. Шкала оценок</h4>
+                    <table style="width: 100%; font-size: 11px;">
+                        <thead><tr><th>Баллы</th><th>Буква</th><th>GPA</th></tr></thead>
                         <tbody>
-                            <tr><td>95-100</td><td><strong>A</strong></td><td>4,0</td><td>Отлично</td></tr>
-                            <tr><td>90-94</td><td><strong>A-</strong></td><td>3,67</td><td>Очень хорошо</td></tr>
-                            <tr><td>85-89</td><td><strong>B+</strong></td><td>3,33</td><td>Хорошо+</td></tr>
-                            <tr><td>80-84</td><td><strong>B</strong></td><td>3,0</td><td>Хорошо</td></tr>
-                            <tr><td>75-79</td><td><strong>B-</strong></td><td>2,67</td><td>Хорошо-</td></tr>
-                            <tr><td>70-74</td><td><strong>C+</strong></td><td>2,33</td><td>Удовлетворительно+</td></tr>
-                            <tr><td>65-69</td><td><strong>C</strong></td><td>2,0</td><td>Удовлетворительно</td></tr>
-                            <tr><td>60-64</td><td><strong>C-</strong></td><td>1,67</td><td>Удовлетворительно-</td></tr>
-                            <tr><td>55-59</td><td><strong>D+</strong></td><td>1,33</td><td>Слабо+</td></tr>
-                            <tr><td>50-54</td><td><strong>D</strong></td><td>1,0</td><td>Слабо</td></tr>
-                            <tr><td>0-49</td><td><strong>F</strong></td><td>0</td><td>Неудовлетворительно</td></tr>
+                            <tr><td>95-100</td><td>A</td><td>4,0</td></tr>
+                            <tr><td>90-94</td><td>A-</td><td>3,67</td></tr>
+                            <tr><td>85-89</td><td>B+</td><td>3,33</td></tr>
+                            <tr><td>80-84</td><td>B</td><td>3,0</td></tr>
+                            <tr><td>75-79</td><td>B-</td><td>2,67</td></tr>
+                            <tr><td>70-74</td><td>C+</td><td>2,33</td></tr>
+                            <tr><td>65-69</td><td>C</td><td>2,0</td></tr>
+                            <tr><td>60-64</td><td>C-</td><td>1,67</td></tr>
+                            <tr><td>55-59</td><td>D+</td><td>1,33</td></tr>
+                            <tr><td>50-54</td><td>D</td><td>1,0</td></tr>
+                            <tr><td>0-49</td><td>F</td><td>0</td></tr>
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Раздел 6: Сохранение и бэкапы -->
                 <div class="instruction-section">
-                    <h4>💾 6. Сохранение и бэкапы</h4>
+                    <h4>💾 7. Сохранение и бэкапы</h4>
                     <ul>
-                        <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически прямо в браузере</li>
-                        <li><strong>Ручное сохранение:</strong> Нажмите "💾 Сохранить" для гарантии</li>
-                        <li><strong>Создание бэкапа:</strong> Нажмите "📥 Бэкап всех групп" - сохранятся ВСЕ группы в один файл</li>
-                        <li><strong>Восстановление из бэкапа:</strong> Нажмите "📂 Восстановить" и выберите ранее сохраненный файл</li>
-                        <li><strong>Сброс всех данных:</strong> "🗑️ Сбросить всё" - удаляет ВСЕ группы и оценки (осторожно!)</li>
-                        <li><strong>Важно:</strong> При очистке кэша браузера данные могут потеряться - регулярно делайте бэкапы!</li>
+                        <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически</li>
+                        <li><strong>Бэкап:</strong> Сохраняет все группы в один файл</li>
+                        <li><strong>Восстановление:</strong> Загрузите ранее сохраненный файл</li>
                     </ul>
                 </div>
-
-                <!-- Раздел 7: Экспорт и печать -->
-                <div class="instruction-section">
-                    <h4>📎 7. Экспорт и печать</h4>
-                    <ul>
-                        <li><strong>Экспорт в Excel:</strong> Нажмите "📊 Экспорт в Excel" - создастся файл .xlsx с итоговой ведомостью</li>
-                        <li><strong>Имя файла:</strong> Можно ввести любое понятное название (например, "ИС-21_итоги_май")</li>
-                        <li><strong>Печать:</strong> Нажмите Ctrl+P на вкладке "Итоги" для печати ведомости</li>
-                        <li><strong>Формат файла:</strong> Экспорт поддерживает настоящий формат Excel с корректным отображением кириллицы</li>
-                    </ul>
-                </div>
-
-                <!-- Раздел 8: Дополнительные возможности -->
-                <div class="instruction-section">
-                    <h4>⚙️ 8. Дополнительные возможности</h4>
-                    <ul>
-                        <li><strong>Количество РО:</strong> Измените число в поле "РО в семестре" (до 20 РО)</li>
-                        <li><strong>Фиксация ФИО:</strong> При горизонтальной прокрутке таблицы колонка с ФИО всегда остается видимой</li>
-                        <li><strong>Адаптивность:</strong> Журнал работает на компьютерах, планшетах и телефонах</li>
-                        <li><strong>Автосохранение:</strong> Все изменения мгновенно сохраняются (индикатор в правом нижнем углу)</li>
-                        <li><strong>Совместимость:</strong> Работает во всех современных браузерах (Chrome, Edge, Safari, Firefox)</li>
-                    </ul>
-                </div>
-
-                <!-- Раздел 9: Частые вопросы -->
-                <div class="instruction-section">
-                    <h4>❓ 9. Частые вопросы</h4>
-                    <ul>
-                        <li><strong>Как перенести данные на другой компьютер?</strong> Сделайте бэкап на первом компьютере, затем восстановите на втором</li>
-                        <li><strong>Что делать, если пропали данные?</strong> Проверьте, не очищали ли вы кэш браузера. Восстановите из последнего бэкапа</li>
-                        <li><strong>Как добавить больше 20 РО?</strong> Введите число в поле "РО в семестре" (максимум 20)</li>
-                        <li><strong>Можно ли работать офлайн?</strong> Да! После первого открытия страница кэшируется</li>
-                        <li><strong>Как изменить дату оценки?</strong> Нажмите "✏️ Редактировать названия" в нужном РО</li>
-                    </ul>
-                </div>
-
-                <!-- Раздел 10: Советы -->
-                <div class="instruction-section">
-                    <h4>💡 10. Полезные советы</h4>
-                    <ul>
-                        <li>Регулярно создавайте бэкапы важных данных (раз в неделю)</li>
-                        <li>Используйте понятные названия для колонок с оценками (реальные даты)</li>
-                        <li>Проверяйте итоговую таблицу перед экспортом в Excel</li>
-                        <li>Для быстрого ввода оценок используйте цифровую клавиатуру</li>
-                        <li>Создавайте отдельную группу для каждого учебного класса/курса</li>
-                        <li>Делайте бэкап перед важными изменениями в журнале</li>
-                    </ul>
-                </div>
-
                 <div class="instruction-footer">
-                    <button type="button" onclick="closeInstructions()" class="excel-btn" style="width: auto;">✅ Понятно, приступим к работе!</button>
+                    <button type="button" onclick="closeInstructions()" class="excel-btn">✅ Понятно, приступим!</button>
                 </div>
             </div>
         </div>

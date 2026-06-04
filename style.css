@@ -32,7 +32,6 @@ body {
     gap: 10px;
 }
 
-/* Мобильные кнопки - крупнее и удобнее */
 button {
     padding: 12px 16px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -59,7 +58,6 @@ button:active {
     background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
 }
 
-/* Группа селектор - мобильная адаптация */
 .group-selector {
     display: flex;
     flex-wrap: wrap;
@@ -117,7 +115,6 @@ button:active {
     font-size: 16px;
 }
 
-/* Информационная панель */
 .info-bar {
     background: white;
     padding: 12px 15px;
@@ -149,7 +146,6 @@ button:active {
     min-height: 38px;
 }
 
-/* Вкладки - горизонтальная прокрутка для мобильных */
 .tabs-header {
     display: flex;
     gap: 5px;
@@ -208,7 +204,6 @@ button:active {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Управление РО */
 .ro-controls {
     background: white;
     padding: 12px;
@@ -247,7 +242,6 @@ button:active {
     font-size: 12px;
 }
 
-/* Таблицы - горизонтальная прокрутка и мелкий шрифт */
 .table-container {
     background: white;
     border-radius: 12px;
@@ -283,7 +277,6 @@ th {
     padding: 10px 4px;
 }
 
-/* Фиксация колонок */
 th:first-child,
 th:nth-child(2) {
     position: sticky;
@@ -319,7 +312,6 @@ th:nth-child(2) {
     word-break: break-word;
 }
 
-/* Поля ввода оценок - крупнее для пальцев */
 .score-input {
     width: 50px;
     text-align: center;
@@ -337,7 +329,6 @@ th:nth-child(2) {
     box-shadow: 0 0 0 3px rgba(102,126,234,0.2);
 }
 
-/* Кнопка редактирования в таблице */
 td button {
     padding: 6px 10px;
     font-size: 12px;
@@ -345,7 +336,6 @@ td button {
     background: #3498db;
 }
 
-/* Результаты */
 .result {
     font-weight: bold;
     font-size: 12px;
@@ -363,7 +353,91 @@ td button {
     color: #e74c3c;
 }
 
-/* Модальные окна - на всю ширину для мобильных */
+.voice-input-btn {
+    background: #9b59b6;
+    padding: 6px 8px;
+    font-size: 11px;
+    min-height: 36px;
+}
+
+.voice-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -5px 30px rgba(0,0,0,0.3);
+    z-index: 1001;
+    animation: slideUp 0.3s;
+}
+
+.voice-panel-content {
+    padding: 20px;
+}
+
+.voice-status {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.voice-icon {
+    font-size: 32px;
+}
+
+#voiceStatusText {
+    font-size: 16px;
+    color: #555;
+}
+
+.voice-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.voice-buttons button {
+    flex: 1;
+    padding: 15px;
+    font-size: 16px;
+}
+
+.voice-start-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.voice-start-btn.listening {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.voice-result {
+    background: #e8f4f8;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    min-height: 60px;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.voice-help {
+    text-align: center;
+    color: #999;
+    font-size: 11px;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -467,7 +541,6 @@ td button {
     font-size: 14px;
 }
 
-/* Пустое состояние */
 .empty-state {
     text-align: center;
     padding: 40px 20px;
@@ -491,7 +564,6 @@ td button {
     padding: 12px 20px;
 }
 
-/* Инструкция - мобильная адаптация */
 .instruction-section {
     margin-bottom: 25px;
 }
@@ -518,7 +590,6 @@ td button {
 .instruction-section table {
     width: 100%;
     margin-top: 10px;
-    font-size: 11px;
     border-collapse: collapse;
 }
 
@@ -532,11 +603,6 @@ td button {
 .instruction-section table th {
     background: #f8f9fa;
     color: #2c3e50;
-    font-weight: bold;
-}
-
-.instruction-section table tr:nth-child(even) {
-    background: #f8f9fa;
 }
 
 .instruction-footer {
@@ -552,7 +618,6 @@ td button {
     width: 100%;
 }
 
-/* Скроллбар */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -568,212 +633,6 @@ td button {
     border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #764ba2;
-}
-
-/* Стили для печати */
-@media print {
-    body {
-        background: white;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .header, .controls, .info-bar, .tabs-header, .ro-controls, .modal, .group-selector, .ro-selector, button {
-        display: none;
-    }
-    
-    .table-container {
-        box-shadow: none;
-        max-height: none;
-        overflow: visible;
-    }
-    
-    th {
-        background: #f0f0f0;
-        color: black;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-    
-    .tab-pane {
-        display: block !important;
-    }
-    
-    .tab-pane:not(#pane_final) {
-        display: none !important;
-    }
-}
-
-/* ========== АДАПТАЦИЯ ДЛЯ ПЛАНШЕТОВ ========== */
-@media (min-width: 768px) and (max-width: 1024px) {
-    body {
-        padding: 15px;
-    }
-    
-    .controls {
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
-    
-    .group-selector {
-        flex: 1;
-        min-width: 200px;
-    }
-    
-    .ro-controls {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .ro-controls > div {
-        flex: 1;
-    }
-    
-    .modal-content {
-        margin: 5% auto;
-        position: relative;
-        width: 90%;
-        border-radius: 20px;
-        bottom: auto;
-    }
-    
-    .column-name-item {
-        flex-direction: row;
-        align-items: center;
-    }
-    
-    .info-bar {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .instruction-footer button {
-        width: auto;
-    }
-}
-
-/* ========== АДАПТАЦИЯ ДЛЯ ДЕСКТОПА ========== */
-@media (min-width: 1025px) {
-    body {
-        padding: 20px;
-    }
-    
-    .controls {
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-    
-    .group-selector {
-        flex-wrap: nowrap;
-    }
-    
-    .ro-controls {
-        flex-direction: row;
-        align-items: center;
-    }
-    
-    .info-bar {
-        flex-direction: row;
-        justify-content: space-between;
-    }
-    
-    .modal-content {
-        margin: 5% auto;
-        position: relative;
-        width: 90%;
-        max-width: 600px;
-        border-radius: 20px;
-        bottom: auto;
-    }
-    
-    .column-name-item {
-        flex-direction: row;
-        align-items: center;
-    }
-    
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-    
-    button:active {
-        transform: translateY(0);
-    }
-    
-    .instruction-footer button {
-        width: auto;
-    }
-}
-
-/* ========== ДЛЯ ОЧЕНЬ МАЛЕНЬКИХ ЭКРАНОВ (до 360px) ========== */
-@media (max-width: 360px) {
-    body {
-        padding: 10px;
-    }
-    
-    .header h2 {
-        font-size: 18px;
-    }
-    
-    button {
-        padding: 10px 12px;
-        font-size: 12px;
-    }
-    
-    .tab-btn {
-        padding: 8px 12px;
-        font-size: 11px;
-    }
-    
-    th, td {
-        padding: 6px 3px;
-        font-size: 10px;
-    }
-    
-    .score-input {
-        width: 40px;
-        padding: 6px 2px;
-        font-size: 12px;
-    }
-    
-    .name-col {
-        min-width: 90px;
-    }
-    
-    .instruction-section li {
-        font-size: 11px;
-    }
-    
-    .instruction-section h4 {
-        font-size: 14px;
-    }
-    
-    .modal-header h3 {
-        font-size: 16px;
-    }
-}
-
-/* ========== ПОДДЕРЖКА ПАЛЬЦЕВОГО ВВОДА ========== */
-@media (hover: none) and (pointer: coarse) {
-    button, .tab-btn, .score-input, select, input {
-        cursor: pointer;
-    }
-    
-    button:active {
-        transform: scale(0.96);
-    }
-    
-    .score-input {
-        font-size: 16px;
-    }
-}
-
-/* Индикатор сохранения */
 #saveIndicator {
     position: fixed;
     bottom: 20px;
@@ -789,37 +648,52 @@ td button {
     pointer-events: none;
 }
 
-@media (max-width: 768px) {
-    #saveIndicator {
-        bottom: 10px;
-        right: 10px;
-        font-size: 10px;
-        padding: 5px 10px;
-    }
+@media print {
+    body { background: white; padding: 0; }
+    .header, .controls, .info-bar, .tabs-header, .ro-controls, .modal, .group-selector, .ro-selector, button, .voice-panel { display: none; }
+    .table-container { box-shadow: none; max-height: none; overflow: visible; }
+    th { background: #f0f0f0; color: black; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .tab-pane { display: block !important; }
+    .tab-pane:not(#pane_final) { display: none !important; }
 }
 
-/* Анимации */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+@media (min-width: 768px) and (max-width: 1024px) {
+    body { padding: 15px; }
+    .controls { flex-direction: row; flex-wrap: wrap; }
+    .group-selector { flex: 1; min-width: 200px; }
+    .ro-controls { flex-direction: row; justify-content: space-between; align-items: center; }
+    .modal-content { margin: 5% auto; position: relative; width: 90%; border-radius: 20px; bottom: auto; }
+    .column-name-item { flex-direction: row; align-items: center; }
+    .info-bar { flex-direction: row; justify-content: space-between; align-items: center; }
+    .instruction-footer button { width: auto; }
 }
 
-@keyframes slideDown {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+@media (min-width: 1025px) {
+    body { padding: 20px; }
+    .controls { flex-direction: row; flex-wrap: wrap; align-items: center; }
+    .group-selector { flex-wrap: nowrap; }
+    .ro-controls { flex-direction: row; align-items: center; }
+    .info-bar { flex-direction: row; justify-content: space-between; }
+    .modal-content { margin: 5% auto; position: relative; width: 90%; max-width: 600px; border-radius: 20px; bottom: auto; }
+    .column-name-item { flex-direction: row; align-items: center; }
+    button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    .instruction-footer button { width: auto; }
 }
 
-@keyframes slideUp {
-    from {
-        transform: translateY(100%);
-    }
-    to {
-        transform: translateY(0);
-    }
+@media (max-width: 360px) {
+    body { padding: 10px; }
+    .header h2 { font-size: 18px; }
+    button { padding: 10px 12px; font-size: 12px; }
+    .tab-btn { padding: 8px 12px; font-size: 11px; }
+    th, td { padding: 6px 3px; font-size: 10px; }
+    .score-input { width: 40px; padding: 6px 2px; font-size: 12px; }
+    .name-col { min-width: 90px; }
+    .instruction-section li { font-size: 11px; }
+    #saveIndicator { bottom: 10px; right: 10px; font-size: 10px; padding: 5px 10px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+    button, .tab-btn, .score-input, select, input { cursor: pointer; }
+    button:active { transform: scale(0.96); }
+    .score-input { font-size: 16px; }
 }

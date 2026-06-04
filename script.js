@@ -10,6 +10,231 @@ let gradesData = {};
 let columnNames = {};
 let students = [];
 
+// ============ ГОЛОСОВОЙ ВВОД ============
+let recognition = null;
+let isListening = false;
+let currentVoiceRO = null;
+let currentVoiceCol = null;
+let currentVoiceStudentIndex = null;
+
+// Инициализация распознавания речи
+function initSpeechRecognition() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        console.log('Браузер не поддерживает голосовой ввод');
+        return false;
+    }
+    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = 'ru-RU';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    
+    recognition.onstart = function() {
+        isListening = true;
+        const startBtn = document.getElementById('voiceStartBtn');
+        if (startBtn) {
+            startBtn.classList.add('listening');
+            startBtn.innerHTML = '🔴 Слушаю...';
+        }
+        document.getElementById('voiceStatusText').innerHTML = '🎤 Слушаю... Скажите оценку';
+        document.getElementById('voiceResult').innerHTML = 'Слушаю...';
+    };
+    
+    recognition.onend = function() {
+        isListening = false;
+        const startBtn = document.getElementById('voiceStartBtn');
+        if (startBtn) {
+            startBtn.classList.remove('listening');
+            startBtn.innerHTML = '🎤 Начать';
+        }
+        document.getElementById('voiceStatusText').innerHTML = 'Голосовой ввод завершен';
+    };
+    
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        console.log('Распознано:', transcript);
+        processVoiceCommand(transcript);
+    };
+    
+    recognition.onerror = function(event) {
+        console.error('Ошибка распознавания:', event.error);
+        document.getElementById('voiceResult').innerHTML = '❌ Ошибка: ' + event.error;
+        document.getElementById('voiceStatusText').innerHTML = 'Ошибка распознавания';
+        isListening = false;
+        const startBtn = document.getElementById('voiceStartBtn');
+        if (startBtn) {
+            startBtn.classList.remove('listening');
+            startBtn.innerHTML = '🎤 Начать';
+        }
+    };
+    
+    return true;
+}
+
+function openVoiceInput(roIndex, colIndex, studentIndex) {
+    if (!recognition && !initSpeechRecognition()) {
+        alert('❌ Ваш браузер не поддерживает голосовой ввод. Используйте Chrome, Edge или Safari на iOS.');
+        return;
+    }
+    
+    currentVoiceRO = roIndex;
+    currentVoiceCol = colIndex;
+    currentVoiceStudentIndex = studentIndex;
+    
+    const studentName = students[studentIndex];
+    document.getElementById('voiceResult').innerHTML = `Готов к вводу оценки для:<br>📌 ${studentName}<br>📊 РО-${roIndex}, колонка ${colIndex}`;
+    document.getElementById('voicePanel').style.display = 'block';
+    document.getElementById('voiceStatusText').innerHTML = 'Нажмите "Начать" и скажите оценку';
+}
+
+function closeVoicePanel() {
+    if (isListening && recognition) {
+        recognition.stop();
+    }
+    document.getElementById('voicePanel').style.display = 'none';
+    currentVoiceRO = null;
+    currentVoiceCol = null;
+    currentVoiceStudentIndex = null;
+}
+
+function startVoiceInput() {
+    if (!recognition) {
+        if (!initSpeechRecognition()) {
+            alert('❌ Голосовой ввод не поддерживается');
+            return;
+        }
+    }
+    
+    try {
+        recognition.start();
+    } catch(e) {
+        console.error('Ошибка запуска:', e);
+        alert('Не удалось запустить голосовой ввод. Попробуйте еще раз.');
+    }
+}
+
+function processVoiceCommand(transcript) {
+    const text = transcript.toLowerCase();
+    document.getElementById('voiceResult').innerHTML = `Распознано: "${transcript}"<br>Обработка...`;
+    
+    const numbers = text.match(/\d{1,3}/g);
+    let score = null;
+    
+    if (numbers && numbers.length > 0) {
+        score = parseInt(numbers[0]);
+        if (score > 100) score = 100;
+        if (score < 0) score = 0;
+    }
+    
+    const wordNumbers = {
+        'ноль': 0, 'один': 1, 'два': 2, 'три': 3, 'четыре': 4,
+        'пять': 5, 'шесть': 6, 'семь': 7, 'восемь': 8, 'девять': 9,
+        'десять': 10, 'одиннадцать': 11, 'двенадцать': 12, 'тринадцать': 13,
+        'четырнадцать': 14, 'пятнадцать': 15, 'шестнадцать': 16, 'семнадцать': 17,
+        'восемнадцать': 18, 'девятнадцать': 19, 'двадцать': 20, 'тридцать': 30,
+        'сорок': 40, 'пятьдесят': 50, 'шестьдесят': 60, 'семьдесят': 70,
+        'восемьдесят': 80, 'девяносто': 90, 'сто': 100
+    };
+    
+    if (score === null) {
+        for (const [word, num] of Object.entries(wordNumbers)) {
+            if (text.includes(word)) {
+                score = num;
+                break;
+            }
+        }
+    }
+    
+    if (text.includes('все') || text.includes('всем')) {
+        applyScoreToAllInRO(score);
+        return;
+    }
+    
+    let foundStudentIndex = -1;
+    for (let i = 0; i < students.length; i++) {
+        const lastName = students[i].split(' ')[0].toLowerCase();
+        if (text.includes(lastName)) {
+            foundStudentIndex = i;
+            break;
+        }
+    }
+    
+    if (foundStudentIndex !== -1 && score !== null) {
+        const currentTab = activeTab;
+        if (currentTab !== 'final') {
+            saveGrade(foundStudentIndex, currentTab, currentVoiceCol || 1, score);
+            document.getElementById('voiceResult').innerHTML = `✅ Оценка ${score} поставлена студенту ${students[foundStudentIndex]}`;
+            setTimeout(() => closeVoicePanel(), 2000);
+        } else {
+            document.getElementById('voiceResult').innerHTML = '❌ Переключитесь на вкладку с оценками';
+        }
+    } else if (score !== null && currentVoiceStudentIndex !== null) {
+        saveGrade(currentVoiceStudentIndex, currentVoiceRO, currentVoiceCol, score);
+        document.getElementById('voiceResult').innerHTML = `✅ Оценка ${score} сохранена для ${students[currentVoiceStudentIndex]}`;
+        setTimeout(() => closeVoicePanel(), 2000);
+    } else if (score !== null) {
+        document.getElementById('voiceResult').innerHTML = '❌ Не удалось определить студента. Скажите фамилию, например: "Иванов 85"';
+    } else {
+        document.getElementById('voiceResult').innerHTML = '❌ Не удалось распознать оценку. Скажите число от 0 до 100';
+    }
+    
+    saveCurrentGroup();
+}
+
+function applyScoreToAllInRO(score) {
+    if (score === null || score === undefined) {
+        document.getElementById('voiceResult').innerHTML = '❌ Не удалось распознать оценку для всех студентов';
+        return;
+    }
+    
+    const currentTab = activeTab;
+    if (currentTab === 'final') {
+        document.getElementById('voiceResult').innerHTML = '❌ Переключитесь на вкладку с оценками';
+        return;
+    }
+    
+    let count = 0;
+    for (let i = 0; i < students.length; i++) {
+        const colCount = gradesCountConfig[currentTab] || 3;
+        for (let c = 1; c <= colCount; c++) {
+            saveGrade(i, currentTab, c, score);
+            count++;
+        }
+    }
+    
+    document.getElementById('voiceResult').innerHTML = `✅ Оценка ${score} поставлена всем студентам (${students.length} чел.)`;
+    setTimeout(() => closeVoicePanel(), 2000);
+    saveCurrentGroup();
+}
+
+function quickVoiceInput() {
+    if (!currentGroup) {
+        alert('❌ Сначала выберите группу');
+        return;
+    }
+    
+    const currentTab = activeTab;
+    if (currentTab === 'final') {
+        alert('❌ Переключитесь на вкладку с оценками (РО-1, РО-2 и т.д.)');
+        return;
+    }
+    
+    if (!recognition && !initSpeechRecognition()) {
+        alert('❌ Ваш браузер не поддерживает голосовой ввод');
+        return;
+    }
+    
+    document.getElementById('voiceResult').innerHTML = `Готов к вводу оценок для текущей таблицы (РО-${currentTab})<br>Скажите: "Иванов 85" или "Петров 90" или "всем 75"`;
+    document.getElementById('voicePanel').style.display = 'block';
+    document.getElementById('voiceStatusText').innerHTML = 'Нажмите "Начать" и скажите оценку';
+    
+    currentVoiceRO = currentTab;
+    currentVoiceCol = 1;
+    currentVoiceStudentIndex = null;
+}
+
 // Загрузка всех групп из localStorage
 function loadAllGroups() {
     const saved = localStorage.getItem('journalGroups');
@@ -24,7 +249,6 @@ function loadAllGroups() {
     return false;
 }
 
-// Сохранение всех групп в localStorage
 function saveAllGroups() {
     try {
         localStorage.setItem('journalGroups', JSON.stringify(allGroups));
@@ -36,7 +260,6 @@ function saveAllGroups() {
     }
 }
 
-// Сохранение текущей группы
 function saveCurrentGroup() {
     if (!currentGroup) return;
     
@@ -51,7 +274,6 @@ function saveCurrentGroup() {
     saveAllGroups();
 }
 
-// Загрузка группы
 function loadGroup(groupName) {
     if (!allGroups[groupName]) return false;
     
@@ -69,7 +291,6 @@ function loadGroup(groupName) {
     return true;
 }
 
-// Переключение группы
 function switchGroup() {
     const select = document.getElementById('groupSelect');
     if (!select) return;
@@ -85,7 +306,6 @@ function switchGroup() {
     loadGroup(currentGroup);
 }
 
-// Открыть модальное окно для создания группы
 function openGroupModal() {
     const modal = document.getElementById('groupModal');
     const title = document.getElementById('groupModalTitle');
@@ -99,7 +319,6 @@ function openGroupModal() {
     modal.style.display = 'block';
 }
 
-// Переименовать текущую группу
 function renameCurrentGroup() {
     if (!currentGroup) {
         alert('❌ Сначала выберите группу для переименования');
@@ -118,7 +337,6 @@ function renameCurrentGroup() {
     modal.style.display = 'block';
 }
 
-// Удалить текущую группу
 function deleteCurrentGroup() {
     if (!currentGroup) {
         alert('❌ Сначала выберите группу для удаления');
@@ -144,7 +362,6 @@ function deleteCurrentGroup() {
     alert(`✅ Группа удалена!`);
 }
 
-// Сохранить группу (создать или переименовать)
 function saveGroup() {
     const newName = document.getElementById('groupName').value.trim();
     if (!newName) {
@@ -202,7 +419,6 @@ function saveGroup() {
     closeGroupModal();
 }
 
-// Обновить выпадающий список групп
 function updateGroupSelect() {
     const select = document.getElementById('groupSelect');
     if (!select) return;
@@ -257,7 +473,6 @@ function showSaveIndicator() {
     }, 1500);
 }
 
-// Загрузка из localStorage (миграция старых данных)
 function loadFromLocalStorage() {
     if (loadAllGroups() && Object.keys(allGroups).length > 0) {
         updateGroupSelect();
@@ -297,7 +512,6 @@ function loadFromLocalStorage() {
     return false;
 }
 
-// Экспорт бэкапа всех групп
 function exportBackup() {
     if (Object.keys(allGroups).length === 0) {
         alert('❌ Нет данных для бэкапа!');
@@ -330,7 +544,6 @@ function exportBackup() {
     }
 }
 
-// Импорт бэкапа
 function importBackup() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -371,7 +584,7 @@ function importBackup() {
                     throw new Error('Неверный формат');
                 }
             } catch(e) {
-                alert('❌ Ошибка при восстановлении бэкапа. Файл поврежден или имеет неверный формат.');
+                alert('❌ Ошибка при восстановлении бэкапа. Файл поврежден.');
             }
         };
         reader.readAsText(file);
@@ -579,7 +792,7 @@ function renderTabsContent() {
         contentContainer.innerHTML = `
             <div class="empty-state">
                 <h3>📁 Начните с создания группы</h3>
-                <p>Нажмите "➕ Новая группа" чтобы создать первую группу</p>
+                <p>Нажмите "➕ Новая" чтобы создать первую группу</p>
                 <button onclick="openGroupModal()" style="margin-top: 15px; background: #3498db;">➕ Создать группу</button>
             </div>
         `;
@@ -590,8 +803,7 @@ function renderTabsContent() {
         contentContainer.innerHTML = `
             <div class="empty-state">
                 <h3>📋 Нет студентов в группе "${currentGroup}"</h3>
-                <p>Нажмите "Загрузить список (.txt)" или "Добавить студента" чтобы начать работу</p>
-                <p>Формат файла: каждая строка - ФИО студента</p>
+                <p>Нажмите "Загрузить список" или "Добавить студента" чтобы начать работу</p>
                 <button onclick="document.getElementById('txtFileInput').click()" style="margin-top: 15px;">📁 Загрузить список</button>
                 <button onclick="openAddStudentModal()" style="margin-top: 15px; margin-left: 10px; background: #9b59b6;">➕ Добавить студента</button>
             </div>
@@ -634,16 +846,23 @@ function renderTabsContent() {
         students.forEach((student, sIdx) => {
             paneHtml += `<tr>
                             <td>${sIdx + 1}</td>
-                            <td class="name-col">${escapeHtml(student)}</td>
+                            <td class="name-col">${escapeHtml(student)}<\/td>
                             <td style="padding: 4px;">
                                 <button onclick="openEditStudentModal(${sIdx})" style="background: #3498db; padding: 4px 8px; font-size: 11px;">✏️</button>
-                            </td>`;
+                            <\/td>`;
             for(let c=1; c<=colCount; c++) {
                 let val = (gradesData[sIdx] && gradesData[sIdx][r] && gradesData[sIdx][r][c] !== undefined) ? gradesData[sIdx][r][c] : '';
-                paneHtml += `<td><input type="number" min="0" max="100" class="score-input" 
-                             value="${val}" oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value)"></td>`;
+                paneHtml += `<td>
+                    <div style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap;">
+                        <input type="number" min="0" max="100" class="score-input" 
+                               value="${val}" oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value)" 
+                               style="flex: 1; min-width: 50px;">
+                        <button type="button" class="voice-input-btn" onclick="openVoiceInput(${r}, ${c}, ${sIdx})" 
+                                style="background: #9b59b6; padding: 6px 8px; font-size: 11px;">🎤</button>
+                    </div>
+                <\/td>`;
             }
-            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}</td>
+            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}<\/td>
                         </tr>`;
         });
         
@@ -659,7 +878,7 @@ function renderTabsContent() {
         <div class="tab-pane ${isFinalActive}" id="pane_final">
             <div class="table-container">
                 <table id="finalTable">
-                </table>
+                <\/table>
             </div>
         </div>`;
         
@@ -739,7 +958,7 @@ function renderFinalTable() {
     if (!table) return;
 
     if (students.length === 0) {
-        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">Загрузите список студентов</td</tr>';
+        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">Загрузите список студентов<\/td><\/tr>';
         return;
     }
 
@@ -759,11 +978,11 @@ function renderFinalTable() {
         
         html += `<tr>
             <td>${sIdx + 1}</td>
-            <td class="name-col">${escapeHtml(student)}</td>`;
+            <td class="name-col">${escapeHtml(student)}<\/td>`;
         
         for(let r=1; r<=activeROCount; r++) {
             let avg = calcROAvg(sIdx, r);
-            html += `<td class="result">${avg}</td>`;
+            html += `<td class="result">${avg}<\/td>`;
             if (avg !== '') {
                 roSum += avg;
                 roCountValid++;
@@ -774,11 +993,11 @@ function renderFinalTable() {
             let semAvg = Math.round(roSum / activeROCount);
             let letter = getGradeLetter(semAvg);
             let gpa = getGradePoint(letter);
-            html += `<td class="result avg">${semAvg}</td>
-                     <td class="result letter">${letter}</td>
-                     <td class="result gpa">${gpa}</td>`;
+            html += `<td class="result avg">${semAvg}<\/td>
+                     <td class="result letter">${letter}<\/td>
+                     <td class="result gpa">${gpa}<\/td>`;
         } else {
-            html += `<td></td><td class="result letter"><td><td class="result gpa"><td>`;
+            html += `<td><\/td><td class="result letter"><\/td><td class="result gpa"><\/td>`;
         }
         html += `</tr>`;
     });
@@ -875,7 +1094,6 @@ function loadSheetJSLibrary() {
     });
 }
 
-// Функции для работы со студентами
 function openAddStudentModal() {
     if (!currentGroup) {
         alert('❌ Сначала создайте или выберите группу!');
@@ -994,7 +1212,6 @@ function updateInfoBar() {
     }
 }
 
-// Функции для инструкции
 function showInstructions() {
     const modal = document.getElementById('instructionsModal');
     if (modal) {
@@ -1014,14 +1231,12 @@ function closeInstructions() {
     }
 }
 
-// Сохранение перед закрытием страницы
 window.addEventListener('beforeunload', () => {
     if (currentGroup && students.length > 0) {
         saveCurrentGroup();
     }
 });
 
-// Инициализация
 if (loadFromLocalStorage()) {
     console.log('Загружены сохраненные данные');
 } else {
