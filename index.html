@@ -15,19 +15,19 @@
                 <select id="groupSelect" onchange="switchGroup()">
                     <option value="">-- Выберите группу --</option>
                 </select>
-                <button onclick="openGroupModal()" style="background: #3498db; padding: 5px 10px;">➕ Новая группа</button>
-                <button onclick="renameCurrentGroup()" style="background: #f39c12; padding: 5px 10px;">✏️ Переименовать</button>
-                <button onclick="deleteCurrentGroup()" style="background: #e74c3c; padding: 5px 10px;">🗑️ Удалить группу</button>
+                <button type="button" onclick="openGroupModal()" style="background: #3498db; padding: 5px 10px;">➕ Новая группа</button>
+                <button type="button" onclick="renameCurrentGroup()" style="background: #f39c12; padding: 5px 10px;">✏️ Переименовать</button>
+                <button type="button" onclick="deleteCurrentGroup()" style="background: #e74c3c; padding: 5px 10px;">🗑️ Удалить группу</button>
             </div>
             
             <input type="file" id="txtFileInput" accept=".txt" style="display: none;" onchange="loadStudentsFromBrowser(event)">
-            <button onclick="document.getElementById('txtFileInput').click()">📁 Загрузить список (.txt)</button>
+            <button type="button" onclick="document.getElementById('txtFileInput').click()">📁 Загрузить список (.txt)</button>
             
-            <button onclick="openAddStudentModal()" style="background: #9b59b6;">➕ Добавить студента</button>
+            <button type="button" onclick="openAddStudentModal()" style="background: #9b59b6;">➕ Добавить студента</button>
             
-            <button onclick="exportToExcel()" class="excel-btn">📊 Экспорт в Excel</button>
+            <button type="button" onclick="exportToExcel()" class="excel-btn">📊 Экспорт в Excel</button>
             
-            <button onclick="showInstructions()" style="background: #f39c12;">❓ Инструкция</button>
+            <button type="button" onclick="showInstructions()" style="background: #f39c12;">❓ Инструкция</button>
             
             <div class="ro-selector">
                 <label>РО в семестре:</label>
@@ -39,10 +39,10 @@
     <div class="info-bar" id="infoBar" style="display: none;">
         <span id="studentCount"></span>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button onclick="manualSave()" style="background: #3498db; padding: 5px 12px;">💾 Сохранить</button>
-            <button onclick="exportBackup()" style="background: #27ae60; padding: 5px 12px;">📥 Бэкап всех групп</button>
-            <button onclick="importBackup()" style="background: #f39c12; padding: 5px 12px;">📂 Восстановить</button>
-            <button onclick="resetAllData()" class="reset-btn">🗑️ Сбросить всё</button>
+            <button type="button" onclick="manualSave()" style="background: #3498db; padding: 5px 12px;">💾 Сохранить</button>
+            <button type="button" onclick="exportBackup()" style="background: #27ae60; padding: 5px 12px;">📥 Бэкап всех групп</button>
+            <button type="button" onclick="importBackup()" style="background: #f39c12; padding: 5px 12px;">📂 Восстановить</button>
+            <button type="button" onclick="resetAllData()" class="reset-btn">🗑️ Сбросить всё</button>
         </div>
     </div>
 
@@ -52,7 +52,7 @@
     <!-- Модальное окно для создания/переименования группы -->
     <div id="groupModal" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header" id="groupModalHeader">
+            <div class="modal-header">
                 <h3 id="groupModalTitle">➕ Создать новую группу</h3>
                 <span class="close" onclick="closeGroupModal()">&times;</span>
             </div>
@@ -62,8 +62,8 @@
                     <input type="text" id="groupName" placeholder="Например: ИС-21, ПД-11, КС-22" style="flex: 1;">
                 </div>
                 <div class="modal-footer" style="justify-content: space-between; padding: 0;">
-                    <button onclick="closeGroupModal()" style="background: #95a5a6;">Отмена</button>
-                    <button onclick="saveGroup()" class="excel-btn" id="groupModalBtn">➕ Создать</button>
+                    <button type="button" onclick="closeGroupModal()" style="background: #95a5a6;">Отмена</button>
+                    <button type="button" onclick="saveGroup()" class="excel-btn" id="groupModalBtn">➕ Создать</button>
                 </div>
             </div>
         </div>
@@ -82,8 +82,8 @@
                     <input type="text" id="newStudentName" placeholder="Введите ФИО студента" style="flex: 1;">
                 </div>
                 <div class="modal-footer" style="justify-content: space-between; padding: 0;">
-                    <button onclick="closeAddStudentModal()" style="background: #95a5a6;">Отмена</button>
-                    <button onclick="addStudent()" class="excel-btn">➕ Добавить</button>
+                    <button type="button" onclick="closeAddStudentModal()" style="background: #95a5a6;">Отмена</button>
+                    <button type="button" onclick="addStudent()" class="excel-btn">➕ Добавить</button>
                 </div>
             </div>
         </div>
@@ -102,10 +102,10 @@
                     <input type="text" id="editStudentName" placeholder="Введите ФИО студента" style="flex: 1;">
                 </div>
                 <div class="modal-footer" style="justify-content: space-between; padding: 0;">
-                    <button onclick="deleteStudent()" style="background: #e74c3c;">🗑️ Удалить</button>
+                    <button type="button" onclick="deleteStudent()" style="background: #e74c3c;">🗑️ Удалить</button>
                     <div>
-                        <button onclick="closeEditStudentModal()" style="background: #95a5a6;">Отмена</button>
-                        <button onclick="updateStudent()" class="excel-btn">💾 Сохранить</button>
+                        <button type="button" onclick="closeEditStudentModal()" style="background: #95a5a6;">Отмена</button>
+                        <button type="button" onclick="updateStudent()" class="excel-btn">💾 Сохранить</button>
                     </div>
                 </div>
             </div>
@@ -123,59 +123,30 @@
                 <div class="instruction-section">
                     <h4>📁 1. Управление группами</h4>
                     <ul>
-                        <li><strong>Создание группы:</strong> Нажмите "➕ Новая группа", введите название (например, "ИС-21")</li>
+                        <li><strong>Создание группы:</strong> Нажмите "➕ Новая группа", введите название</li>
                         <li><strong>Переключение групп:</strong> Выберите группу из выпадающего списка</li>
                         <li><strong>Переименование:</strong> Выберите группу, нажмите "✏️ Переименовать"</li>
                         <li><strong>Удаление:</strong> Выберите группу, нажмите "🗑️ Удалить группу"</li>
                     </ul>
                 </div>
-
                 <div class="instruction-section">
                     <h4>📋 2. Работа со студентами</h4>
                     <ul>
-                        <li><strong>Загрузка списка:</strong> Нажмите "Загрузить список (.txt)" - файл с ФИО построчно</li>
-                        <li><strong>Добавление вручную:</strong> Нажмите "➕ Добавить студента" и введите ФИО</li>
-                        <li><strong>Редактирование/Удаление:</strong> Нажмите кнопку "✏️" рядом с ФИО студента</li>
+                        <li><strong>Загрузка списка:</strong> Нажмите "Загрузить список (.txt)"</li>
+                        <li><strong>Добавление вручную:</strong> Нажмите "➕ Добавить студента"</li>
+                        <li><strong>Редактирование:</strong> Нажмите "✏️" рядом с ФИО студента</li>
                     </ul>
                 </div>
-
                 <div class="instruction-section">
-                    <h4>📊 3. Работа с оценками</h4>
+                    <h4>📊 3. Оценки</h4>
                     <ul>
-                        <li><strong>Ввод оценок:</strong> Переключайтесь между вкладками РО-1, РО-2 и т.д.</li>
-                        <li><strong>Количество колонок:</strong> Измените число в поле "Оценок (колонок) в РО-X"</li>
-                        <li><strong>Названия колонок:</strong> Нажмите "✏️ Редактировать названия" чтобы заменить "Оц.1" на даты</li>
+                        <li>Вводите оценки от 0 до 100 в ячейки</li>
+                        <li>Меняйте количество колонок в РО</li>
+                        <li>Редактируйте названия колонок (даты)</li>
                     </ul>
                 </div>
-
-                <div class="instruction-section">
-                    <h4>🏆 4. Итоги и успеваемость</h4>
-                    <ul>
-                        <li>Итоговый балл = среднее арифметическое всех РО</li>
-                        <li><strong>Шкала оценок:</strong> A (95-100) → F (менее 50)</li>
-                        <li><strong>GPA:</strong> Числовой эквивалент от 4,0 до 0</li>
-                    </ul>
-                </div>
-
-                <div class="instruction-section">
-                    <h4>💾 5. Сохранение и бэкапы</h4>
-                    <ul>
-                        <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически</li>
-                        <li><strong>Бэкап всех групп:</strong> Сохраняет все группы в один файл</li>
-                        <li><strong>Восстановление:</strong> Загрузите ранее сохраненный файл бэкапа</li>
-                    </ul>
-                </div>
-
-                <div class="instruction-section">
-                    <h4>📎 6. Экспорт</h4>
-                    <ul>
-                        <li>Нажмите "📊 Экспорт в Excel" - создастся файл .xlsx</li>
-                        <li>Имя файла по умолчанию: "Группа_Итоговая_Ведомость_дата.xlsx"</li>
-                    </ul>
-                </div>
-
                 <div class="instruction-footer">
-                    <button onclick="closeInstructions()" class="excel-btn" style="width: auto;">Понятно, спасибо!</button>
+                    <button type="button" onclick="closeInstructions()" class="excel-btn" style="width: auto;">Понятно, спасибо!</button>
                 </div>
             </div>
         </div>

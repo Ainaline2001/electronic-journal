@@ -1,5 +1,5 @@
 // ============ СИСТЕМА ГРУПП ============
-let allGroups = {}; // { "ИС-21": { students, gradesData, gradesCountConfig, columnNames, activeROCount } }
+let allGroups = {};
 let currentGroup = "";
 let activeROCount = 4;
 let activeTab = 1;
@@ -72,37 +72,31 @@ function loadGroup(groupName) {
 // Переключение группы
 function switchGroup() {
     const select = document.getElementById('groupSelect');
+    if (!select) return;
+    
     const newGroup = select.value;
+    if (!newGroup) return;
     
-    if (!newGroup) {
-        if (confirm('Выберите группу для работы')) {
-            openGroupModal();
-        }
-        return;
-    }
-    
-    // Сохраняем текущую группу если она есть
     if (currentGroup) {
         saveCurrentGroup();
     }
     
     currentGroup = newGroup;
     loadGroup(currentGroup);
-    
-    // Обновляем стиль выбранной группы
-    select.style.borderColor = '#27ae60';
-    setTimeout(() => {
-        select.style.borderColor = '#e0e0e0';
-    }, 500);
 }
 
 // Открыть модальное окно для создания группы
 function openGroupModal() {
-    document.getElementById('groupModalTitle').innerHTML = '➕ Создать новую группу';
-    document.getElementById('groupModalBtn').innerHTML = '➕ Создать';
-    document.getElementById('groupModalBtn').className = 'excel-btn';
-    document.getElementById('groupName').value = '';
-    document.getElementById('groupModal').style.display = 'block';
+    const modal = document.getElementById('groupModal');
+    const title = document.getElementById('groupModalTitle');
+    const btn = document.getElementById('groupModalBtn');
+    const input = document.getElementById('groupName');
+    
+    title.innerHTML = '➕ Создать новую группу';
+    btn.innerHTML = '➕ Создать';
+    btn.className = 'excel-btn';
+    input.value = '';
+    modal.style.display = 'block';
 }
 
 // Переименовать текущую группу
@@ -112,11 +106,16 @@ function renameCurrentGroup() {
         return;
     }
     
-    document.getElementById('groupModalTitle').innerHTML = '✏️ Переименовать группу';
-    document.getElementById('groupModalBtn').innerHTML = '💾 Сохранить';
-    document.getElementById('groupModalBtn').className = 'excel-btn';
-    document.getElementById('groupName').value = currentGroup;
-    document.getElementById('groupModal').style.display = 'block';
+    const modal = document.getElementById('groupModal');
+    const title = document.getElementById('groupModalTitle');
+    const btn = document.getElementById('groupModalBtn');
+    const input = document.getElementById('groupName');
+    
+    title.innerHTML = '✏️ Переименовать группу';
+    btn.innerHTML = '💾 Сохранить';
+    btn.className = 'excel-btn';
+    input.value = currentGroup;
+    modal.style.display = 'block';
 }
 
 // Удалить текущую группу
@@ -153,10 +152,10 @@ function saveGroup() {
         return;
     }
     
-    const isRename = currentGroup && document.getElementById('groupModalTitle').innerHTML.includes('Переименовать');
+    const title = document.getElementById('groupModalTitle').innerHTML;
+    const isRename = title.includes('Переименовать');
     
     if (isRename) {
-        // Переименование
         if (newName === currentGroup) {
             closeGroupModal();
             return;
@@ -167,7 +166,6 @@ function saveGroup() {
             return;
         }
         
-        // Сохраняем данные под новым именем
         allGroups[newName] = allGroups[currentGroup];
         delete allGroups[currentGroup];
         
@@ -176,18 +174,15 @@ function saveGroup() {
         updateGroupSelect();
         alert(`✅ Группа переименована в "${newName}"!`);
     } else {
-        // Создание новой группы
         if (allGroups[newName]) {
             alert('❌ Группа с таким названием уже существует!');
             return;
         }
         
-        // Сохраняем текущую группу если есть
         if (currentGroup) {
             saveCurrentGroup();
         }
         
-        // Создаем новую группу
         allGroups[newName] = {
             students: [],
             activeROCount: 4,
@@ -199,6 +194,7 @@ function saveGroup() {
         
         currentGroup = newName;
         saveAllGroups();
+        updateGroupSelect();
         loadGroup(currentGroup);
         alert(`✅ Группа "${newName}" создана!`);
     }
@@ -209,8 +205,9 @@ function saveGroup() {
 // Обновить выпадающий список групп
 function updateGroupSelect() {
     const select = document.getElementById('groupSelect');
-    const currentValue = currentGroup;
+    if (!select) return;
     
+    const currentValue = currentGroup;
     select.innerHTML = '<option value="">-- Выберите группу --</option>';
     
     const groups = Object.keys(allGroups).sort();
@@ -226,12 +223,8 @@ function updateGroupSelect() {
 }
 
 function closeGroupModal() {
-    document.getElementById('groupModal').style.display = 'none';
-}
-
-// Сохранение в localStorage (для обратной совместимости)
-function saveToLocalStorage() {
-    saveCurrentGroup();
+    const modal = document.getElementById('groupModal');
+    if (modal) modal.style.display = 'none';
 }
 
 function showSaveIndicator() {
@@ -266,7 +259,6 @@ function showSaveIndicator() {
 
 // Загрузка из localStorage (миграция старых данных)
 function loadFromLocalStorage() {
-    // Сначала пробуем загрузить новые группы
     if (loadAllGroups() && Object.keys(allGroups).length > 0) {
         updateGroupSelect();
         const firstGroup = Object.keys(allGroups)[0];
@@ -275,7 +267,6 @@ function loadFromLocalStorage() {
         return true;
     }
     
-    // Миграция старых данных (если были)
     const oldData = localStorage.getItem('journalData');
     if (oldData) {
         try {
@@ -313,23 +304,14 @@ function exportBackup() {
         return;
     }
     
-    // Запрашиваем название файла у пользователя
     const now = new Date();
     const defaultName = `бэкап_журнала_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     
     let fileName = prompt('💾 Введите название файла для бэкапа:', defaultName);
+    if (!fileName) return;
     
-    if (!fileName) {
-        // Если пользователь нажал Отмена, не сохраняем
-        return;
-    }
-    
-    // Очищаем имя файла от недопустимых символов
     fileName = fileName.replace(/[\\/:*?"<>|]/g, '_').trim();
-    
-    if (fileName.length === 0) {
-        fileName = defaultName;
-    }
+    if (fileName.length === 0) fileName = defaultName;
     
     try {
         const data = JSON.stringify(allGroups, null, 2);
@@ -344,7 +326,6 @@ function exportBackup() {
         URL.revokeObjectURL(url);
         alert(`✅ Бэкап сохранен как "${fileName}.json"`);
     } catch(e) {
-        console.error('Ошибка экспорта:', e);
         alert('❌ Ошибка при создании бэкапа');
     }
 }
@@ -358,7 +339,6 @@ function importBackup() {
         const file = e.target.files[0];
         if (!file) return;
         
-        // Показываем имя файла пользователю
         if (!confirm(`📂 Восстановить данные из файла "${file.name}"?\nТекущие данные будут заменены!`)) {
             return;
         }
@@ -373,9 +353,7 @@ function importBackup() {
                     if (data[firstKey] && data[firstKey].students !== undefined) {
                         allGroups = data;
                     } else if (data.students !== undefined) {
-                        allGroups = {
-                            "Группа 1": data
-                        };
+                        allGroups = { "Группа 1": data };
                     } else {
                         throw new Error('Неверный формат файла');
                     }
@@ -393,7 +371,6 @@ function importBackup() {
                     throw new Error('Неверный формат');
                 }
             } catch(e) {
-                console.error('Ошибка импорта:', e);
                 alert('❌ Ошибка при восстановлении бэкапа. Файл поврежден или имеет неверный формат.');
             }
         };
@@ -666,7 +643,7 @@ function renderTabsContent() {
                 paneHtml += `<td><input type="number" min="0" max="100" class="score-input" 
                              value="${val}" oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value)"></td>`;
             }
-            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}<\/td>
+            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}</td>
                         </tr>`;
         });
         
@@ -682,7 +659,7 @@ function renderTabsContent() {
         <div class="tab-pane ${isFinalActive}" id="pane_final">
             <div class="table-container">
                 <table id="finalTable">
-                <\/table>
+                </table>
             </div>
         </div>`;
         
@@ -762,7 +739,7 @@ function renderFinalTable() {
     if (!table) return;
 
     if (students.length === 0) {
-        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">Загрузите список студентов<\/td><\/tr>';
+        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">Загрузите список студентов</td</tr>';
         return;
     }
 
@@ -782,11 +759,11 @@ function renderFinalTable() {
         
         html += `<tr>
             <td>${sIdx + 1}</td>
-            <td class="name-col">${escapeHtml(student)}<\/td>`;
+            <td class="name-col">${escapeHtml(student)}</td>`;
         
         for(let r=1; r<=activeROCount; r++) {
             let avg = calcROAvg(sIdx, r);
-            html += `<td class="result">${avg}<\/td>`;
+            html += `<td class="result">${avg}</td>`;
             if (avg !== '') {
                 roSum += avg;
                 roCountValid++;
@@ -797,11 +774,11 @@ function renderFinalTable() {
             let semAvg = Math.round(roSum / activeROCount);
             let letter = getGradeLetter(semAvg);
             let gpa = getGradePoint(letter);
-            html += `<td class="result avg">${semAvg}<\/td>
-                     <td class="result letter">${letter}<\/td>
-                     <td class="result gpa">${gpa}<\/td>`;
+            html += `<td class="result avg">${semAvg}</td>
+                     <td class="result letter">${letter}</td>
+                     <td class="result gpa">${gpa}</td>`;
         } else {
-            html += `<td><\/td><td class="result letter"><\/td><td class="result gpa"><\/td>`;
+            html += `<td></td><td class="result letter"><td><td class="result gpa"><td>`;
         }
         html += `</tr>`;
     });
@@ -861,23 +838,15 @@ async function exportToExcel() {
         
         XLSX.utils.book_append_sheet(wb, ws, `Итоговая ведомость_${currentGroup}`);
         
-        // Формируем понятное имя файла
         const now = new Date();
         const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
         const defaultName = `${currentGroup}_ведомость_${dateStr}`;
         
         let filename = prompt("📊 Введите название файла:", defaultName);
+        if (!filename) return;
         
-        if (!filename) {
-            return;
-        }
-        
-        // Очищаем имя файла от недопустимых символов
         filename = filename.replace(/[\\/:*?"<>|]/g, '_').trim();
-        
-        if (filename.length === 0) {
-            filename = defaultName;
-        }
+        if (filename.length === 0) filename = defaultName;
         
         XLSX.writeFile(wb, `${filename}.xlsx`);
         alert(`✅ Файл "${filename}.xlsx" успешно создан и скачан!`);
