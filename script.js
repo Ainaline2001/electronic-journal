@@ -839,7 +839,7 @@ function renderTabsContent() {
             paneHtml += `<th>${escapeHtml(colName)}</th>`;
         }
         paneHtml += `<th>Средний РО-${r}</th>
-                        </tr>
+                        <tr>
                     </thead>
                     <tbody>`;
         
@@ -855,8 +855,9 @@ function renderTabsContent() {
                 paneHtml += `<td>
                     <div style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap;">
                         <input type="number" min="0" max="100" class="score-input" 
-                               value="${val}" oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value)" 
-                               style="flex: 1; min-width: 50px;">
+                               value="${val === '' ? '' : val}" oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value)" 
+                               style="flex: 1; min-width: 50px;" 
+                               placeholder="-">
                         <button type="button" class="voice-input-btn" onclick="openVoiceInput(${r}, ${c}, ${sIdx})" 
                                 style="background: #9b59b6; padding: 6px 8px; font-size: 11px;">🎤</button>
                     </div>
@@ -867,7 +868,7 @@ function renderTabsContent() {
         });
         
         paneHtml += `</tbody>
-                <table>
+                </table>
             </div>
         </div>`;
         contentContainer.innerHTML += paneHtml;
@@ -911,17 +912,23 @@ function changeGradesCount(roIndex, newCount) {
 }
 
 function saveGrade(sIdx, roIndex, colIndex, value) {
-    let val = parseInt(value);
+    let val;
+    if (value === '' || value === null) {
+        val = undefined;
+    } else {
+        val = parseInt(value);
+    }
+    
     if (!isNaN(val) && val >= 0 && val <= 100) {
         if (!gradesData[sIdx]) gradesData[sIdx] = {};
         if (!gradesData[sIdx][roIndex]) gradesData[sIdx][roIndex] = {};
         gradesData[sIdx][roIndex][colIndex] = val;
-    } else if (value === '') {
+    } else if (value === '' || value === null) {
         if (gradesData[sIdx] && gradesData[sIdx][roIndex]) {
             delete gradesData[sIdx][roIndex][colIndex];
         }
     } else if (isNaN(val) || val < 0 || val > 100) {
-        alert("Пожалуйста, введите число от 0 до 100");
+        alert("Пожалуйста, введите число от 0 до 100 или оставьте поле пустым");
         let oldVal = (gradesData[sIdx] && gradesData[sIdx][roIndex] && gradesData[sIdx][roIndex][colIndex] !== undefined) ? gradesData[sIdx][roIndex][colIndex] : '';
         let input = event.target;
         input.value = oldVal;
@@ -935,30 +942,34 @@ function saveGrade(sIdx, roIndex, colIndex, value) {
     saveCurrentGroup();
 }
 
+// Функция расчета среднего балла РО (по имеющимся оценкам)
 function calcROAvg(sIdx, roIndex) {
     let sum = 0;
     let count = 0;
     let targetCols = gradesCountConfig[roIndex] || 3;
 
     for (let c = 1; c <= targetCols; c++) {
-        if (gradesData[sIdx] && gradesData[sIdx][roIndex] && gradesData[sIdx][roIndex][c] !== undefined) {
-            sum += gradesData[sIdx][roIndex][c];
+        let value = gradesData[sIdx] && gradesData[sIdx][roIndex] && gradesData[sIdx][roIndex][c];
+        if (value !== undefined && value !== null && value !== '') {
+            sum += value;
             count++;
         }
     }
     
-    if (count === targetCols && targetCols > 0) {
-        return Math.round(sum / targetCols);
+    // Если есть хотя бы одна оценка - считаем среднее
+    if (count > 0) {
+        return Math.round(sum / count);
     }
     return ''; 
 }
 
+// Функция отображения итоговой таблицы
 function renderFinalTable() {
     let table = document.getElementById('finalTable');
     if (!table) return;
 
     if (students.length === 0) {
-        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">Загрузите список студентов<\/td><\/tr>';
+        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">Загрузите список студентов</td</tr>';
         return;
     }
 
@@ -973,31 +984,37 @@ function renderFinalTable() {
     <tbody>`;
 
     students.forEach((student, sIdx) => {
-        let roSum = 0;
-        let roCountValid = 0;
+        let roValues = [];
+        let allROHaveGrades = true;
         
         html += `<tr>
             <td>${sIdx + 1}</td>
             <td class="name-col">${escapeHtml(student)}<\/td>`;
         
+        // Собираем значения всех РО и проверяем, есть ли оценки в каждом РО
         for(let r=1; r<=activeROCount; r++) {
             let avg = calcROAvg(sIdx, r);
             html += `<td class="result">${avg}<\/td>`;
-            if (avg !== '') {
-                roSum += avg;
-                roCountValid++;
+            
+            if (avg === '' || avg === null) {
+                allROHaveGrades = false;
+            } else {
+                roValues.push(avg);
             }
         }
         
-        if (roCountValid === activeROCount && activeROCount > 0) {
-            let semAvg = Math.round(roSum / activeROCount);
+        // Итоговый балл семестра - ТОЛЬКО если в каждом РО есть хотя бы одна оценка
+        if (allROHaveGrades && roValues.length === activeROCount) {
+            let semAvg = Math.round(roValues.reduce((a, b) => a + b, 0) / activeROCount);
             let letter = getGradeLetter(semAvg);
             let gpa = getGradePoint(letter);
             html += `<td class="result avg">${semAvg}<\/td>
                      <td class="result letter">${letter}<\/td>
                      <td class="result gpa">${gpa}<\/td>`;
         } else {
-            html += `<td><\/td><td class="result letter"><\/td><td class="result gpa"><\/td>`;
+            html += `<td class="result avg" style="color: #999;">—<\/td>
+                     <td class="result letter" style="color: #999;">—<\/td>
+                     <td class="result gpa" style="color: #999;">—<\/td>`;
         }
         html += `</tr>`;
     });
