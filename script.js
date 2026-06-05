@@ -87,7 +87,7 @@ const translations = {
         createGroupBtn: '➕ Создать группу',
         noStudents: (g) => `📋 Нет студентов в группе "${g}"`,
         noStudentsDesc: 'Нажмите "Загрузить список" или "Добавить студента" чтобы начать работу',
-        loadListDesc: 'Формат файла: каждая строка - ФИО студента'
+        noData: 'Загрузите список студентов'
     },
     kz: {
         pageTitle: 'Бағалау журналы (РО)',
@@ -174,7 +174,7 @@ const translations = {
         createGroupBtn: '➕ Топ құру',
         noStudents: (g) => `📋 "${g}" тобында студенттер жоқ`,
         noStudentsDesc: 'Жұмысты бастау үшін "Тізімді жүктеу" немесе "Студент қосу" батырмасын басыңыз',
-        loadListDesc: 'Файл форматы: әр жолда - студенттің Т.А.Ә.'
+        noData: 'Студенттер тізімін жүктеңіз'
     }
 };
 
@@ -233,6 +233,7 @@ function setLanguage(lang) {
     renderTabsHeader();
     renderTabsContent();
     updateInfoBar();
+    renderInstructionsContent();
 }
 
 function loadSavedLanguage() {
@@ -862,7 +863,7 @@ function openColumnNamesModal(roIndex) {
     let modalHtml = `<div id="columnNamesModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>✏️ ${t('editColumnNamesBtn')} РО-${roIndex}</h3><span class="close" onclick="closeModal()">&times;</span></div><div class="column-names-list">`;
     for (let c = 1; c <= colCount; c++) {
         let currentName = columnNames[roIndex][c] || t('columnDefault', c);
-        modalHtml += `<div class="column-name-item"><label>${t('columnLabel', c)}</label><input type="text" id="colName_${roIndex}_${c}" value="${currentName.replace(/"/g, '&quot;')}" placeholder="Например: 12.03 или Контрольная"></div>`;
+        modalHtml += `<div class="column-name-item"><label>Колонка ${c}:</label><input type="text" id="colName_${roIndex}_${c}" value="${currentName.replace(/"/g, '&quot;')}" placeholder="Например: 12.03 или Контрольная"></div>`;
     }
     modalHtml += `</div><div class="modal-footer"><button onclick="saveColumnNames(${roIndex})" class="excel-btn">${t('saveColumnNamesBtn')}</button><button onclick="closeModal()" style="background:#95a5a6;">${t('cancelBtn')}</button></div></div></div>`;
     let oldModal = document.getElementById('columnNamesModal');
@@ -904,25 +905,69 @@ function renderTabsContent() {
     for (let r = 1; r <= activeROCount; r++) {
         let isActive = (activeTab === r) ? 'active' : '';
         let colCount = gradesCountConfig[r] || 3;
-        let paneHtml = `<div class="tab-pane ${isActive}" id="pane_${r}"><div class="ro-controls"><div><label>📊 Оценок (колонок) в РО-${r}: </label><input type="number" min="1" max="50" value="${colCount}" onchange="changeGradesCount(${r}, this.value)"></div><div><button class="edit-names-btn" onclick="openColumnNamesModal(${r})">✏️ ${t('editColumnNamesBtn')}</button></div></div><div class="table-container"><table><thead><tr><th>№</th><th>ФИО Студента</th><th>${t('actions')}</th>`;
-        for(let c=1; c<=colCount; c++) {
+        let paneHtml = `<div class="tab-pane ${isActive}" id="pane_${r}">
+            <div class="ro-controls">
+                <div>
+                    <label>📊 Оценок (колонок) в РО-${r}: </label>
+                    <input type="number" min="1" max="50" value="${colCount}" onchange="changeGradesCount(${r}, this.value)">
+                </div>
+                <div>
+                    <button class="edit-names-btn" onclick="openColumnNamesModal(${r})">✏️ ${t('editColumnNamesBtn')}</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>ФИО Студента</th>
+                            <th>${t('actions')}</th>`;
+        for(let c = 1; c <= colCount; c++) {
             let colName = (columnNames[r] && columnNames[r][c]) || t('columnDefault', c);
             paneHtml += `<th>${escapeHtml(colName)}</th>`;
         }
-        paneHtml += `<th>${t('avgRO', r)}</th></tr></thead><tbody>`;
-        students.forEach((student, sIdx) => {
-            paneHtml += `<tr><td>${sIdx + 1}</td><td class="name-col">${escapeHtml(student)}</td><td style="padding:4px;"><button onclick="openEditStudentModal(${sIdx})" style="background:#3498db;padding:4px 8px;font-size:11px;">✏️</button></td>`;
-            for(let c=1; c<=colCount; c++) {
+        paneHtml += `<th>${t('avgRO', r)}</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+        
+        for(let sIdx = 0; sIdx < students.length; sIdx++) {
+            let student = students[sIdx];
+            paneHtml += `<tr>
+                            <td>${sIdx + 1}</td>
+                            <td class="name-col">${escapeHtml(student)}<\/td>
+                            <td style="padding: 4px;">
+                                <button onclick="openEditStudentModal(${sIdx})" style="background:#3498db;padding:4px 8px;font-size:11px;">✏️</button>
+                            <\/td>`;
+            for(let c = 1; c <= colCount; c++) {
                 let val = (gradesData[sIdx] && gradesData[sIdx][r] && gradesData[sIdx][r][c] !== undefined) ? gradesData[sIdx][r][c] : '';
-                paneHtml += `<td><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;"><input type="number" min="0" max="100" class="score-input" value="${val === '' ? '' : val}" oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value)" style="flex:1;min-width:50px;" placeholder="-"><button type="button" class="voice-input-btn" onclick="openVoiceInput(${r}, ${c}, ${sIdx})" style="background:#9b59b6;padding:6px 8px;font-size:11px;">🎤</button></div></td>`;
+                paneHtml += `<td>
+                                <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">
+                                    <input type="number" min="0" max="100" class="score-input" 
+                                           value="${val === '' ? '' : val}" 
+                                           oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value)" 
+                                           style="flex:1;min-width:50px;" 
+                                           placeholder="-">
+                                    <button type="button" class="voice-input-btn" 
+                                            onclick="openVoiceInput(${r}, ${c}, ${sIdx})" 
+                                            style="background:#9b59b6;padding:6px 8px;font-size:11px;">🎤</button>
+                                </div>
+                             <\/td>`;
             }
-            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}</td></tr>`;
-        });
-        paneHtml += `</tbody></table></div></div>`;
+            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}<\/td>
+                        </tr>`;
+        }
+        paneHtml += `</tbody>
+                </table>
+            </div>
+        </div>`;
         contentContainer.innerHTML += paneHtml;
     }
     let isFinalActive = (activeTab === 'final') ? 'active' : '';
-    contentContainer.innerHTML += `<div class="tab-pane ${isFinalActive}" id="pane_final"><div class="table-container"><table id="finalTable"></table></div></div>`;
+    contentContainer.innerHTML += `<div class="tab-pane ${isFinalActive}" id="pane_final">
+        <div class="table-container">
+            <table id="finalTable"></div>
+    </div>`;
     if (activeTab === 'final') renderFinalTable();
 }
 
@@ -998,19 +1043,27 @@ function renderFinalTable() {
     let table = document.getElementById('finalTable');
     if (!table) return;
     if (students.length === 0) {
-        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">' + t('noData') + '</td></tr>';
+        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">' + t('noData') + '<\/td><\/tr>';
         return;
     }
-    let html = `<thead><tr><th>№</th><th>ФИО Студента</th>`;
+    let html = `<thead>
+        <tr>
+            <th>№</th>
+            <th>ФИО Студента</th>`;
     for(let r=1; r<=activeROCount; r++) html += `<th>Итог РО-${r}</th>`;
-    html += `<th>${t('finalGrade')}</th><th>${t('letter')}</th><th>${t('gpa')}</th></tr></thead><tbody>`;
+    html += `<th>${t('finalGrade')}</th><th>${t('letter')}</th><th>${t('gpa')}</th>
+        </tr>
+    </thead>
+    <tbody>`;
     students.forEach((student, sIdx) => {
         let roValues = [];
         let allROHaveGrades = true;
-        html += `<tr><td>${sIdx + 1}</td><td class="name-col">${escapeHtml(student)}</td>`;
+        html += `<tr>
+            <td>${sIdx + 1}</td>
+            <td class="name-col">${escapeHtml(student)}<\/td>`;
         for(let r=1; r<=activeROCount; r++) {
             let avg = calcROAvg(sIdx, r);
-            html += `<td class="result">${avg}</td>`;
+            html += `<td class="result">${avg}<\/td>`;
             if (avg === '' || avg === null) {
                 allROHaveGrades = false;
             } else {
@@ -1021,9 +1074,13 @@ function renderFinalTable() {
             let semAvg = Math.round(roValues.reduce((a, b) => a + b, 0) / activeROCount);
             let letter = getGradeLetter(semAvg);
             let gpa = getGradePoint(letter);
-            html += `<td class="result avg">${semAvg}</td><td class="result letter">${letter}</td><td class="result gpa">${gpa}</td>`;
+            html += `<td class="result avg">${semAvg}<\/td>
+                     <td class="result letter">${letter}<\/td>
+                     <td class="result gpa">${gpa}<\/td>`;
         } else {
-            html += `<td class="result avg" style="color:#999;">—</td><td class="result letter" style="color:#999;">—</td><td class="result gpa" style="color:#999;">—</td>`;
+            html += `<td class="result avg" style="color:#999;">—<\/td>
+                     <td class="result letter" style="color:#999;">—<\/td>
+                     <td class="result gpa" style="color:#999;">—<\/td>`;
         }
         html += `</tr>`;
     });
@@ -1196,7 +1253,170 @@ function updateInfoBar() {
     }
 }
 
+// ============ ИНСТРУКЦИЯ ============
+function renderInstructionsContent() {
+    const content = document.getElementById('instructionsContent');
+    if (!content) return;
+    
+    if (currentLang === 'ru') {
+        content.innerHTML = `
+            <div class="instruction-section">
+                <h4>📁 1. Управление группами</h4>
+                <ul>
+                    <li><strong>Создание группы:</strong> Нажмите "➕ Новая", введите название группы (например, "ИС-21")</li>
+                    <li><strong>Переключение:</strong> Выберите группу из выпадающего списка</li>
+                    <li><strong>Переименование:</strong> Нажмите "✏️" рядом с группой</li>
+                    <li><strong>Удаление:</strong> Нажмите "🗑️" - все данные группы будут удалены</li>
+                </ul>
+            </div>
+            <div class="instruction-section">
+                <h4>📋 2. Работа со студентами</h4>
+                <ul>
+                    <li><strong>Загрузка списка:</strong> Нажмите "Загрузить список (.txt)" - файл с ФИО построчно</li>
+                    <li><strong>Добавление:</strong> Нажмите "➕ Добавить студента"</li>
+                    <li><strong>Редактирование:</strong> Нажмите "✏️" рядом с ФИО</li>
+                    <li><strong>Удаление:</strong> В режиме редактирования нажмите "Удалить"</li>
+                </ul>
+            </div>
+            <div class="instruction-section">
+                <h4>🎤 3. Голосовой ввод оценок</h4>
+                <ul>
+                    <li><strong>Быстрый ввод:</strong> Нажмите "🎤 Быстрый ввод" и скажите: "Иванов 85"</li>
+                    <li><strong>В ячейке:</strong> Нажмите кнопку 🎤 в любой ячейке оценки</li>
+                    <li><strong>Массовый ввод:</strong> Скажите "всем 75" для всей группы</li>
+                    <li><strong>Поддерживаются:</strong> числа и слова (пять, десять, двадцать)</li>
+                </ul>
+            </div>
+            <div class="instruction-section">
+                <h4>📊 4. Работа с рубежными оценками</h4>
+                <ul>
+                    <li><strong>Ввод оценок:</strong> Вводите оценки от 0 до 100 в ячейки</li>
+                    <li><strong>Количество РО:</strong> Измените число в поле "РО в семестре" (до 20)</li>
+                    <li><strong>Колонки:</strong> Меняйте количество колонок в каждом РО</li>
+                    <li><strong>Названия колонок:</strong> Редактируйте названия колонок (например, даты или темы)</li>
+                </ul>
+            </div>
+            <div class="instruction-section">
+                <h4>🏆 5. Итоги и успеваемость</h4>
+                <ul>
+                    <li><strong>Итоговый балл:</strong> Среднее арифметическое всех РО (только если все РО заполнены)</li>
+                    <li><strong>Буквенная оценка:</strong> A (95-100) → F (менее 50)</li>
+                    <li><strong>GPA:</strong> Числовой эквивалент от 4,0 до 0</li>
+                </ul>
+            </div>
+            <div class="instruction-section">
+                <h4>📈 6. Шкала оценок</h4>
+                <table style="width:100%; font-size:11px;">
+                    <thead><tr><th>Баллы</th><th>Буква</th><th>GPA</th><th>Описание</th></tr></thead>
+                    <tbody>
+                        <tr><td>95-100</td><td>A</td><td>4,0</td><td>Отлично</td></tr>
+                        <tr><td>90-94</td><td>A-</td><td>3,67</td><td>Очень хорошо</td></tr>
+                        <tr><td>85-89</td><td>B+</td><td>3,33</td><td>Хорошо+</td></tr>
+                        <tr><td>80-84</td><td>B</td><td>3,0</td><td>Хорошо</td></tr>
+                        <tr><td>75-79</td><td>B-</td><td>2,67</td><td>Хорошо-</td></tr>
+                        <tr><td>70-74</td><td>C+</td><td>2,33</td><td>Удовлетворительно+</td></tr>
+                        <tr><td>65-69</td><td>C</td><td>2,0</td><td>Удовлетворительно</td></tr>
+                        <tr><td>60-64</td><td>C-</td><td>1,67</td><td>Удовлетворительно-</td></tr>
+                        <tr><td>55-59</td><td>D+</td><td>1,33</td><td>Слабо+</td></tr>
+                        <tr><td>50-54</td><td>D</td><td>1,0</td><td>Слабо</td></tr>
+                        <tr><td>0-49</td><td>F</td><td>0</td><td>Неудовлетворительно</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="instruction-section">
+                <h4>💾 7. Сохранение и бэкапы</h4>
+                <ul>
+                    <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически</li>
+                    <li><strong>Бэкап:</strong> Сохраняет все группы в один файл</li>
+                    <li><strong>Восстановление:</strong> Загрузите ранее сохраненный файл</li>
+                </ul>
+            </div>
+            <div class="instruction-footer">
+                <button type="button" onclick="closeInstructions()" class="excel-btn">✅ Понятно, приступим!</button>
+            </div>
+        `;
+    } else {
+        content.innerHTML = `
+            <div class="instruction-section">
+                <h4>📁 1. Топтарды басқару</h4>
+                <ul>
+                    <li><strong>Топ құру:</strong> "➕ Жаңа" батырмасын басып, топ атын енгізіңіз (мысалы, "ИС-21")</li>
+                    <li><strong>Ауыстыру:</strong> Топты ашылмалы тізімнен таңдаңыз</li>
+                    <li><strong>Атын өзгерту:</strong> Топтың жанындағы "✏️" батырмасын басыңыз</li>
+                    <li><strong>Жою:</strong> "🗑️" батырмасын басыңыз - топтың барлық деректері жойылады</li>
+                </ul>
+            </div>
+            <div class="instruction-section">
+                <h4>📋 2. Студенттермен жұмыс</h4>
+                <ul>
+                    <li><strong>Тізімді жүктеу:</strong> "Тізімді жүктеу" батырмасын басыңыз - файлда Т.А.Ә. әр жолда</li>
+                    <li><strong>Қосу:</strong> "➕ Студент қосу" батырмасын басыңыз</li>
+                    <li><strong>Өңдеу:</strong> Т.А.Ә. жанындағы "✏️" батырмасын басыңыз</li>
+                    <li><strong>Жою:</strong> Өңдеу режимінде "Жою" батырмасын басыңыз</li>
+                </ul>
+            </div>
+            <div class="instruction-section">
+                <h4>🎤 3. Бағаларды дауыспен енгізу</h4>
+                <ul>
+                    <li><strong>Жылдам енгізу:</strong> "🎤 Жылдам енгізу" батырмасын басып, айтыңыз: "Иванов 85"</li>
+                    <li><strong>Ұяшықта:</strong> Кез келген баға ұяшығындағы 🎤 батырмасын басыңыз</li>
+                    <li><strong>Жаппай енгізу:</strong> Барлық топқа "барлығына 75" деп айтыңыз</li>
+                    <li><strong>Қолдау:</strong> сандар және сөздер (бес, он, жиырма)</li>
+                </ul>
+            </div>
+            <div class="instruction-section">
+                <h4>📊 4. Рубеждық бағалармен жұмыс</h4>
+                <ul>
+                    <li><strong>Баға енгізу:</strong> Ұяшықтарға 0-ден 100-ге дейінгі бағаларды енгізіңіз</li>
+                    <li><strong>РО саны:</strong> "Семестрдегі РО" өрісіндегі санды өзгертіңіз (20-ға дейін)</li>
+                    <li><strong>Бағандар:</strong> Әр РО-дағы бағандар санын өзгертіңіз</li>
+                    <li><strong>Баған атаулары:</strong> Баған атауларын өңдеңіз (мысалы, күндер немесе тақырыптар)</li>
+                </ul>
+            </div>
+            <div class="instruction-section">
+                <h4>🏆 5. Қорытынды және үлгерім</h4>
+                <ul>
+                    <li><strong>Қорытынды балл:</strong> Барлық РО-ның орташа арифметикалық мәні (тек барлық РО толтырылғанда)</li>
+                    <li><strong>Әріптік баға:</strong> A (95-100) → F (50-ден төмен)</li>
+                    <li><strong>GPA:</strong> 4,0-ден 0-ге дейінгі сандық балама</li>
+                </ul>
+            </div>
+            <div class="instruction-section">
+                <h4>📈 6. Бағалау шкаласы</h4>
+                <table style="width:100%; font-size:11px;">
+                    <thead><tr><th>Баллдар</th><th>Әріп</th><th>GPA</th><th>Сипаттама</th></tr></thead>
+                    <tbody>
+                        <tr><td>95-100</td><td>A</td><td>4,0</td><td>Өте жақсы</td></tr>
+                        <tr><td>90-94</td><td>A-</td><td>3,67</td><td>Өте жақсы</td></tr>
+                        <tr><td>85-89</td><td>B+</td><td>3,33</td><td>Жақсы+</td></tr>
+                        <tr><td>80-84</td><td>B</td><td>3,0</td><td>Жақсы</td></tr>
+                        <tr><td>75-79</td><td>B-</td><td>2,67</td><td>Жақсы-</td></tr>
+                        <tr><td>70-74</td><td>C+</td><td>2,33</td><td>Қанағаттанарлық+</td></tr>
+                        <tr><td>65-69</td><td>C</td><td>2,0</td><td>Қанағаттанарлық</td></tr>
+                        <tr><td>60-64</td><td>C-</td><td>1,67</td><td>Қанағаттанарлық-</td></tr>
+                        <tr><td>55-59</td><td>D+</td><td>1,33</td><td>Әлсіз+</td></tr>
+                        <tr><td>50-54</td><td>D</td><td>1,0</td><td>Әлсіз</td></tr>
+                        <tr><td>0-49</td><td>F</td><td>0</td><td>Қанағаттанарлықсыз</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="instruction-section">
+                <h4>💾 7. Сақтау және көшірмелер</h4>
+                <ul>
+                    <li><strong>Автосақтау:</strong> Барлық өзгерістер автоматты түрде сақталады</li>
+                    <li><strong>Көшірме:</strong> Барлық топтарды бір файлға сақтайды</li>
+                    <li><strong>Қалпына келтіру:</strong> Бұрын сақталған файлды жүктеңіз</li>
+                </ul>
+            </div>
+            <div class="instruction-footer">
+                <button type="button" onclick="closeInstructions()" class="excel-btn">✅ Түсінікті, кірісейік!</button>
+            </div>
+        `;
+    }
+}
+
 function showInstructions() {
+    renderInstructionsContent();
     const modal = document.getElementById('instructionsModal');
     if (modal) {
         modal.style.display = 'block';
