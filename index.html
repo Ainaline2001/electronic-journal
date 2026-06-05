@@ -8,29 +8,35 @@
 </head>
 <body>
     <div class="header">
-        <h2>📊 Журнал рубежных оценок (РО)</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <h2 id="mainTitle">📊 Журнал рубежных оценок (РО)</h2>
+            <div class="language-switcher">
+                <button onclick="setLanguage('ru')" id="langRuBtn" class="lang-btn active">🇷🇺 Русский</button>
+                <button onclick="setLanguage('kz')" id="langKzBtn" class="lang-btn">🇰🇿 Қазақша</button>
+            </div>
+        </div>
         <div class="controls">
             <div class="group-selector">
-                <label>📁 Группа:</label>
+                <label id="groupLabel">📁 Группа:</label>
                 <select id="groupSelect" onchange="switchGroup()">
                     <option value="">-- Выберите группу --</option>
                 </select>
-                <button type="button" onclick="openGroupModal()" style="background: #3498db; padding: 5px 10px;">➕ Новая</button>
-                <button type="button" onclick="renameCurrentGroup()" style="background: #f39c12; padding: 5px 10px;">✏️</button>
-                <button type="button" onclick="deleteCurrentGroup()" style="background: #e74c3c; padding: 5px 10px;">🗑️</button>
+                <button type="button" onclick="openGroupModal()" id="newGroupBtn" style="background: #3498db; padding: 5px 10px;">➕ Новая</button>
+                <button type="button" onclick="renameCurrentGroup()" id="renameGroupBtn" style="background: #f39c12; padding: 5px 10px;">✏️</button>
+                <button type="button" onclick="deleteCurrentGroup()" id="deleteGroupBtn" style="background: #e74c3c; padding: 5px 10px;">🗑️</button>
             </div>
             
             <input type="file" id="txtFileInput" accept=".txt" style="display: none;" onchange="loadStudentsFromBrowser(event)">
-            <button type="button" onclick="document.getElementById('txtFileInput').click()">📁 Загрузить список</button>
+            <button type="button" onclick="document.getElementById('txtFileInput').click()" id="loadListBtn">📁 Загрузить список</button>
             
-            <button type="button" onclick="openAddStudentModal()" style="background: #9b59b6;">➕ Добавить студента</button>
+            <button type="button" onclick="openAddStudentModal()" id="addStudentBtn" style="background: #9b59b6;">➕ Добавить студента</button>
             
-            <button type="button" onclick="exportToExcel()" class="excel-btn">📊 Экспорт в Excel</button>
+            <button type="button" onclick="exportToExcel()" id="exportExcelBtn" class="excel-btn">📊 Экспорт в Excel</button>
             
-            <button type="button" onclick="showInstructions()" style="background: #f39c12;">❓ Инструкция</button>
+            <button type="button" onclick="showInstructions()" id="instructionsBtn" style="background: #f39c12;">❓ Инструкция</button>
             
             <div class="ro-selector">
-                <label>РО в семестре:</label>
+                <label id="roCountLabel">РО в семестре:</label>
                 <input type="number" id="roCount" value="4" min="1" max="20" onchange="initApp()">
             </div>
         </div>
@@ -39,11 +45,11 @@
     <div class="info-bar" id="infoBar" style="display: none;">
         <span id="studentCount"></span>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button type="button" onclick="manualSave()" style="background: #3498db; padding: 5px 12px;">💾 Сохранить</button>
-            <button type="button" onclick="quickVoiceInput()" style="background: #9b59b6; padding: 5px 12px;">🎤 Быстрый ввод</button>
-            <button type="button" onclick="exportBackup()" style="background: #27ae60; padding: 5px 12px;">📥 Бэкап</button>
-            <button type="button" onclick="importBackup()" style="background: #f39c12; padding: 5px 12px;">📂 Восстановить</button>
-            <button type="button" onclick="resetAllData()" class="reset-btn">🗑️ Сброс</button>
+            <button type="button" onclick="manualSave()" id="saveBtn" style="background: #3498db; padding: 5px 12px;">💾 Сохранить</button>
+            <button type="button" onclick="quickVoiceInput()" id="quickVoiceBtn" style="background: #9b59b6; padding: 5px 12px;">🎤 Быстрый ввод</button>
+            <button type="button" onclick="exportBackup()" id="backupBtn" style="background: #27ae60; padding: 5px 12px;">📥 Бэкап</button>
+            <button type="button" onclick="importBackup()" id="restoreBtn" style="background: #f39c12; padding: 5px 12px;">📂 Восстановить</button>
+            <button type="button" onclick="resetAllData()" id="resetBtn" class="reset-btn">🗑️ Сброс</button>
         </div>
     </div>
 
@@ -59,11 +65,11 @@
             </div>
             <div class="voice-buttons">
                 <button id="voiceStartBtn" class="voice-start-btn" onclick="startVoiceInput()">🎤 Начать</button>
-                <button onclick="closeVoicePanel()" style="background: #95a5a6;">✖️ Закрыть</button>
+                <button onclick="closeVoicePanel()" id="voiceCloseBtn" style="background: #95a5a6;">✖️ Закрыть</button>
             </div>
             <div id="voiceResult" class="voice-result"></div>
             <div class="voice-help">
-                <small>📌 Скажите: "Иванов 85" или "Петров 90" или "всем 75"</small>
+                <small id="voiceHelpText">📌 Скажите: "Иванов 85" или "Петров 90" или "всем 75"</small>
             </div>
         </div>
     </div>
@@ -77,11 +83,11 @@
             </div>
             <div style="padding: 20px 25px;">
                 <div class="column-name-item" style="margin-bottom: 20px;">
-                    <label style="min-width: 100px;">Название группы:</label>
+                    <label id="groupNameLabel" style="min-width: 100px;">Название группы:</label>
                     <input type="text" id="groupName" placeholder="Например: ИС-21, ПД-11" style="flex: 1;">
                 </div>
                 <div class="modal-footer" style="justify-content: space-between; padding: 0;">
-                    <button type="button" onclick="closeGroupModal()" style="background: #95a5a6;">Отмена</button>
+                    <button type="button" onclick="closeGroupModal()" id="groupCancelBtn" style="background: #95a5a6;">Отмена</button>
                     <button type="button" onclick="saveGroup()" class="excel-btn" id="groupModalBtn">➕ Создать</button>
                 </div>
             </div>
@@ -92,17 +98,17 @@
     <div id="addStudentModal" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
-                <h3>➕ Добавить нового студента</h3>
+                <h3 id="addStudentTitle">➕ Добавить нового студента</h3>
                 <span class="close" onclick="closeAddStudentModal()">&times;</span>
             </div>
             <div style="padding: 20px 25px;">
                 <div class="column-name-item" style="margin-bottom: 20px;">
-                    <label style="min-width: 100px;">ФИО Студента:</label>
+                    <label id="studentNameLabel" style="min-width: 100px;">ФИО Студента:</label>
                     <input type="text" id="newStudentName" placeholder="Введите ФИО студента" style="flex: 1;">
                 </div>
                 <div class="modal-footer" style="justify-content: space-between; padding: 0;">
-                    <button type="button" onclick="closeAddStudentModal()" style="background: #95a5a6;">Отмена</button>
-                    <button type="button" onclick="addStudent()" class="excel-btn">➕ Добавить</button>
+                    <button type="button" onclick="closeAddStudentModal()" id="addStudentCancelBtn" style="background: #95a5a6;">Отмена</button>
+                    <button type="button" onclick="addStudent()" class="excel-btn" id="addStudentConfirmBtn">➕ Добавить</button>
                 </div>
             </div>
         </div>
@@ -112,19 +118,19 @@
     <div id="editStudentModal" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
-                <h3>✏️ Редактировать студента</h3>
+                <h3 id="editStudentTitle">✏️ Редактировать студента</h3>
                 <span class="close" onclick="closeEditStudentModal()">&times;</span>
             </div>
             <div style="padding: 20px 25px;">
                 <div class="column-name-item" style="margin-bottom: 20px;">
-                    <label style="min-width: 100px;">ФИО Студента:</label>
+                    <label id="editStudentNameLabel" style="min-width: 100px;">ФИО Студента:</label>
                     <input type="text" id="editStudentName" placeholder="Введите ФИО студента" style="flex: 1;">
                 </div>
                 <div class="modal-footer" style="justify-content: space-between; padding: 0;">
-                    <button type="button" onclick="deleteStudent()" style="background: #e74c3c;">🗑️ Удалить</button>
+                    <button type="button" onclick="deleteStudent()" id="deleteStudentBtn" style="background: #e74c3c;">🗑️ Удалить</button>
                     <div>
-                        <button type="button" onclick="closeEditStudentModal()" style="background: #95a5a6;">Отмена</button>
-                        <button type="button" onclick="updateStudent()" class="excel-btn">💾 Сохранить</button>
+                        <button type="button" onclick="closeEditStudentModal()" id="editStudentCancelBtn" style="background: #95a5a6;">Отмена</button>
+                        <button type="button" onclick="updateStudent()" class="excel-btn" id="editStudentSaveBtn">💾 Сохранить</button>
                     </div>
                 </div>
             </div>
@@ -135,85 +141,10 @@
     <div id="instructionsModal" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
             <div class="modal-header" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
-                <h3>📖 Полная инструкция по работе с журналом рубежных оценок</h3>
+                <h3 id="instructionsTitle">📖 Полная инструкция по работе с журналом рубежных оценок</h3>
                 <span class="close" onclick="closeInstructions()">&times;</span>
             </div>
-            <div style="padding: 20px 25px;">
-                <div class="instruction-section">
-                    <h4>📁 1. Управление группами</h4>
-                    <ul>
-                        <li><strong>Создание группы:</strong> Нажмите "➕ Новая", введите название группы (например, "ИС-21")</li>
-                        <li><strong>Переключение:</strong> Выберите группу из выпадающего списка</li>
-                        <li><strong>Переименование:</strong> Нажмите "✏️" рядом с группой</li>
-                        <li><strong>Удаление:</strong> Нажмите "🗑️" - все данные группы будут удалены</li>
-                    </ul>
-                </div>
-                <div class="instruction-section">
-                    <h4>📋 2. Работа со студентами</h4>
-                    <ul>
-                        <li><strong>Загрузка списка:</strong> Нажмите "Загрузить список (.txt)" - файл с ФИО построчно</li>
-                        <li><strong>Добавление:</strong> Нажмите "➕ Добавить студента"</li>
-                        <li><strong>Редактирование:</strong> Нажмите "✏️" рядом с ФИО</li>
-                        <li><strong>Удаление:</strong> В режиме редактирования нажмите "Удалить"</li>
-                    </ul>
-                </div>
-                <div class="instruction-section">
-                    <h4>🎤 3. Голосовой ввод оценок</h4>
-                    <ul>
-                        <li><strong>Быстрый ввод:</strong> Нажмите "🎤 Быстрый ввод" и скажите: "Иванов 85"</li>
-                        <li><strong>В ячейке:</strong> Нажмите кнопку 🎤 в любой ячейке оценки</li>
-                        <li><strong>Массовый ввод:</strong> Скажите "всем 75" для всей группы</li>
-                        <li><strong>Поддерживаются:</strong> числа и слова (пять, десять, двадцать)</li>
-                    </ul>
-                </div>
-                <div class="instruction-section">
-                    <h4>📊 4. Работа с рубежными оценками</h4>
-                    <ul>
-                        <li><strong>Ввод оценок:</strong> Вводите оценки от 0 до 100 в ячейки</li>
-                        <li><strong>Количество РО:</strong> Измените число в поле "РО в семестре" (до 20)</li>
-                        <li><strong>Колонки:</strong> Меняйте количество колонок в каждом РО</li>
-                        <li><strong>Названия:</strong> Редактируйте названия колонок (например, даты или темы)</li>
-                    </ul>
-                </div>
-                <div class="instruction-section">
-                    <h4>🏆 5. Итоги и успеваемость</h4>
-                    <ul>
-                        <li><strong>Итоговый балл:</strong> Среднее арифметическое всех РО</li>
-                        <li><strong>Буквенная оценка:</strong> A (95-100) → F (менее 50)</li>
-                        <li><strong>GPA:</strong> Числовой эквивалент от 4,0 до 0</li>
-                    </ul>
-                </div>
-                <div class="instruction-section">
-                    <h4>📈 6. Шкала оценок</h4>
-                    <table style="width: 100%; font-size: 11px;">
-                        <thead><tr><th>Баллы</th><th>Буква</th><th>GPA</th></tr></thead>
-                        <tbody>
-                            <tr><td>95-100</td><td>A</td><td>4,0</td></tr>
-                            <tr><td>90-94</td><td>A-</td><td>3,67</td></tr>
-                            <tr><td>85-89</td><td>B+</td><td>3,33</td></tr>
-                            <tr><td>80-84</td><td>B</td><td>3,0</td></tr>
-                            <tr><td>75-79</td><td>B-</td><td>2,67</td></tr>
-                            <tr><td>70-74</td><td>C+</td><td>2,33</td></tr>
-                            <tr><td>65-69</td><td>C</td><td>2,0</td></tr>
-                            <tr><td>60-64</td><td>C-</td><td>1,67</td></tr>
-                            <tr><td>55-59</td><td>D+</td><td>1,33</td></tr>
-                            <tr><td>50-54</td><td>D</td><td>1,0</td></tr>
-                            <tr><td>0-49</td><td>F</td><td>0</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="instruction-section">
-                    <h4>💾 7. Сохранение и бэкапы</h4>
-                    <ul>
-                        <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически</li>
-                        <li><strong>Бэкап:</strong> Сохраняет все группы в один файл</li>
-                        <li><strong>Восстановление:</strong> Загрузите ранее сохраненный файл</li>
-                    </ul>
-                </div>
-                <div class="instruction-footer">
-                    <button type="button" onclick="closeInstructions()" class="excel-btn">✅ Понятно, приступим!</button>
-                </div>
-            </div>
+            <div id="instructionsContent" style="padding: 20px 25px;"></div>
         </div>
     </div>
 

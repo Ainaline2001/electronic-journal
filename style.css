@@ -19,17 +19,11 @@ body {
     margin-bottom: 15px;
 }
 
-.header h2 {
-    margin: 0 0 12px 0;
-    color: #2c3e50;
-    font-size: 20px;
-    text-align: center;
-}
-
 .controls {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-top: 12px;
 }
 
 button {
@@ -648,9 +642,31 @@ td button {
     pointer-events: none;
 }
 
+.language-switcher {
+    display: flex;
+    gap: 5px;
+}
+
+.lang-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 36px;
+    background: #e0e0e0;
+    color: #555;
+}
+
+.lang-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.lang-btn:active {
+    transform: scale(0.95);
+}
+
 @media print {
     body { background: white; padding: 0; }
-    .header, .controls, .info-bar, .tabs-header, .ro-controls, .modal, .group-selector, .ro-selector, button, .voice-panel { display: none; }
+    .header, .controls, .info-bar, .tabs-header, .ro-controls, .modal, .group-selector, .ro-selector, button, .voice-panel, .language-switcher { display: none; }
     .table-container { box-shadow: none; max-height: none; overflow: visible; }
     th { background: #f0f0f0; color: black; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .tab-pane { display: block !important; }
@@ -666,6 +682,7 @@ td button {
     .column-name-item { flex-direction: row; align-items: center; }
     .info-bar { flex-direction: row; justify-content: space-between; align-items: center; }
     .instruction-footer button { width: auto; }
+    .lang-btn { padding: 8px 16px; font-size: 14px; }
 }
 
 @media (min-width: 1025px) {
@@ -678,11 +695,11 @@ td button {
     .column-name-item { flex-direction: row; align-items: center; }
     button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
     .instruction-footer button { width: auto; }
+    .lang-btn { padding: 8px 16px; font-size: 14px; }
 }
 
 @media (max-width: 360px) {
     body { padding: 10px; }
-    .header h2 { font-size: 18px; }
     button { padding: 10px 12px; font-size: 12px; }
     .tab-btn { padding: 8px 12px; font-size: 11px; }
     th, td { padding: 6px 3px; font-size: 10px; }
@@ -690,6 +707,7 @@ td button {
     .name-col { min-width: 90px; }
     .instruction-section li { font-size: 11px; }
     #saveIndicator { bottom: 10px; right: 10px; font-size: 10px; padding: 5px 10px; }
+    .lang-btn { padding: 4px 8px; font-size: 10px; }
 }
 
 @media (hover: none) and (pointer: coarse) {
