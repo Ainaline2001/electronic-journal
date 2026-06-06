@@ -2,153 +2,143 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Журнал рубежных оценок (РО)</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" id="themeStylesheet">
 </head>
 <body>
     <div class="header">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <h2 id="mainTitle">📊 Журнал рубежных оценок (РО)</h2>
-            <div class="language-switcher">
-                <button onclick="setLanguage('ru')" id="langRuBtn" class="lang-btn active">🇷🇺 Русский</button>
-                <button onclick="setLanguage('kz')" id="langKzBtn" class="lang-btn">🇰🇿 Қазақша</button>
+            <h1 id="mainTitle">📊 Журнал рубежных оценок (РО)</h1>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="language-switcher">
+                    <button id="langRuBtn" class="lang-btn active" onclick="setLanguage('ru')">🇷🇺 Русский</button>
+                    <button id="langKzBtn" class="lang-btn" onclick="setLanguage('kz')">🇰🇿 Қазақша</button>
+                </div>
+                <div class="theme-switcher">
+                    <button onclick="setTheme('win2k')" id="themeWin2k" class="theme-btn">🪟 2000</button>
+                    <button onclick="setTheme('winxp')" id="themeWinXp" class="theme-btn">🪟 XP</button>
+                    <button onclick="setTheme('vista')" id="themeVista" class="theme-btn">🪟 Vista</button>
+                    <button onclick="setTheme('win7')" id="themeWin7" class="theme-btn">🪟 7</button>
+                    <button onclick="setTheme('win81')" id="themeWin81" class="theme-btn">🪟 8.1</button>
+                    <button onclick="setTheme('win10')" id="themeWin10" class="theme-btn">🪟 10</button>
+                    <button onclick="setTheme('macos9')" id="themeMacOs9" class="theme-btn">🍎 OS 9</button>
+                    <button onclick="setTheme('macosx')" id="themeMacOsX" class="theme-btn">💎 OS X</button>
+            </div>
             </div>
         </div>
         <div class="controls">
             <div class="group-selector">
                 <label id="groupLabel">📁 Группа:</label>
-                <select id="groupSelect" onchange="switchGroup()">
-                    <option value="">-- Выберите группу --</option>
-                </select>
-                <button type="button" onclick="openGroupModal()" id="newGroupBtn" style="background: #3498db; padding: 5px 10px;">➕ Новая</button>
-                <button type="button" onclick="renameCurrentGroup()" id="renameGroupBtn" style="background: #f39c12; padding: 5px 10px;">✏️</button>
-                <button type="button" onclick="deleteCurrentGroup()" id="deleteGroupBtn" style="background: #e74c3c; padding: 5px 10px;">🗑️</button>
+                <select id="groupSelect" onchange="switchGroup()"></select>
+                <button onclick="openGroupModal()" id="newGroupBtn">➕ Новая</button>
+                <button onclick="renameCurrentGroup()" id="renameGroupBtn">✏️</button>
+                <button onclick="deleteCurrentGroup()" id="deleteGroupBtn">🗑️</button>
             </div>
-            
-            <input type="file" id="txtFileInput" accept=".txt" style="display: none;" onchange="loadStudentsFromBrowser(event)">
-            <button type="button" onclick="document.getElementById('txtFileInput').click()" id="loadListBtn">📁 Загрузить список</button>
-            
-            <button type="button" onclick="openAddStudentModal()" id="addStudentBtn" style="background: #9b59b6;">➕ Добавить студента</button>
-            
-            <button type="button" onclick="exportToExcel()" id="exportExcelBtn" class="excel-btn">📊 Экспорт в Excel</button>
-            
-            <button type="button" onclick="showInstructions()" id="instructionsBtn" style="background: #f39c12;">❓ Инструкция</button>
-            
             <div class="ro-selector">
                 <label id="roCountLabel">РО в семестре:</label>
-                <input type="number" id="roCount" value="4" min="1" max="20" onchange="initApp()">
+                <input type="number" id="roCount" min="1" max="20" value="4" onchange="initApp()">
             </div>
         </div>
-    </div>
-
-    <div class="info-bar" id="infoBar" style="display: none;">
-        <span id="studentCount"></span>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button type="button" onclick="manualSave()" id="saveBtn" style="background: #3498db; padding: 5px 12px;">💾 Сохранить</button>
-            <button type="button" onclick="quickVoiceInput()" id="quickVoiceBtn" style="background: #9b59b6; padding: 5px 12px;">🎤 Быстрый ввод</button>
-            <button type="button" onclick="exportBackup()" id="backupBtn" style="background: #27ae60; padding: 5px 12px;">📥 Бэкап</button>
-            <button type="button" onclick="importBackup()" id="restoreBtn" style="background: #f39c12; padding: 5px 12px;">📂 Восстановить</button>
-            <button type="button" onclick="resetAllData()" id="resetBtn" class="reset-btn">🗑️ Сброс</button>
+        <div class="info-bar" id="infoBar" style="display: none;">
+            <div id="studentCount"></div>
+            <div class="info-bar-actions">
+                <input type="file" id="txtFileInput" accept=".txt" style="display: none;" onchange="loadStudentsFromBrowser(event)">
+                <button onclick="document.getElementById('txtFileInput').click()" id="loadListBtn">📁 Загрузить список</button>
+                <button onclick="openAddStudentModal()" id="addStudentBtn">➕ Добавить студента</button>
+                <button onclick="exportToExcel()" class="excel-btn" id="exportExcelBtn">📊 Экспорт в Excel</button>
+                <button onclick="showInstructions()" id="instructionsBtn">❓ Инструкция</button>
+                <button onclick="manualSave()" id="saveBtn">💾 Сохранить</button>
+                <button onclick="quickVoiceInput()" id="quickVoiceBtn">🎤 Быстрый ввод</button>
+                <button onclick="exportBackup()" id="backupBtn">📥 Бэкап</button>
+                <button onclick="importBackup()" id="restoreBtn">📂 Восстановить</button>
+                <button onclick="resetAllData()" class="reset-btn" id="resetBtn">🗑️ Сброс</button>
+            </div>
         </div>
     </div>
 
     <div class="tabs-header" id="tabsHeader"></div>
-    <div class="tabs-content" id="tabsContent"></div>
+    <div id="tabsContent"></div>
 
-    <!-- Панель голосового ввода -->
+    <!-- Голосовая панель -->
     <div id="voicePanel" class="voice-panel" style="display: none;">
         <div class="voice-panel-content">
             <div class="voice-status">
-                <span class="voice-icon">🎤</span>
-                <span id="voiceStatusText">Нажмите для голосового ввода</span>
+                <div class="voice-icon">🎤</div>
+                <div id="voiceStatusText">Нажмите для голосового ввода</div>
             </div>
             <div class="voice-buttons">
-                <button id="voiceStartBtn" class="voice-start-btn" onclick="startVoiceInput()">🎤 Начать</button>
-                <button onclick="closeVoicePanel()" id="voiceCloseBtn" style="background: #95a5a6;">✖️ Закрыть</button>
+                <button onclick="startVoiceInput()" id="voiceStartBtn" class="voice-start-btn">🎤 Начать</button>
+                <button onclick="closeVoicePanel()" id="voiceCloseBtn">✖️ Закрыть</button>
             </div>
             <div id="voiceResult" class="voice-result"></div>
-            <div class="voice-help">
-                <small id="voiceHelpText">📌 Скажите: "Иванов 85" или "Петров 90" или "всем 75"</small>
-            </div>
+            <div id="voiceHelpText" class="voice-help">📌 Скажите: "Иванов 85" или "Петров 90" или "всем 75"</div>
         </div>
     </div>
 
-    <!-- Модальное окно для создания/переименования группы -->
-    <div id="groupModal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 400px;">
+    <!-- Модальные окна (структура та же) -->
+    <div id="groupModal" class="modal">
+        <div class="modal-content">
             <div class="modal-header">
                 <h3 id="groupModalTitle">➕ Создать новую группу</h3>
                 <span class="close" onclick="closeGroupModal()">&times;</span>
             </div>
-            <div style="padding: 20px 25px;">
-                <div class="column-name-item" style="margin-bottom: 20px;">
-                    <label id="groupNameLabel" style="min-width: 100px;">Название группы:</label>
-                    <input type="text" id="groupName" placeholder="Например: ИС-21, ПД-11" style="flex: 1;">
-                </div>
-                <div class="modal-footer" style="justify-content: space-between; padding: 0;">
-                    <button type="button" onclick="closeGroupModal()" id="groupCancelBtn" style="background: #95a5a6;">Отмена</button>
-                    <button type="button" onclick="saveGroup()" class="excel-btn" id="groupModalBtn">➕ Создать</button>
-                </div>
+            <div class="modal-body">
+                <label id="groupNameLabel" class="modal-label">Название группы:</label>
+                <input type="text" id="groupName" class="modal-input">
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeGroupModal()" id="groupCancelBtn">Отмена</button>
+                <button onclick="saveGroup()" id="groupModalBtn" class="excel-btn">➕ Создать</button>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно для добавления студента -->
-    <div id="addStudentModal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 500px;">
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
             <div class="modal-header">
                 <h3 id="addStudentTitle">➕ Добавить нового студента</h3>
                 <span class="close" onclick="closeAddStudentModal()">&times;</span>
             </div>
-            <div style="padding: 20px 25px;">
-                <div class="column-name-item" style="margin-bottom: 20px;">
-                    <label id="studentNameLabel" style="min-width: 100px;">ФИО Студента:</label>
-                    <input type="text" id="newStudentName" placeholder="Введите ФИО студента" style="flex: 1;">
-                </div>
-                <div class="modal-footer" style="justify-content: space-between; padding: 0;">
-                    <button type="button" onclick="closeAddStudentModal()" id="addStudentCancelBtn" style="background: #95a5a6;">Отмена</button>
-                    <button type="button" onclick="addStudent()" class="excel-btn" id="addStudentConfirmBtn">➕ Добавить</button>
-                </div>
+            <div class="modal-body">
+                <label id="studentNameLabel" class="modal-label">ФИО Студента:</label>
+                <input type="text" id="newStudentName" class="modal-input">
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeAddStudentModal()" id="addStudentCancelBtn">Отмена</button>
+                <button onclick="addStudent()" id="addStudentConfirmBtn" class="excel-btn">➕ Добавить</button>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно для редактирования/удаления студента -->
-    <div id="editStudentModal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 500px;">
+    <div id="editStudentModal" class="modal">
+        <div class="modal-content">
             <div class="modal-header">
                 <h3 id="editStudentTitle">✏️ Редактировать студента</h3>
                 <span class="close" onclick="closeEditStudentModal()">&times;</span>
             </div>
-            <div style="padding: 20px 25px;">
-                <div class="column-name-item" style="margin-bottom: 20px;">
-                    <label id="editStudentNameLabel" style="min-width: 100px;">ФИО Студента:</label>
-                    <input type="text" id="editStudentName" placeholder="Введите ФИО студента" style="flex: 1;">
-                </div>
-                <div class="modal-footer" style="justify-content: space-between; padding: 0;">
-                    <button type="button" onclick="deleteStudent()" id="deleteStudentBtn" style="background: #e74c3c;">🗑️ Удалить</button>
-                    <div>
-                        <button type="button" onclick="closeEditStudentModal()" id="editStudentCancelBtn" style="background: #95a5a6;">Отмена</button>
-                        <button type="button" onclick="updateStudent()" class="excel-btn" id="editStudentSaveBtn">💾 Сохранить</button>
-                    </div>
-                </div>
+            <div class="modal-body">
+                <label id="editStudentNameLabel" class="modal-label">ФИО Студента:</label>
+                <input type="text" id="editStudentName" class="modal-input">
+            </div>
+            <div class="modal-footer">
+                <button onclick="deleteStudent()" id="deleteStudentBtn" class="reset-btn" style="margin-right: auto;">🗑️ Удалить</button>
+                <button onclick="closeEditStudentModal()" id="editStudentCancelBtn">Отмена</button>
+                <button onclick="updateStudent()" id="editStudentSaveBtn" class="excel-btn">💾 Сохранить</button>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно инструкции -->
-    <div id="instructionsModal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
-            <div class="modal-header" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
-                <h3 id="instructionsTitle">📖 Полная инструкция по работе с журналом рубежных оценок</h3>
+    <div id="instructionsModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="instructionsTitle">📖 Полная инструкция</h3>
                 <span class="close" onclick="closeInstructions()">&times;</span>
             </div>
-            <div id="instructionsContent" style="padding: 20px 25px;"></div>
+            <div style="padding: 20px; max-height: 70vh; overflow-y: auto;" id="instructionsContent"></div>
         </div>
     </div>
 
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

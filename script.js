@@ -41,53 +41,55 @@ const translations = {
         deleteStudentBtn: '🗑️ Удалить',
         editStudentCancelBtn: 'Отмена',
         editStudentSaveBtn: '💾 Сохранить',
-        instructionsTitle: '📖 Полная инструкция по работе с журналом рубежных оценок',
+        instructionsTitle: '📖 Полная инструкция',
         actions: 'Действия',
         finalGrade: '1-Семестр (Итог)',
         letter: 'Буква',
         gpa: 'GPA',
         finalTab: '🏆 Итоги',
-        editColumnNamesBtn: '✏️ Редактировать названия',
+        editColumnNamesBtn: '✏️ Названия колонок',
         saveColumnNamesBtn: '💾 Сохранить',
         cancelBtn: 'Отмена',
         columnDefault: (c) => `Оц.${c}`,
         avgRO: (r) => `Средний РО-${r}`,
         alertNoGroup: '❌ Сначала создайте или выберите группу!',
-        alertNoData: '❌ Нет данных для экспорта! Сначала загрузите список студентов.',
-        alertVoiceNotSupported: '❌ Ваш браузер не поддерживает голосовой ввод. Используйте Chrome, Edge или Safari на iOS.',
-        successDataSaved: '✅ Данные группы сохранены!',
+        alertNoData: '❌ Нет данных для экспорта!',
+        alertVoiceNotSupported: '❌ Ваш браузер не поддерживает голосовой ввод.',
+        successDataSaved: '✅ Данные сохранены!',
         successBackupSaved: (n) => `✅ Бэкап сохранен как "${n}.json"`,
-        successBackupRestored: (c) => `✅ Бэкап успешно восстановлен!\nЗагружено групп: ${c}`,
-        successExcelCreated: (n) => `✅ Файл "${n}.xlsx" успешно создан и скачан!`,
+        successBackupRestored: (c) => `✅ Бэкап восстановлен! Групп: ${c}`,
+        successExcelCreated: (n) => `✅ Файл "${n}.xlsx" создан!`,
         successAllDataReset: '✅ Все данные сброшены!',
         successGroupDeleted: '✅ Группа удалена!',
         successGroupRenamed: (n) => `✅ Группа переименована в "${n}"!`,
         successGroupCreated: (n) => `✅ Группа "${n}" создана!`,
-        successStudentsLoaded: (c, g) => `✅ Загружено ${c} студентов(а) в группу "${g}"!`,
-        successStudentAdded: (n, g) => `✅ Студент "${n}" успешно добавлен в группу "${g}"!`,
-        successStudentUpdated: (o, n) => `✅ Студент "${o}" изменен на "${n}"!`,
-        successStudentDeleted: (g) => `✅ Студент удален из группы "${g}"!`,
+        successStudentsLoaded: (c, g) => `✅ Загружено ${c} студентов в "${g}"!`,
+        successStudentAdded: (n, g) => `✅ Студент "${n}" добавлен в "${g}"!`,
+        successStudentUpdated: (o, n) => `✅ "${o}" изменен на "${n}"!`,
+        successStudentDeleted: (g) => `✅ Студент удален из "${g}"!`,
         successColumnNamesSaved: '✅ Названия колонок сохранены!',
-        errorInvalidScore: 'Пожалуйста, введите число от 0 до 100 или оставьте поле пустым',
+        errorInvalidScore: 'Введите число 0-100 или оставьте пустым',
         errorGroupExists: '❌ Группа с таким названием уже существует!',
         errorStudentExists: '❌ Студент с таким ФИО уже существует!',
         errorEnterGroupName: '❌ Введите название группы',
         errorEnterStudentName: '❌ Введите ФИО студента!',
         errorNoBackupData: '❌ Нет данных для бэкапа!',
         errorBackupFailed: '❌ Ошибка при создании бэкапа',
-        errorRestoreFailed: '❌ Ошибка при восстановлении бэкапа. Файл поврежден.',
-        errorExcelFailed: '❌ Ошибка при создании Excel файла. Попробуйте другой браузер (Chrome, Edge)',
-        confirmReset: '⚠️ Вы уверены, что хотите сбросить ВСЕ данные ВСЕХ групп?\nЭто действие нельзя отменить!',
-        confirmDeleteGroup: (g) => `⚠️ Вы уверены, что хотите удалить группу "${g}"?\nВсе данные группы будут потеряны!`,
-        confirmDeleteStudent: (s) => `⚠️ Вы уверены, что хотите удалить студента "${s}"?\nВсе оценки этого студента будут потеряны!`,
-        confirmOverwriteStudents: (g, c) => `⚠️ Загрузка нового списка заменит текущих студентов группы "${g}" (${c}). Продолжить?`,
-        confirmRestore: (f) => `📂 Восстановить данные из файла "${f}"?\nТекущие данные будут заменены!`,
+        errorRestoreFailed: '❌ Ошибка при восстановлении бэкапа.',
+        errorExcelFailed: '❌ Ошибка при создании Excel файла.',
+        confirmReset: '⚠️ Сбросить ВСЕ данные ВСЕХ групп?\nДействие нельзя отменить!',
+        confirmDeleteGroup: (g) => `⚠️ Удалить группу "${g}"?\nВсе данные будут потеряны!`,
+        confirmDeleteStudent: (s) => `⚠️ Удалить студента "${s}"?`,
+        confirmOverwriteStudents: (g, c) => `⚠️ Заменить студентов в "${g}" (${c} чел.)?`,
+        confirmRestore: (f) => `📂 Восстановить из "${f}"?\nТекущие данные будут заменены!`,
         createFirstGroup: '📁 Начните с создания группы',
         createFirstGroupDesc: 'Нажмите "➕ Новая" чтобы создать первую группу',
         createGroupBtn: '➕ Создать группу',
-        noStudents: (g) => `📋 Нет студентов в группе "${g}"`,
-        noStudentsDesc: 'Нажмите "Загрузить список" или "Добавить студента" чтобы начать работу',
-        noData: 'Загрузите список студентов'
+        noStudents: (g) => `📋 Нет студентов в "${g}"`,
+        noStudentsDesc: 'Нажмите "Загрузить список" или "Добавить студента"',
+        noData: 'Загрузите список студентов',
+        searchPlaceholder: '🔍 Поиск студента...',
+        gradesCountLabel: (r) => `Оценок в РО-${r}:`
     },
     kz: {
         pageTitle: 'Бағалау журналы (РО)',
@@ -109,9 +111,9 @@ const translations = {
         resetBtn: '🗑️ Тазалау',
         voiceStartBtn: '🎤 Бастау',
         voiceCloseBtn: '✖️ Жабу',
-        voiceHelpText: '📌 Айтыңыз: "Иванов 85" немесе "Петров 90" немесе "барлығына 75"',
+        voiceHelpText: '📌 Айтыңыз: "Иванов 85" немесе "барлығына 75"',
         voiceStatusIdle: 'Дауыстық енгізу үшін басыңыз',
-        voiceStatusListening: '🎤 Тыңдап тұрмын... Бағаны айтыңыз',
+        voiceStatusListening: '🎤 Тыңдап тұрмын...',
         voiceStatusEnded: 'Дауыстық енгізу аяқталды',
         groupModalCreate: '➕ Жаңа топ құру',
         groupModalRename: '✏️ Топтың атын өзгерту',
@@ -128,53 +130,55 @@ const translations = {
         deleteStudentBtn: '🗑️ Жою',
         editStudentCancelBtn: 'Болдырмау',
         editStudentSaveBtn: '💾 Сақтау',
-        instructionsTitle: '📖 Бағалау журналымен жұмыс істеу бойынша толық нұсқаулық',
+        instructionsTitle: '📖 Нұсқаулық',
         actions: 'Әрекеттер',
         finalGrade: '1-Семестр (Қорытынды)',
         letter: 'Әріп',
         gpa: 'GPA',
         finalTab: '🏆 Қорытынды',
-        editColumnNamesBtn: '✏️ Атауларды өңдеу',
+        editColumnNamesBtn: '✏️ Баған атаулары',
         saveColumnNamesBtn: '💾 Сақтау',
         cancelBtn: 'Болдырмау',
-        columnDefault: (c) => `Баг.${c}`,
+        columnDefault: (c) => `Бағ.${c}`,
         avgRO: (r) => `Орташа РО-${r}`,
-        alertNoGroup: '❌ Алдымен топ құрыңыз немесе таңдаңыз!',
-        alertNoData: '❌ Экспорттау үшін деректер жоқ! Алдымен студенттер тізімін жүктеңіз.',
-        alertVoiceNotSupported: '❌ Сіздің браузеріңіз дауыстық енгізуді қолдамайды. Chrome, Edge немесе Safari on iOS пайдаланыңыз.',
-        successDataSaved: '✅ Топ деректері сақталды!',
-        successBackupSaved: (n) => `✅ Көшірме "${n}.json" деп сақталды`,
-        successBackupRestored: (c) => `✅ Көшірме сәтті қалпына келтірілді!\nЖүктелген топтар саны: ${c}`,
-        successExcelCreated: (n) => `✅ "${n}.xlsx" файлы сәтті жасалды және жүктелді!`,
+        alertNoGroup: '❌ Алдымен топ құрыңыз!',
+        alertNoData: '❌ Экспорттау үшін деректер жоқ!',
+        alertVoiceNotSupported: '❌ Браузер дауыстық енгізуді қолдамайды.',
+        successDataSaved: '✅ Деректер сақталды!',
+        successBackupSaved: (n) => `✅ Көшірме "${n}.json" сақталды`,
+        successBackupRestored: (c) => `✅ Көшірме қалпына келтірілді! Топтар: ${c}`,
+        successExcelCreated: (n) => `✅ "${n}.xlsx" жасалды!`,
         successAllDataReset: '✅ Барлық деректер тазаланды!',
         successGroupDeleted: '✅ Топ жойылды!',
-        successGroupRenamed: (n) => `✅ Топтың аты "${n}" болып өзгертілді!`,
+        successGroupRenamed: (n) => `✅ Топ "${n}" болып өзгертілді!`,
         successGroupCreated: (n) => `✅ "${n}" тобы құрылды!`,
-        successStudentsLoaded: (c, g) => `✅ "${g}" тобына ${c} студент(тер) жүктелді!`,
+        successStudentsLoaded: (c, g) => `✅ "${g}" тобына ${c} студент жүктелді!`,
         successStudentAdded: (n, g) => `✅ "${n}" студенті "${g}" тобына қосылды!`,
-        successStudentUpdated: (o, n) => `✅ "${o}" студентінің аты "${n}" болып өзгертілді!`,
+        successStudentUpdated: (o, n) => `✅ "${o}" → "${n}" өзгертілді!`,
         successStudentDeleted: (g) => `✅ Студент "${g}" тобынан жойылды!`,
         successColumnNamesSaved: '✅ Баған атаулары сақталды!',
-        errorInvalidScore: '0-ден 100-ге дейінгі санды енгізіңіз немесе өрісті бос қалдырыңыз',
-        errorGroupExists: '❌ Мұндай атаумен топ бар!',
-        errorStudentExists: '❌ Мұндай Т.А.Ә. бар студент бар!',
+        errorInvalidScore: '0-100 аралығындағы сан немесе бос қалдырыңыз',
+        errorGroupExists: '❌ Мұндай топ бар!',
+        errorStudentExists: '❌ Мұндай студент бар!',
         errorEnterGroupName: '❌ Топтың атын енгізіңіз',
         errorEnterStudentName: '❌ Студенттің Т.А.Ә. енгізіңіз!',
         errorNoBackupData: '❌ Көшірме үшін деректер жоқ!',
         errorBackupFailed: '❌ Көшірме жасау кезінде қате',
-        errorRestoreFailed: '❌ Көшірмені қалпына келтіру кезінде қате. Файл бүлінген.',
-        errorExcelFailed: '❌ Excel файлын жасау кезінде қате. Басқа браузерді қолданып көріңіз (Chrome, Edge)',
-        confirmReset: '⚠️ БАРЛЫҚ топтардың БАРЛЫҚ деректерін тазалағыңыз келе ме?\nБұл әрекетті кері қайтару мүмкін емес!',
-        confirmDeleteGroup: (g) => `⚠️ "${g}" тобын жойғыңыз келе ме?\nТоптың барлық деректері жоғалады!`,
-        confirmDeleteStudent: (s) => `⚠️ "${s}" студентін жойғыңыз келе ме?\nСтуденттің барлық бағалары жоғалады!`,
-        confirmOverwriteStudents: (g, c) => `⚠️ Жаңа тізімді жүктеу "${g}" тобындағы студенттерді (${c}) ауыстырады. Жалғастыру керек пе?`,
-        confirmRestore: (f) => `📂 "${f}" файлынан деректерді қалпына келтіру керек пе?\nАғымдағы деректер ауыстырылады!`,
+        errorRestoreFailed: '❌ Көшірмені қалпына келтіру кезінде қате.',
+        errorExcelFailed: '❌ Excel файлын жасау кезінде қате.',
+        confirmReset: '⚠️ БАРЛЫҚ деректерді тазалау керек пе?',
+        confirmDeleteGroup: (g) => `⚠️ "${g}" тобын жою керек пе?`,
+        confirmDeleteStudent: (s) => `⚠️ "${s}" студентін жою керек пе?`,
+        confirmOverwriteStudents: (g, c) => `⚠️ "${g}" тобындағы студенттерді (${c}) ауыстыру керек пе?`,
+        confirmRestore: (f) => `📂 "${f}" файлынан қалпына келтіру керек пе?`,
         createFirstGroup: '📁 Топ құрудан бастаңыз',
-        createFirstGroupDesc: 'Бірінші топты құру үшін "➕ Жаңа" батырмасын басыңыз',
+        createFirstGroupDesc: '"➕ Жаңа" батырмасын басыңыз',
         createGroupBtn: '➕ Топ құру',
         noStudents: (g) => `📋 "${g}" тобында студенттер жоқ`,
-        noStudentsDesc: 'Жұмысты бастау үшін "Тізімді жүктеу" немесе "Студент қосу" батырмасын басыңыз',
-        noData: 'Студенттер тізімін жүктеңіз'
+        noStudentsDesc: '"Тізімді жүктеу" немесе "Студент қосу" батырмасын басыңыз',
+        noData: 'Студенттер тізімін жүктеңіз',
+        searchPlaceholder: '🔍 Студентті іздеу...',
+        gradesCountLabel: (r) => `РО-${r} бағандары:`
     }
 };
 
@@ -196,44 +200,24 @@ function setLanguage(lang) {
     document.getElementById('langKzBtn').classList.toggle('active', lang === 'kz');
     document.documentElement.lang = lang === 'ru' ? 'ru' : 'kk';
     document.title = t('pageTitle');
-    updateElementText('mainTitle', 'mainTitle');
-    updateElementText('groupLabel', 'groupLabel');
-    updateElementText('loadListBtn', 'loadListBtn');
-    updateElementText('addStudentBtn', 'addStudentBtn');
-    updateElementText('exportExcelBtn', 'exportExcelBtn');
-    updateElementText('instructionsBtn', 'instructionsBtn');
-    updateElementText('roCountLabel', 'roCountLabel');
-    updateElementText('saveBtn', 'saveBtn');
-    updateElementText('quickVoiceBtn', 'quickVoiceBtn');
-    updateElementText('backupBtn', 'backupBtn');
-    updateElementText('restoreBtn', 'restoreBtn');
-    updateElementText('resetBtn', 'resetBtn');
-    updateElementText('voiceStartBtn', 'voiceStartBtn');
-    updateElementText('voiceCloseBtn', 'voiceCloseBtn');
-    updateElementText('voiceHelpText', 'voiceHelpText');
-    updateElementText('voiceStatusText', 'voiceStatusIdle');
-    updateElementText('groupCancelBtn', 'groupCancelBtn');
-    updateElementText('groupNameLabel', 'groupNameLabel');
-    updateElementText('addStudentTitle', 'addStudentTitle');
-    updateElementText('studentNameLabel', 'studentNameLabel');
-    updateElementText('addStudentCancelBtn', 'addStudentCancelBtn');
-    updateElementText('addStudentConfirmBtn', 'addStudentConfirmBtn');
-    updateElementText('editStudentTitle', 'editStudentTitle');
-    updateElementText('editStudentNameLabel', 'editStudentNameLabel');
-    updateElementText('deleteStudentBtn', 'deleteStudentBtn');
-    updateElementText('editStudentCancelBtn', 'editStudentCancelBtn');
-    updateElementText('editStudentSaveBtn', 'editStudentSaveBtn');
-    updateElementText('instructionsTitle', 'instructionsTitle');
-    
+
+    const ids = ['mainTitle','groupLabel','loadListBtn','addStudentBtn','exportExcelBtn',
+                 'instructionsBtn','roCountLabel','saveBtn','quickVoiceBtn','backupBtn',
+                 'restoreBtn','resetBtn','voiceStartBtn','voiceCloseBtn','voiceHelpText',
+                 'voiceStatusText','groupCancelBtn','groupNameLabel','addStudentTitle',
+                 'studentNameLabel','addStudentCancelBtn','addStudentConfirmBtn',
+                 'editStudentTitle','editStudentNameLabel','deleteStudentBtn',
+                 'editStudentCancelBtn','editStudentSaveBtn','instructionsTitle'];
+    ids.forEach(id => updateElementText(id, id));
+
     const groupSelect = document.getElementById('groupSelect');
     if (groupSelect && groupSelect.options[0]) {
         groupSelect.options[0].text = t('selectGroup');
     }
-    
+
     renderTabsHeader();
     renderTabsContent();
     updateInfoBar();
-    renderInstructionsContent();
 }
 
 function loadSavedLanguage() {
@@ -241,7 +225,29 @@ function loadSavedLanguage() {
     setLanguage(savedLang === 'kz' ? 'kz' : 'ru');
 }
 
-// ============ ОСНОВНЫЕ ПЕРЕМЕННЫЕ ============
+// ============ ПЕРЕКЛЮЧЕНИЕ ТЕМ ============
+function setTheme(theme) {
+    localStorage.setItem('appTheme', theme);
+    document.body.classList.remove('theme-win2k', 'theme-winxp', 'theme-vista', 'theme-win7', 'theme-win81', 'theme-win10', 'theme-macos9', 'theme-macosx');
+    document.body.classList.add(`theme-${theme}`);
+    
+    const themes = ['win2k', 'winxp', 'vista', 'win7', 'win81', 'win10', 'macos9', 'macosx'];
+    themes.forEach(t => {
+        const btn = document.getElementById(`theme${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (btn) btn.classList.toggle('active', t === theme);
+    });
+}
+
+function loadSavedTheme() {
+    const savedTheme = localStorage.getItem('appTheme');
+    if (savedTheme && ['win2k', 'winxp', 'vista', 'win7', 'win81', 'win10', 'macos9', 'macosx'].includes(savedTheme)) {
+        setTheme(savedTheme);
+    } else {
+        setTheme('win2k');
+    }
+}
+
+// ============ ПЕРЕМЕННЫЕ ============
 let allGroups = {};
 let currentGroup = "";
 let activeROCount = 4;
@@ -260,17 +266,14 @@ let currentVoiceCol = null;
 let currentVoiceStudentIndex = null;
 
 function initSpeechRecognition() {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        console.log('Браузер не поддерживает голосовой ввод');
-        return false;
-    }
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return false;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognition = new SpeechRecognition();
     recognition.lang = 'ru-RU';
     recognition.continuous = false;
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
-    
+
     recognition.onstart = function() {
         isListening = true;
         const startBtn = document.getElementById('voiceStartBtn');
@@ -281,7 +284,7 @@ function initSpeechRecognition() {
         updateElementText('voiceStatusText', 'voiceStatusListening');
         document.getElementById('voiceResult').innerHTML = 'Слушаю...';
     };
-    
+
     recognition.onend = function() {
         isListening = false;
         const startBtn = document.getElementById('voiceStartBtn');
@@ -291,13 +294,11 @@ function initSpeechRecognition() {
         }
         updateElementText('voiceStatusText', 'voiceStatusEnded');
     };
-    
+
     recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        console.log('Распознано:', transcript);
-        processVoiceCommand(transcript);
+        processVoiceCommand(event.results[0][0].transcript);
     };
-    
+
     recognition.onerror = function(event) {
         console.error('Ошибка распознавания:', event.error);
         document.getElementById('voiceResult').innerHTML = '❌ Ошибка: ' + event.error;
@@ -321,7 +322,7 @@ function openVoiceInput(roIndex, colIndex, studentIndex) {
     currentVoiceCol = colIndex;
     currentVoiceStudentIndex = studentIndex;
     const studentName = students[studentIndex];
-    document.getElementById('voiceResult').innerHTML = `Готов к вводу оценки для:<br>📌 ${studentName}<br>📊 РО-${roIndex}, колонка ${colIndex}`;
+    document.getElementById('voiceResult').innerHTML = `Готов к вводу:<br>📌 ${studentName}<br>📊 РО-${roIndex}, колонка ${colIndex}`;
     document.getElementById('voicePanel').style.display = 'block';
     updateElementText('voiceStatusText', 'voiceStatusIdle');
 }
@@ -329,9 +330,7 @@ function openVoiceInput(roIndex, colIndex, studentIndex) {
 function closeVoicePanel() {
     if (isListening && recognition) recognition.stop();
     document.getElementById('voicePanel').style.display = 'none';
-    currentVoiceRO = null;
-    currentVoiceCol = null;
-    currentVoiceStudentIndex = null;
+    currentVoiceRO = currentVoiceCol = currentVoiceStudentIndex = null;
 }
 
 function startVoiceInput() {
@@ -339,122 +338,72 @@ function startVoiceInput() {
         alert(t('alertVoiceNotSupported'));
         return;
     }
-    try {
-        recognition.start();
-    } catch(e) {
-        console.error('Ошибка запуска:', e);
-        alert('Не удалось запустить голосовой ввод. Попробуйте еще раз.');
-    }
+    try { recognition.start(); } catch(e) { alert('Не удалось запустить голосовой ввод.'); }
 }
 
 function processVoiceCommand(transcript) {
     const text = transcript.toLowerCase();
     document.getElementById('voiceResult').innerHTML = `Распознано: "${transcript}"<br>Обработка...`;
-    
     const numbers = text.match(/\d{1,3}/g);
     let score = null;
-    
     if (numbers && numbers.length > 0) {
         score = parseInt(numbers[0]);
         if (score > 100) score = 100;
         if (score < 0) score = 0;
     }
-    
     const wordNumbers = {
-        'ноль': 0, 'один': 1, 'два': 2, 'три': 3, 'четыре': 4,
-        'пять': 5, 'шесть': 6, 'семь': 7, 'восемь': 8, 'девять': 9,
-        'десять': 10, 'одиннадцать': 11, 'двенадцать': 12, 'тринадцать': 13,
-        'четырнадцать': 14, 'пятнадцать': 15, 'шестнадцать': 16, 'семнадцать': 17,
-        'восемнадцать': 18, 'девятнадцать': 19, 'двадцать': 20, 'тридцать': 30,
-        'сорок': 40, 'пятьдесят': 50, 'шестьдесят': 60, 'семьдесят': 70,
-        'восемьдесят': 80, 'девяносто': 90, 'сто': 100
+        'ноль':0,'один':1,'два':2,'три':3,'четыре':4,'пять':5,'шесть':6,
+        'семь':7,'восемь':8,'девять':9,'десять':10,'одиннадцать':11,'двенадцать':12,
+        'тринадцать':13,'четырнадцать':14,'пятнадцать':15,'шестнадцать':16,
+        'семнадцать':17,'восемнадцать':18,'девятнадцать':19,'двадцать':20,
+        'тридцать':30,'сорок':40,'пятьдесят':50,'шестьдесят':60,'семьдесят':70,
+        'восемьдесят':80,'девяносто':90,'сто':100
     };
-    
     if (score === null) {
         for (const [word, num] of Object.entries(wordNumbers)) {
-            if (text.includes(word)) {
-                score = num;
-                break;
-            }
+            if (text.includes(word)) { score = num; break; }
         }
     }
-    
     if (text.includes('все') || text.includes('всем')) {
-        applyScoreToAllInRO(score);
+        if (score !== null && activeTab !== 'final') {
+            for (let i = 0; i < students.length; i++) {
+                const colCount = gradesCountConfig[activeTab] || 3;
+                for (let c = 1; c <= colCount; c++) saveGrade(i, activeTab, c, score);
+            }
+            document.getElementById('voiceResult').innerHTML = `✅ Оценка ${score} всем (${students.length})`;
+            setTimeout(() => closeVoicePanel(), 2000);
+        }
         return;
     }
-    
     let foundStudentIndex = -1;
     for (let i = 0; i < students.length; i++) {
         const lastName = students[i].split(' ')[0].toLowerCase();
-        if (text.includes(lastName)) {
-            foundStudentIndex = i;
-            break;
-        }
+        if (text.includes(lastName)) { foundStudentIndex = i; break; }
     }
-    
-    if (foundStudentIndex !== -1 && score !== null) {
-        const currentTab = activeTab;
-        if (currentTab !== 'final') {
-            saveGrade(foundStudentIndex, currentTab, currentVoiceCol || 1, score);
-            document.getElementById('voiceResult').innerHTML = `✅ Оценка ${score} поставлена студенту ${students[foundStudentIndex]}`;
-            setTimeout(() => closeVoicePanel(), 2000);
-        } else {
-            document.getElementById('voiceResult').innerHTML = '❌ Переключитесь на вкладку с оценками';
-        }
+    if (foundStudentIndex !== -1 && score !== null && activeTab !== 'final') {
+        saveGrade(foundStudentIndex, activeTab, currentVoiceCol || 1, score);
+        document.getElementById('voiceResult').innerHTML = `✅ Оценка ${score} → ${students[foundStudentIndex]}`;
+        setTimeout(() => closeVoicePanel(), 2000);
     } else if (score !== null && currentVoiceStudentIndex !== null) {
         saveGrade(currentVoiceStudentIndex, currentVoiceRO, currentVoiceCol, score);
-        document.getElementById('voiceResult').innerHTML = `✅ Оценка ${score} сохранена для ${students[currentVoiceStudentIndex]}`;
+        document.getElementById('voiceResult').innerHTML = `✅ Оценка ${score} → ${students[currentVoiceStudentIndex]}`;
         setTimeout(() => closeVoicePanel(), 2000);
     } else if (score !== null) {
-        document.getElementById('voiceResult').innerHTML = '❌ Не удалось определить студента. Скажите фамилию, например: "Иванов 85"';
+        document.getElementById('voiceResult').innerHTML = '❌ Скажите "Иванов 85"';
     } else {
-        document.getElementById('voiceResult').innerHTML = '❌ Не удалось распознать оценку. Скажите число от 0 до 100';
+        document.getElementById('voiceResult').innerHTML = '❌ Не удалось распознать оценку';
     }
-    saveCurrentGroup();
-}
-
-function applyScoreToAllInRO(score) {
-    if (score === null || score === undefined) {
-        document.getElementById('voiceResult').innerHTML = '❌ Не удалось распознать оценку для всех студентов';
-        return;
-    }
-    const currentTab = activeTab;
-    if (currentTab === 'final') {
-        document.getElementById('voiceResult').innerHTML = '❌ Переключитесь на вкладку с оценками';
-        return;
-    }
-    let count = 0;
-    for (let i = 0; i < students.length; i++) {
-        const colCount = gradesCountConfig[currentTab] || 3;
-        for (let c = 1; c <= colCount; c++) {
-            saveGrade(i, currentTab, c, score);
-            count++;
-        }
-    }
-    document.getElementById('voiceResult').innerHTML = `✅ Оценка ${score} поставлена всем студентам (${students.length} чел.)`;
-    setTimeout(() => closeVoicePanel(), 2000);
     saveCurrentGroup();
 }
 
 function quickVoiceInput() {
-    if (!currentGroup) {
-        alert(t('alertNoGroup'));
-        return;
-    }
-    const currentTab = activeTab;
-    if (currentTab === 'final') {
-        alert('❌ Переключитесь на вкладку с оценками (РО-1, РО-2 и т.д.)');
-        return;
-    }
-    if (!recognition && !initSpeechRecognition()) {
-        alert(t('alertVoiceNotSupported'));
-        return;
-    }
-    document.getElementById('voiceResult').innerHTML = `Готов к вводу оценок для текущей таблицы (РО-${currentTab})<br>Скажите: "Иванов 85" или "Петров 90" или "всем 75"`;
+    if (!currentGroup) { alert(t('alertNoGroup')); return; }
+    if (activeTab === 'final') { alert('❌ Переключитесь на вкладку с оценками'); return; }
+    if (!recognition && !initSpeechRecognition()) { alert(t('alertVoiceNotSupported')); return; }
+    document.getElementById('voiceResult').innerHTML = `Готов к вводу (РО-${activeTab})<br>Скажите: "Иванов 85" или "всем 75"`;
     document.getElementById('voicePanel').style.display = 'block';
     updateElementText('voiceStatusText', 'voiceStatusIdle');
-    currentVoiceRO = currentTab;
+    currentVoiceRO = activeTab;
     currentVoiceCol = 1;
     currentVoiceStudentIndex = null;
 }
@@ -463,12 +412,8 @@ function quickVoiceInput() {
 function loadAllGroups() {
     const saved = localStorage.getItem('journalGroups');
     if (saved) {
-        try {
-            allGroups = JSON.parse(saved);
-            return true;
-        } catch(e) {
-            console.error('Ошибка загрузки групп:', e);
-        }
+        try { allGroups = JSON.parse(saved); return true; }
+        catch(e) { console.error('Ошибка загрузки групп:', e); }
     }
     return false;
 }
@@ -478,20 +423,13 @@ function saveAllGroups() {
         localStorage.setItem('journalGroups', JSON.stringify(allGroups));
         showSaveIndicator();
         return true;
-    } catch(e) {
-        console.error('Ошибка сохранения групп:', e);
-        return false;
-    }
+    } catch(e) { return false; }
 }
 
 function saveCurrentGroup() {
     if (!currentGroup) return;
     allGroups[currentGroup] = {
-        students: students,
-        activeROCount: activeROCount,
-        gradesCountConfig: gradesCountConfig,
-        gradesData: gradesData,
-        columnNames: columnNames,
+        students, activeROCount, gradesCountConfig, gradesData, columnNames,
         lastSaved: new Date().toISOString()
     };
     saveAllGroups();
@@ -529,10 +467,7 @@ function openGroupModal() {
 }
 
 function renameCurrentGroup() {
-    if (!currentGroup) {
-        alert('❌ Сначала выберите группу для переименования');
-        return;
-    }
+    if (!currentGroup) { alert('❌ Сначала выберите группу'); return; }
     updateElementText('groupModalTitle', 'groupModalRename');
     document.getElementById('groupModalBtn').innerHTML = t('groupSaveBtn');
     document.getElementById('groupName').value = currentGroup;
@@ -540,10 +475,7 @@ function renameCurrentGroup() {
 }
 
 function deleteCurrentGroup() {
-    if (!currentGroup) {
-        alert('❌ Сначала выберите группу для удаления');
-        return;
-    }
+    if (!currentGroup) { alert('❌ Сначала выберите группу'); return; }
     if (!confirm(t('confirmDeleteGroup', currentGroup))) return;
     delete allGroups[currentGroup];
     saveAllGroups();
@@ -560,21 +492,12 @@ function deleteCurrentGroup() {
 
 function saveGroup() {
     const newName = document.getElementById('groupName').value.trim();
-    if (!newName) {
-        alert(t('errorEnterGroupName'));
-        return;
-    }
-    const title = document.getElementById('groupModalTitle').innerHTML;
-    const isRename = title.includes('Переименовать') || title.includes('өзгерту');
+    if (!newName) { alert(t('errorEnterGroupName')); return; }
+    const isRename = document.getElementById('groupModalTitle').innerHTML.includes('Переименовать') ||
+                     document.getElementById('groupModalTitle').innerHTML.includes('өзгерту');
     if (isRename) {
-        if (newName === currentGroup) {
-            closeGroupModal();
-            return;
-        }
-        if (allGroups[newName]) {
-            alert(t('errorGroupExists'));
-            return;
-        }
+        if (newName === currentGroup) { closeGroupModal(); return; }
+        if (allGroups[newName]) { alert(t('errorGroupExists')); return; }
         allGroups[newName] = allGroups[currentGroup];
         delete allGroups[currentGroup];
         currentGroup = newName;
@@ -582,17 +505,10 @@ function saveGroup() {
         updateGroupSelect();
         alert(t('successGroupRenamed', newName));
     } else {
-        if (allGroups[newName]) {
-            alert(t('errorGroupExists'));
-            return;
-        }
+        if (allGroups[newName]) { alert(t('errorGroupExists')); return; }
         if (currentGroup) saveCurrentGroup();
         allGroups[newName] = {
-            students: [],
-            activeROCount: 4,
-            gradesCountConfig: {},
-            gradesData: {},
-            columnNames: {},
+            students: [], activeROCount: 4, gradesCountConfig: {}, gradesData: {}, columnNames: {},
             lastSaved: new Date().toISOString()
         };
         currentGroup = newName;
@@ -609,31 +525,27 @@ function updateGroupSelect() {
     if (!select) return;
     const currentValue = currentGroup;
     select.innerHTML = `<option value="">${t('selectGroup')}</option>`;
-    const groups = Object.keys(allGroups).sort();
-    for (const group of groups) {
+    Object.keys(allGroups).sort().forEach(group => {
         const option = document.createElement('option');
         option.value = group;
         option.textContent = `${group} (${allGroups[group].students?.length || 0} студ.)`;
         if (group === currentValue) option.selected = true;
         select.appendChild(option);
-    }
+    });
 }
 
-function closeGroupModal() {
-    document.getElementById('groupModal').style.display = 'none';
-}
+function closeGroupModal() { document.getElementById('groupModal').style.display = 'none'; }
 
 function showSaveIndicator() {
     let indicator = document.getElementById('saveIndicator');
     if (!indicator) {
         indicator = document.createElement('div');
         indicator.id = 'saveIndicator';
-        indicator.style.cssText = `position:fixed;bottom:20px;right:20px;background:#27ae60;color:white;padding:8px 16px;border-radius:8px;font-size:12px;z-index:1000;opacity:0;transition:opacity 0.3s;pointer-events:none;`;
+        indicator.textContent = '✓ Сохранено';
         document.body.appendChild(indicator);
     }
-    indicator.textContent = '✓ Сохранено';
-    indicator.style.opacity = '1';
-    setTimeout(() => { indicator.style.opacity = '0'; }, 1500);
+    indicator.classList.add('show');
+    setTimeout(() => indicator.classList.remove('show'), 1500);
 }
 
 function loadFromLocalStorage() {
@@ -651,11 +563,9 @@ function loadFromLocalStorage() {
             if (data.students && data.students.length > 0) {
                 const defaultGroup = "Группа 1";
                 allGroups[defaultGroup] = {
-                    students: data.students,
-                    activeROCount: data.activeROCount || 4,
+                    students: data.students, activeROCount: data.activeROCount || 4,
                     gradesCountConfig: data.gradesCountConfig || {},
-                    gradesData: data.gradesData || {},
-                    columnNames: data.columnNames || {},
+                    gradesData: data.gradesData || {}, columnNames: data.columnNames || {},
                     lastSaved: data.lastSaved
                 };
                 saveAllGroups();
@@ -665,21 +575,16 @@ function loadFromLocalStorage() {
                 updateGroupSelect();
                 return true;
             }
-        } catch(e) {
-            console.error('Ошибка миграции:', e);
-        }
+        } catch(e) {}
     }
     return false;
 }
 
 function exportBackup() {
-    if (Object.keys(allGroups).length === 0) {
-        alert(t('errorNoBackupData'));
-        return;
-    }
+    if (Object.keys(allGroups).length === 0) { alert(t('errorNoBackupData')); return; }
     const now = new Date();
     const defaultName = `журнал_РО_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-    let fileName = prompt('💾 Введите название файла для бэкапа:', defaultName);
+    let fileName = prompt('💾 Название файла для бэкапа:', defaultName);
     if (!fileName) return;
     fileName = fileName.replace(/[\\/:*?"<>|]/g, '_').trim();
     if (fileName.length === 0) fileName = defaultName;
@@ -695,9 +600,7 @@ function exportBackup() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         alert(t('successBackupSaved', fileName));
-    } catch(e) {
-        alert(t('errorBackupFailed'));
-    }
+    } catch(e) { alert(t('errorBackupFailed')); }
 }
 
 function importBackup() {
@@ -714,13 +617,9 @@ function importBackup() {
                 const data = JSON.parse(event.target.result);
                 if (data && typeof data === 'object') {
                     const firstKey = Object.keys(data)[0];
-                    if (data[firstKey] && data[firstKey].students !== undefined) {
-                        allGroups = data;
-                    } else if (data.students !== undefined) {
-                        allGroups = { "Группа 1": data };
-                    } else {
-                        throw new Error('Неверный формат файла');
-                    }
+                    if (data[firstKey] && data[firstKey].students !== undefined) allGroups = data;
+                    else if (data.students !== undefined) allGroups = { "Группа 1": data };
+                    else throw new Error();
                     saveAllGroups();
                     updateGroupSelect();
                     if (Object.keys(allGroups).length > 0) {
@@ -728,12 +627,8 @@ function importBackup() {
                         loadGroup(currentGroup);
                     }
                     alert(t('successBackupRestored', Object.keys(allGroups).length));
-                } else {
-                    throw new Error('Неверный формат');
-                }
-            } catch(e) {
-                alert(t('errorRestoreFailed'));
-            }
+                } else throw new Error();
+            } catch(e) { alert(t('errorRestoreFailed')); }
         };
         reader.readAsText(file);
     };
@@ -757,10 +652,7 @@ function resetAllData() {
 }
 
 function manualSave() {
-    if (!currentGroup) {
-        alert(t('alertNoGroup'));
-        return;
-    }
+    if (!currentGroup) { alert(t('alertNoGroup')); return; }
     saveCurrentGroup();
     alert(t('successDataSaved'));
 }
@@ -780,26 +672,23 @@ function getGradeLetter(score) {
 }
 
 function getGradePoint(letter) {
-    const points = { 'A':'4,0','A-':'3,67','B+':'3,33','B':'3,0','B-':'2,67','C+':'2,33','C':'2,0','C-':'1,67','D+':'1,33','D':'1,0','F':'0' };
+    const points = {
+        'A':'4,0','A-':'3,67','B+':'3,33','B':'3,0','B-':'2,67',
+        'C+':'2,33','C':'2,0','C-':'1,67','D+':'1,33','D':'1,0','F':'0'
+    };
     return points[letter] || '0';
 }
 
 function loadStudentsFromBrowser(event) {
     const file = event.target.files[0];
     if (!file) return;
-    if (!currentGroup) {
-        alert(t('alertNoGroup'));
-        event.target.value = '';
-        return;
-    }
+    if (!currentGroup) { alert(t('alertNoGroup')); event.target.value = ''; return; }
     const reader = new FileReader();
     reader.onload = function(e) {
         const newStudents = e.target.result.split(/\r?\n/).map(s => s.trim()).filter(s => s.length > 0);
-        if (students.length > 0 && newStudents.length > 0) {
-            if (!confirm(t('confirmOverwriteStudents', currentGroup, students.length))) {
-                event.target.value = '';
-                return;
-            }
+        if (students.length > 0 && newStudents.length > 0 && !confirm(t('confirmOverwriteStudents', currentGroup, students.length))) {
+            event.target.value = '';
+            return;
         }
         students = newStudents;
         event.target.value = '';
@@ -820,6 +709,7 @@ function initApp() {
     if (val > 20) val = 20;
     activeROCount = val;
     document.getElementById('roCount').value = activeROCount;
+
     students.forEach((_, sIdx) => {
         if (!gradesData[sIdx]) gradesData[sIdx] = {};
         for (let r = 1; r <= activeROCount; r++) {
@@ -827,9 +717,7 @@ function initApp() {
             if (!gradesCountConfig[r]) gradesCountConfig[r] = 3;
             if (!columnNames[r]) {
                 columnNames[r] = {};
-                for (let c = 1; c <= gradesCountConfig[r]; c++) {
-                    columnNames[r][c] = t('columnDefault', c);
-                }
+                for (let c = 1; c <= gradesCountConfig[r]; c++) columnNames[r][c] = t('columnDefault', c);
             }
         }
     });
@@ -841,11 +729,9 @@ function initApp() {
 function renderTabsHeader() {
     let html = '';
     for (let r = 1; r <= activeROCount; r++) {
-        let isActive = (activeTab === r) ? 'active' : '';
-        html += `<button class="tab-btn ${isActive}" onclick="switchTab(${r})">РО-${r}</button>`;
+        html += `<button class="tab-btn ${activeTab === r ? 'active' : ''}" onclick="switchTab(${r})">РО-${r}</button>`;
     }
-    let isFinalActive = (activeTab === 'final') ? 'active' : '';
-    html += `<button class="tab-btn final-tab ${isFinalActive}" onclick="switchTab('final')">${t('finalTab')}</button>`;
+    html += `<button class="tab-btn final-tab ${activeTab === 'final' ? 'active' : ''}" onclick="switchTab('final')">${t('finalTab')}</button>`;
     document.getElementById('tabsHeader').innerHTML = html;
 }
 
@@ -859,31 +745,25 @@ function switchTab(tabId) {
 }
 
 function openColumnNamesModal(roIndex) {
-    let colCount = gradesCountConfig[roIndex];
-    let modalHtml = `<div id="columnNamesModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>✏️ ${t('editColumnNamesBtn')} РО-${roIndex}</h3><span class="close" onclick="closeModal()">&times;</span></div><div class="column-names-list">`;
+    const colCount = gradesCountConfig[roIndex];
+    let modalHtml = `<div id="columnNamesModal" class="modal" style="display:block;"><div class="modal-content"><div class="modal-header"><h3>✏️ ${t('editColumnNamesBtn')} РО-${roIndex}</h3><span class="close" onclick="closeModal()">&times;</span></div><div class="modal-body column-names-list">`;
     for (let c = 1; c <= colCount; c++) {
-        let currentName = columnNames[roIndex][c] || t('columnDefault', c);
-        modalHtml += `<div class="column-name-item"><label>Колонка ${c}:</label><input type="text" id="colName_${roIndex}_${c}" value="${currentName.replace(/"/g, '&quot;')}" placeholder="Например: 12.03 или Контрольная"></div>`;
+        const currentName = columnNames[roIndex][c] || t('columnDefault', c);
+        modalHtml += `<div class="column-name-item"><label>Колонка ${c}:</label><input type="text" id="colName_${roIndex}_${c}" value="${currentName.replace(/"/g, '&quot;')}" placeholder="Например: 12.03"></div>`;
     }
-    modalHtml += `</div><div class="modal-footer"><button onclick="saveColumnNames(${roIndex})" class="excel-btn">${t('saveColumnNamesBtn')}</button><button onclick="closeModal()" style="background:#95a5a6;">${t('cancelBtn')}</button></div></div></div>`;
-    let oldModal = document.getElementById('columnNamesModal');
+    modalHtml += `</div><div class="modal-footer"><button onclick="saveColumnNames(${roIndex})" class="excel-btn">${t('saveColumnNamesBtn')}</button><button onclick="closeModal()">${t('cancelBtn')}</button></div></div></div>`;
+    const oldModal = document.getElementById('columnNamesModal');
     if (oldModal) oldModal.remove();
     document.body.insertAdjacentHTML('beforeend', modalHtml);
-    document.getElementById('columnNamesModal').style.display = 'block';
 }
 
-function closeModal() {
-    let modal = document.getElementById('columnNamesModal');
-    if (modal) modal.remove();
-}
+function closeModal() { const modal = document.getElementById('columnNamesModal'); if (modal) modal.remove(); }
 
 function saveColumnNames(roIndex) {
-    let colCount = gradesCountConfig[roIndex];
+    const colCount = gradesCountConfig[roIndex];
     for (let c = 1; c <= colCount; c++) {
-        let input = document.getElementById(`colName_${roIndex}_${c}`);
-        if (input && input.value.trim()) {
-            columnNames[roIndex][c] = input.value.trim();
-        }
+        const input = document.getElementById(`colName_${roIndex}_${c}`);
+        if (input && input.value.trim()) columnNames[roIndex][c] = input.value.trim();
     }
     closeModal();
     renderTabsContent();
@@ -891,115 +771,126 @@ function saveColumnNames(roIndex) {
     alert(t('successColumnNamesSaved'));
 }
 
+function filterStudents(query) {
+    const rows = document.querySelectorAll('#tabsContent tbody tr');
+    const lowerQuery = query.toLowerCase().trim();
+    rows.forEach(row => {
+        const nameCell = row.querySelector('.name-col');
+        if (nameCell) row.style.display = nameCell.textContent.toLowerCase().includes(lowerQuery) ? '' : 'none';
+    });
+}
+
 function renderTabsContent() {
-    let contentContainer = document.getElementById('tabsContent');
+    const contentContainer = document.getElementById('tabsContent');
     contentContainer.innerHTML = '';
+
     if (!currentGroup) {
-        contentContainer.innerHTML = `<div class="empty-state"><h3>${t('createFirstGroup')}</h3><p>${t('createFirstGroupDesc')}</p><button onclick="openGroupModal()" style="margin-top:15px;background:#3498db;">${t('createGroupBtn')}</button></div>`;
+        contentContainer.innerHTML = `<div class="empty-state"><h3>${t('createFirstGroup')}</h3><p>${t('createFirstGroupDesc')}</p><button onclick="openGroupModal()">${t('createGroupBtn')}</button></div>`;
         return;
     }
     if (students.length === 0) {
-        contentContainer.innerHTML = `<div class="empty-state"><h3>${t('noStudents', currentGroup)}</h3><p>${t('noStudentsDesc')}</p><button onclick="document.getElementById('txtFileInput').click()" style="margin-top:15px;">📁 ${t('loadListBtn')}</button><button onclick="openAddStudentModal()" style="margin-top:15px;margin-left:10px;background:#9b59b6;">${t('addStudentBtn')}</button></div>`;
+        contentContainer.innerHTML = `<div class="empty-state"><h3>${t('noStudents', currentGroup)}</h3><p>${t('noStudentsDesc')}</p><div class="empty-state-actions"><button onclick="document.getElementById('txtFileInput').click()">📁 ${t('loadListBtn')}</button><button onclick="openAddStudentModal()">➕ ${t('addStudentBtn')}</button></div></div>`;
         return;
     }
+
     for (let r = 1; r <= activeROCount; r++) {
-        let isActive = (activeTab === r) ? 'active' : '';
-        let colCount = gradesCountConfig[r] || 3;
+        const isActive = (activeTab === r) ? 'active' : '';
+        const colCount = gradesCountConfig[r] || 3;
+
         let paneHtml = `<div class="tab-pane ${isActive}" id="pane_${r}">
             <div class="ro-controls">
-                <div>
-                    <label>📊 Оценок (колонок) в РО-${r}: </label>
-                    <input type="number" min="1" max="50" value="${colCount}" onchange="changeGradesCount(${r}, this.value)">
-                </div>
-                <div>
+                <div class="ro-controls-row">
+                    <input type="text" id="studentSearch_${r}" placeholder="${t('searchPlaceholder')}" oninput="filterStudents(this.value)" class="search-input">
+                    <label>${t('gradesCountLabel', r)}</label>
+                    <input type="number" min="1" max="50" value="${colCount}" onchange="changeGradesCount(${r}, this.value)" class="count-input">
                     <button class="edit-names-btn" onclick="openColumnNamesModal(${r})">✏️ ${t('editColumnNamesBtn')}</button>
                 </div>
             </div>
             <div class="table-container">
                 <table>
                     <thead>
-                        <tr>
-                            <th>№</th>
-                            <th>ФИО Студента</th>
-                            <th>${t('actions')}</th>`;
-        for(let c = 1; c <= colCount; c++) {
-            let colName = (columnNames[r] && columnNames[r][c]) || t('columnDefault', c);
+                        <tr><th>№</th><th>ФИО Студента</th><th>${t('actions')}</th>`;
+        for (let c = 1; c <= colCount; c++) {
+            const colName = (columnNames[r] && columnNames[r][c]) || t('columnDefault', c);
             paneHtml += `<th>${escapeHtml(colName)}</th>`;
         }
-        paneHtml += `<th>${t('avgRO', r)}</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+        paneHtml += `<th>${t('avgRO', r)}</th></tr></thead><tbody>`;
         
-        for(let sIdx = 0; sIdx < students.length; sIdx++) {
-            let student = students[sIdx];
+        for (let sIdx = 0; sIdx < students.length; sIdx++) {
+            const student = students[sIdx];
             paneHtml += `<tr>
-                            <td>${sIdx + 1}</td>
-                            <td class="name-col">${escapeHtml(student)}<\/td>
-                            <td style="padding: 4px;">
-                                <button onclick="openEditStudentModal(${sIdx})" style="background:#3498db;padding:4px 8px;font-size:11px;">✏️</button>
-                            <\/td>`;
-            for(let c = 1; c <= colCount; c++) {
-                let val = (gradesData[sIdx] && gradesData[sIdx][r] && gradesData[sIdx][r][c] !== undefined) ? gradesData[sIdx][r][c] : '';
-                paneHtml += `<td>
-                                <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">
-                                    <input type="number" min="0" max="100" class="score-input" 
-                                           value="${val === '' ? '' : val}" 
-                                           oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value)" 
-                                           style="flex:1;min-width:50px;" 
-                                           placeholder="-">
-                                    <button type="button" class="voice-input-btn" 
-                                            onclick="openVoiceInput(${r}, ${c}, ${sIdx})" 
-                                            style="background:#9b59b6;padding:6px 8px;font-size:11px;">🎤</button>
-                                </div>
-                             <\/td>`;
+                <td>${sIdx + 1}</td>
+                <td class="name-col">${escapeHtml(student)}</td>
+                <td class="action-cell"><button onclick="openEditStudentModal(${sIdx})">✏️</button></td>`;
+            for (let c = 1; c <= colCount; c++) {
+                const val = (gradesData[sIdx] && gradesData[sIdx][r] && gradesData[sIdx][r][c] !== undefined) ? gradesData[sIdx][r][c] : '';
+                paneHtml += `<td><div class="grade-cell"><input type="text" class="score-input" data-s="${sIdx}" data-r="${r}" data-c="${c}" value="${val === '' ? '' : val}" oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value, this)" onkeydown="handleGradeKeydown(event, ${sIdx}, ${r}, ${c}, ${colCount})" placeholder="0-100"><button type="button" class="voice-input-btn" onclick="openVoiceInput(${r}, ${c}, ${sIdx})">🎤</button></div></td>`;
             }
-            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}<\/td>
-                        </tr>`;
+            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}</td></tr>`;
         }
-        paneHtml += `</tbody>
-                </table>
-            </div>
-        </div>`;
+        paneHtml += `</tbody></table></div></div>`;
         contentContainer.innerHTML += paneHtml;
     }
-    let isFinalActive = (activeTab === 'final') ? 'active' : '';
-    contentContainer.innerHTML += `<div class="tab-pane ${isFinalActive}" id="pane_final">
-        <div class="table-container">
-            <table id="finalTable"></div>
-    </div>`;
+
+    const isFinalActive = (activeTab === 'final') ? 'active' : '';
+    contentContainer.innerHTML += `<div class="tab-pane ${isFinalActive}" id="pane_final"><div class="table-container"><table id="finalTable"></table></div></div>`;
     if (activeTab === 'final') renderFinalTable();
 }
 
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+
+function handleGradeKeydown(event, sIdx, r, c, maxCols) {
+    if (event.key === 'Enter' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        const nextS = sIdx + 1;
+        if (nextS < students.length) {
+            const nextInput = document.querySelector(`input.score-input[data-s="${nextS}"][data-r="${r}"][data-c="${c}"]`);
+            if (nextInput) { nextInput.focus(); nextInput.select(); }
+        }
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        const prevS = sIdx - 1;
+        if (prevS >= 0) {
+            const prevInput = document.querySelector(`input.score-input[data-s="${prevS}"][data-r="${r}"][data-c="${c}"]`);
+            if (prevInput) { prevInput.focus(); prevInput.select(); }
+        }
+    } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        if (c < maxCols) {
+            const nextInput = document.querySelector(`input.score-input[data-s="${sIdx}"][data-r="${r}"][data-c="${c+1}"]`);
+            if (nextInput) { nextInput.focus(); nextInput.select(); }
+        }
+    } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        if (c > 1) {
+            const prevInput = document.querySelector(`input.score-input[data-s="${sIdx}"][data-r="${r}"][data-c="${c-1}"]`);
+            if (prevInput) { prevInput.focus(); prevInput.select(); }
+        }
+    }
 }
 
 function changeGradesCount(roIndex, newCount) {
     let count = parseInt(newCount) || 1;
     if (count < 1) count = 1;
     if (count > 50) count = 50;
-    let oldCount = gradesCountConfig[roIndex] || 3;
+    const oldCount = gradesCountConfig[roIndex] || 3;
     if (!columnNames[roIndex]) columnNames[roIndex] = {};
     if (count > oldCount) {
-        for (let c = oldCount + 1; c <= count; c++) {
-            columnNames[roIndex][c] = t('columnDefault', c);
-        }
+        for (let c = oldCount + 1; c <= count; c++) columnNames[roIndex][c] = t('columnDefault', c);
     }
     gradesCountConfig[roIndex] = count;
     renderTabsContent();
     saveCurrentGroup();
 }
 
-function saveGrade(sIdx, roIndex, colIndex, value) {
+function saveGrade(sIdx, roIndex, colIndex, value, inputElement) {
     let val;
     if (value === '' || value === null) {
         val = undefined;
     } else {
         val = parseInt(value);
     }
+    
     if (!isNaN(val) && val >= 0 && val <= 100) {
         if (!gradesData[sIdx]) gradesData[sIdx] = {};
         if (!gradesData[sIdx][roIndex]) gradesData[sIdx][roIndex] = {};
@@ -1008,62 +899,48 @@ function saveGrade(sIdx, roIndex, colIndex, value) {
         if (gradesData[sIdx] && gradesData[sIdx][roIndex]) {
             delete gradesData[sIdx][roIndex][colIndex];
         }
-    } else if (isNaN(val) || val < 0 || val > 100) {
+    } else {
         alert(t('errorInvalidScore'));
-        let oldVal = (gradesData[sIdx] && gradesData[sIdx][roIndex] && gradesData[sIdx][roIndex][colIndex] !== undefined) ? gradesData[sIdx][roIndex][colIndex] : '';
-        let input = event.target;
-        input.value = oldVal;
+        const oldVal = (gradesData[sIdx] && gradesData[sIdx][roIndex] && gradesData[sIdx][roIndex][colIndex] !== undefined) ? gradesData[sIdx][roIndex][colIndex] : '';
+        if (inputElement) inputElement.value = oldVal;
         return;
     }
     const avgElement = document.getElementById(`avg_${sIdx}_${roIndex}`);
-    if (avgElement) {
-        avgElement.innerText = calcROAvg(sIdx, roIndex);
-    }
+    if (avgElement) avgElement.innerText = calcROAvg(sIdx, roIndex);
     saveCurrentGroup();
 }
 
 function calcROAvg(sIdx, roIndex) {
-    let sum = 0;
-    let count = 0;
-    let targetCols = gradesCountConfig[roIndex] || 3;
+    let sum = 0, count = 0;
+    const targetCols = gradesCountConfig[roIndex] || 3;
     for (let c = 1; c <= targetCols; c++) {
-        let value = gradesData[sIdx] && gradesData[sIdx][roIndex] && gradesData[sIdx][roIndex][c];
+        const value = gradesData[sIdx] && gradesData[sIdx][roIndex] && gradesData[sIdx][roIndex][c];
         if (value !== undefined && value !== null && value !== '') {
             sum += value;
             count++;
         }
     }
-    if (count > 0) {
-        return Math.round(sum / count);
-    }
-    return '';
+    return count > 0 ? Math.round(sum / count) : '';
 }
 
 function renderFinalTable() {
-    let table = document.getElementById('finalTable');
+    const table = document.getElementById('finalTable');
     if (!table) return;
     if (students.length === 0) {
-        table.innerHTML = '<tr><td style="text-align:center; padding:40px;">' + t('noData') + '<\/td><\/tr>';
+        table.innerHTML = `<tr><td style="text-align:center; padding:40px;">${t('noData')}</td></tr>`;
         return;
     }
-    let html = `<thead>
-        <tr>
-            <th>№</th>
-            <th>ФИО Студента</th>`;
-    for(let r=1; r<=activeROCount; r++) html += `<th>Итог РО-${r}</th>`;
-    html += `<th>${t('finalGrade')}</th><th>${t('letter')}</th><th>${t('gpa')}</th>
-        </tr>
-    </thead>
-    <tbody>`;
+    let html = `<thead><tr><th>№</th><th>ФИО Студента</th>`;
+    for (let r = 1; r <= activeROCount; r++) html += `<th>Итог РО-${r}</th>`;
+    html += `<th>${t('finalGrade')}</th><th>${t('letter')}</th><th>${t('gpa')}</th></tr></thead><tbody>`;
+
     students.forEach((student, sIdx) => {
-        let roValues = [];
+        const roValues = [];
         let allROHaveGrades = true;
-        html += `<tr>
-            <td>${sIdx + 1}</td>
-            <td class="name-col">${escapeHtml(student)}<\/td>`;
-        for(let r=1; r<=activeROCount; r++) {
-            let avg = calcROAvg(sIdx, r);
-            html += `<td class="result">${avg}<\/td>`;
+        html += `<tr><td>${sIdx + 1}</td><td class="name-col">${escapeHtml(student)}</td>`;
+        for (let r = 1; r <= activeROCount; r++) {
+            const avg = calcROAvg(sIdx, r);
+            html += `<td class="result">${avg}</td>`;
             if (avg === '' || avg === null) {
                 allROHaveGrades = false;
             } else {
@@ -1071,16 +948,16 @@ function renderFinalTable() {
             }
         }
         if (allROHaveGrades && roValues.length === activeROCount && activeROCount > 0) {
-            let semAvg = Math.round(roValues.reduce((a, b) => a + b, 0) / activeROCount);
-            let letter = getGradeLetter(semAvg);
-            let gpa = getGradePoint(letter);
-            html += `<td class="result avg">${semAvg}<\/td>
-                     <td class="result letter">${letter}<\/td>
-                     <td class="result gpa">${gpa}<\/td>`;
+            const semAvg = Math.round(roValues.reduce((a, b) => a + b, 0) / activeROCount);
+            const letter = getGradeLetter(semAvg);
+            const gpa = getGradePoint(letter);
+            html += `<td class="result avg">${semAvg}</td>
+                     <td class="result letter">${letter}</td>
+                     <td class="result gpa">${gpa}</td>`;
         } else {
-            html += `<td class="result avg" style="color:#999;">—<\/td>
-                     <td class="result letter" style="color:#999;">—<\/td>
-                     <td class="result gpa" style="color:#999;">—<\/td>`;
+            html += `<td class="result avg" style="color:#999;">—</td>
+                     <td class="result letter" style="color:#999;">—</td>
+                     <td class="result gpa" style="color:#999;">—</td>`;
         }
         html += `</tr>`;
     });
@@ -1089,96 +966,63 @@ function renderFinalTable() {
 }
 
 async function exportToExcel() {
-    if (students.length === 0) {
-        alert(t('alertNoData'));
-        return;
-    }
-    const exportBtn = document.querySelector('.excel-btn');
-    const originalText = exportBtn.innerHTML;
-    exportBtn.innerHTML = '⏳ Создание файла...';
-    exportBtn.disabled = true;
+    if (students.length === 0) { alert(t('alertNoData')); return; }
+    const btn = document.querySelector('.excel-btn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '⏳ Создание...';
+    btn.disabled = true;
     try {
-        if (typeof XLSX === 'undefined') {
-            await loadSheetJSLibrary();
-        }
+        if (typeof XLSX === 'undefined') await loadSheetJSLibrary();
         renderFinalTable();
-        const wsData = [];
-        const headers = ['№', 'ФИО Студента'];
-        for (let r = 1; r <= activeROCount; r++) headers.push(`Итог РО-${r}`);
-        headers.push(t('finalGrade'), t('letter'), t('gpa'));
-        wsData.push(headers);
-        const tableRows = document.querySelectorAll('#finalTable tbody tr');
-        tableRows.forEach(tr => {
-            const rowData = [];
-            const cells = tr.querySelectorAll('td');
-            cells.forEach(td => rowData.push(td.innerText));
-            wsData.push(rowData);
+        const data = [['№', 'ФИО Студента', ...Array(activeROCount).fill().map((_,i)=>`Итог РО-${i+1}`), t('finalGrade'), t('letter'), t('gpa')]];
+        document.querySelectorAll('#finalTable tbody tr').forEach(tr => {
+            const row = [];
+            tr.querySelectorAll('td').forEach(td => row.push(td.innerText));
+            data.push(row);
         });
         const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const ws = XLSX.utils.aoa_to_sheet(data);
         ws['!cols'] = [{wch:5},{wch:30},...Array(activeROCount).fill({wch:12}),{wch:15},{wch:8},{wch:8}];
-        XLSX.utils.book_append_sheet(wb, ws, `Итоговая ведомость_${currentGroup}`);
+        XLSX.utils.book_append_sheet(wb, ws, `Ведомость_${currentGroup}`);
         const now = new Date();
-        const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-        const defaultName = `${currentGroup}_ведомость_РО_${dateStr}`;
-        let filename = prompt("📊 Введите название файла:", defaultName);
-        if (!filename) return;
-        filename = filename.replace(/[\\/:*?"<>|]/g, '_').trim();
-        if (filename.length === 0) filename = defaultName;
-        XLSX.writeFile(wb, `${filename}.xlsx`);
-        alert(t('successExcelCreated', filename));
-    } catch (error) {
-        console.error('Ошибка экспорта:', error);
-        alert(t('errorExcelFailed'));
-    } finally {
-        exportBtn.innerHTML = originalText;
-        exportBtn.disabled = false;
-    }
+        const def = `${currentGroup}_ведомость_${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
+        let fn = prompt("📊 Название файла:", def);
+        if (!fn) return;
+        fn = fn.replace(/[\\/:*?"<>|]/g, '_').trim() || def;
+        XLSX.writeFile(wb, `${fn}.xlsx`);
+        alert(t('successExcelCreated', fn));
+    } catch(e) { alert(t('errorExcelFailed')); }
+    finally { btn.innerHTML = orig; btn.disabled = false; }
 }
 
 function loadSheetJSLibrary() {
-    return new Promise((resolve, reject) => {
-        if (typeof XLSX !== 'undefined') {
-            resolve();
-            return;
+    return new Promise((resolve) => {
+        if (typeof XLSX !== 'undefined') resolve();
+        else {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js';
+            script.onload = () => resolve();
+            document.head.appendChild(script);
         }
-        const script = document.createElement('script');
-        script.src = 'https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js';
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Не удалось загрузить библиотеку Excel'));
-        document.head.appendChild(script);
     });
 }
 
 function openAddStudentModal() {
-    if (!currentGroup) {
-        alert(t('alertNoGroup'));
-        return;
-    }
+    if (!currentGroup) { alert(t('alertNoGroup')); return; }
     document.getElementById('newStudentName').value = '';
     document.getElementById('addStudentModal').style.display = 'block';
 }
 
-function closeAddStudentModal() {
-    document.getElementById('addStudentModal').style.display = 'none';
-}
+function closeAddStudentModal() { document.getElementById('addStudentModal').style.display = 'none'; }
 
 function addStudent() {
     const name = document.getElementById('newStudentName').value.trim();
-    if (!name) {
-        alert(t('errorEnterStudentName'));
-        return;
-    }
-    if (students.includes(name)) {
-        alert(t('errorStudentExists'));
-        return;
-    }
+    if (!name) { alert(t('errorEnterStudentName')); return; }
+    if (students.includes(name)) { alert(t('errorStudentExists')); return; }
     students.push(name);
-    const newIndex = students.length - 1;
-    gradesData[newIndex] = {};
-    for (let r = 1; r <= activeROCount; r++) {
-        gradesData[newIndex][r] = {};
-    }
+    const idx = students.length - 1;
+    gradesData[idx] = {};
+    for (let r = 1; r <= activeROCount; r++) gradesData[idx][r] = {};
     closeAddStudentModal();
     initApp();
     saveCurrentGroup();
@@ -1186,52 +1030,42 @@ function addStudent() {
     alert(t('successStudentAdded', name, currentGroup));
 }
 
-function openEditStudentModal(index) {
-    currentEditIndex = index;
-    document.getElementById('editStudentName').value = students[index];
+function openEditStudentModal(idx) {
+    currentEditIndex = idx;
+    document.getElementById('editStudentName').value = students[idx];
     document.getElementById('editStudentModal').style.display = 'block';
 }
 
-function closeEditStudentModal() {
-    document.getElementById('editStudentModal').style.display = 'none';
-    currentEditIndex = -1;
-}
+function closeEditStudentModal() { document.getElementById('editStudentModal').style.display = 'none'; currentEditIndex = -1; }
 
 function updateStudent() {
-    const newName = document.getElementById('editStudentName').value.trim();
-    if (!newName) {
-        alert(t('errorEnterStudentName'));
-        return;
-    }
-    if (newName !== students[currentEditIndex] && students.includes(newName)) {
-        alert(t('errorStudentExists'));
-        return;
-    }
-    const oldName = students[currentEditIndex];
-    students[currentEditIndex] = newName;
+    const nn = document.getElementById('editStudentName').value.trim();
+    if (!nn) { alert(t('errorEnterStudentName')); return; }
+    if (nn !== students[currentEditIndex] && students.includes(nn)) { alert(t('errorStudentExists')); return; }
+    const old = students[currentEditIndex];
+    students[currentEditIndex] = nn;
     closeEditStudentModal();
     initApp();
     saveCurrentGroup();
-    alert(t('successStudentUpdated', oldName, newName));
+    alert(t('successStudentUpdated', old, nn));
 }
 
 function deleteStudent() {
     if (!confirm(t('confirmDeleteStudent', students[currentEditIndex]))) return;
     students.splice(currentEditIndex, 1);
-    const newGradesData = {};
+    const nd = {};
     for (let i = 0; i < students.length; i++) {
-        const oldIndex = i < currentEditIndex ? i : i + 1;
-        newGradesData[i] = gradesData[oldIndex] || {};
+        const oi = i < currentEditIndex ? i : i + 1;
+        nd[i] = gradesData[oi] || {};
         for (let r = 1; r <= activeROCount; r++) {
-            if (!newGradesData[i][r]) newGradesData[i][r] = {};
-            for (let c = 1; c <= 50; c++) {
-                if (gradesData[oldIndex] && gradesData[oldIndex][r] && gradesData[oldIndex][r][c] !== undefined) {
-                    newGradesData[i][r][c] = gradesData[oldIndex][r][c];
-                }
+            if (!nd[i][r]) nd[i][r] = {};
+            const mc = gradesCountConfig[r] || 3;
+            for (let c = 1; c <= mc; c++) {
+                if (gradesData[oi] && gradesData[oi][r] && gradesData[oi][r][c] !== undefined) nd[i][r][c] = gradesData[oi][r][c];
             }
         }
     }
-    gradesData = newGradesData;
+    gradesData = nd;
     closeEditStudentModal();
     initApp();
     saveCurrentGroup();
@@ -1240,103 +1074,145 @@ function deleteStudent() {
 }
 
 function updateInfoBar() {
-    const infoBar = document.getElementById('infoBar');
-    const studentCount = document.getElementById('studentCount');
-    if (studentCount && currentGroup && students.length > 0) {
-        studentCount.innerHTML = `🎓 Группа: ${currentGroup} | 👨‍🎓 Студентов: ${students.length} | <button onclick="openAddStudentModal()" style="background:#9b59b6;padding:2px 8px;font-size:11px;margin-left:5px;">➕ ${t('addStudentBtn')}</button>`;
-        infoBar.style.display = 'flex';
+    const ib = document.getElementById('infoBar');
+    const sc = document.getElementById('studentCount');
+    if (!sc) return;
+    if (currentGroup && students.length > 0) {
+        sc.innerHTML = `🎓 Группа: <strong>${currentGroup}</strong> | 👨‍🎓 Студентов: <strong>${students.length}</strong>`;
+        ib.style.display = 'flex';
     } else if (currentGroup && students.length === 0) {
-        studentCount.innerHTML = `🎓 Группа: ${currentGroup} | 👨‍🎓 Студентов: 0`;
-        infoBar.style.display = 'flex';
+        sc.innerHTML = `🎓 Группа: <strong>${currentGroup}</strong> | 👨‍🎓 Студентов: 0`;
+        ib.style.display = 'flex';
     } else {
-        infoBar.style.display = 'none';
+        ib.style.display = 'none';
     }
 }
 
-// ============ ИНСТРУКЦИЯ ============
 function renderInstructionsContent() {
-    const content = document.getElementById('instructionsContent');
-    if (!content) return;
+    const c = document.getElementById('instructionsContent');
+    if (!c) return;
     
     if (currentLang === 'ru') {
-        content.innerHTML = `
+        c.innerHTML = `
             <div class="instruction-section">
                 <h4>📁 1. Управление группами</h4>
                 <ul>
-                    <li><strong>Создание группы:</strong> Нажмите "➕ Новая", введите название группы (например, "ИС-21")</li>
-                    <li><strong>Переключение:</strong> Выберите группу из выпадающего списка</li>
-                    <li><strong>Переименование:</strong> Нажмите "✏️" рядом с группой</li>
-                    <li><strong>Удаление:</strong> Нажмите "🗑️" - все данные группы будут удалены</li>
+                    <li><strong>Создание группы:</strong> Нажмите "➕ Новая", введите название группы (например, "ИС-21", "ПД-11")</li>
+                    <li><strong>Переключение между группами:</strong> Выберите нужную группу из выпадающего списка</li>
+                    <li><strong>Переименование группы:</strong> Нажмите "✏️" рядом с названием группы</li>
+                    <li><strong>Удаление группы:</strong> Нажмите "🗑️" - все данные группы будут удалены безвозвратно</li>
                 </ul>
             </div>
+            
             <div class="instruction-section">
                 <h4>📋 2. Работа со студентами</h4>
                 <ul>
-                    <li><strong>Загрузка списка:</strong> Нажмите "Загрузить список (.txt)" - файл с ФИО построчно</li>
-                    <li><strong>Добавление:</strong> Нажмите "➕ Добавить студента"</li>
-                    <li><strong>Редактирование:</strong> Нажмите "✏️" рядом с ФИО</li>
-                    <li><strong>Удаление:</strong> В режиме редактирования нажмите "Удалить"</li>
+                    <li><strong>Загрузка списка из файла:</strong> Нажмите "📁 Загрузить список" - файл должен быть в формате .txt, каждое ФИО на новой строке</li>
+                    <li><strong>Добавление студента вручную:</strong> Нажмите "➕ Добавить студента", введите ФИО в появившемся окне</li>
+                    <li><strong>Редактирование ФИО:</strong> Нажмите "✏️" в строке студента, измените имя и нажмите "Сохранить"</li>
+                    <li><strong>Удаление студента:</strong> В режиме редактирования нажмите "🗑️ Удалить" - все оценки студента будут удалены</li>
                 </ul>
             </div>
+            
             <div class="instruction-section">
                 <h4>🎤 3. Голосовой ввод оценок</h4>
                 <ul>
-                    <li><strong>Быстрый ввод:</strong> Нажмите "🎤 Быстрый ввод" и скажите: "Иванов 85"</li>
-                    <li><strong>В ячейке:</strong> Нажмите кнопку 🎤 в любой ячейке оценки</li>
-                    <li><strong>Массовый ввод:</strong> Скажите "всем 75" для всей группы</li>
-                    <li><strong>Поддерживаются:</strong> числа и слова (пять, десять, двадцать)</li>
+                    <li><strong>Быстрый ввод:</strong> Нажмите "🎤 Быстрый ввод" и скажите, например: "Иванов 85"</li>
+                    <li><strong>Ввод в конкретной ячейке:</strong> Нажмите кнопку 🎤 в любой ячейке и скажите число</li>
+                    <li><strong>Массовый ввод:</strong> Скажите "всем 75" - оценка поставится всем студентам в текущем РО</li>
+                    <li><strong>Поддерживаемые форматы:</strong> числа (85), слова (восемьдесят пять), или "всем 75"</li>
                 </ul>
             </div>
+            
             <div class="instruction-section">
-                <h4>📊 4. Работа с рубежными оценками</h4>
+                <h4>⌨️ 4. Навигация с клавиатуры</h4>
                 <ul>
-                    <li><strong>Ввод оценок:</strong> Вводите оценки от 0 до 100 в ячейки</li>
-                    <li><strong>Количество РО:</strong> Измените число в поле "РО в семестре" (до 20)</li>
-                    <li><strong>Колонки:</strong> Меняйте количество колонок в каждом РО</li>
-                    <li><strong>Названия колонок:</strong> Редактируйте названия колонок (например, даты или темы)</li>
+                    <li><strong>Enter / ↓</strong> - переход к следующему студенту в той же колонке</li>
+                    <li><strong>↑</strong> - переход к предыдущему студенту</li>
+                    <li><strong>→</strong> - переход к следующей колонке</li>
+                    <li><strong>←</strong> - переход к предыдущей колонке</li>
                 </ul>
             </div>
+            
             <div class="instruction-section">
-                <h4>🏆 5. Итоги и успеваемость</h4>
+                <h4>📊 5. Работа с рубежными оценками (РО)</h4>
                 <ul>
-                    <li><strong>Итоговый балл:</strong> Среднее арифметическое всех РО (только если все РО заполнены)</li>
-                    <li><strong>Буквенная оценка:</strong> A (95-100) → F (менее 50)</li>
-                    <li><strong>GPA:</strong> Числовой эквивалент от 4,0 до 0</li>
+                    <li><strong>Ввод оценок:</strong> Вводите оценки от 0 до 100 в ячейки таблицы</li>
+                    <li><strong>Пустые ячейки:</strong> Если студент отсутствовал, оставьте поле пустым - оно не учитывается в расчете</li>
+                    <li><strong>Количество колонок в РО:</strong> Измените число в поле "Оценок в РО-X" - колонки добавятся или удалятся автоматически</li>
+                    <li><strong>Названия колонок:</strong> Нажмите "✏️ Названия колонок" чтобы заменить "Оц.1" на реальные даты (например, "12.03", "Контрольная")</li>
+                    <li><strong>Количество РО в семестре:</strong> Измените число в поле "РО в семестре" (максимум 20)</li>
                 </ul>
             </div>
+            
             <div class="instruction-section">
-                <h4>📈 6. Шкала оценок</h4>
-                <table style="width:100%; font-size:11px;">
-                    <thead><tr><th>Баллы</th><th>Буква</th><th>GPA</th><th>Описание</th></tr></thead>
+                <h4>🏆 6. Итоги и успеваемость</h4>
+                <ul>
+                    <li><strong>Средний балл РО:</strong> Рассчитывается автоматически как среднее арифметическое всех заполненных колонок в этом РО</li>
+                    <li><strong>Итоговый балл за семестр:</strong> Рассчитывается как среднее арифметическое всех РО (только если все РО имеют хотя бы одну оценку)</li>
+                    <li><strong>Буквенная оценка:</strong> Автоматически переводится по шкале (см. таблицу ниже)</li>
+                    <li><strong>GPA:</strong> Числовой эквивалент буквенной оценки (от 4,0 до 0)</li>
+                </ul>
+            </div>
+            
+            <div class="instruction-section">
+                <h4>📈 7. Шкала оценок</h4>
+                <table class="grades-table">
+                    <thead>
+                        <tr>
+                            <th>Баллы</th>
+                            <th>Буква</th>
+                            <th>GPA</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
                     <tbody>
-                        <tr><td>95-100</td><td>A</td><td>4,0</td><td>Отлично</td></tr>
-                        <tr><td>90-94</td><td>A-</td><td>3,67</td><td>Очень хорошо</td></tr>
-                        <tr><td>85-89</td><td>B+</td><td>3,33</td><td>Хорошо+</td></tr>
-                        <tr><td>80-84</td><td>B</td><td>3,0</td><td>Хорошо</td></tr>
-                        <tr><td>75-79</td><td>B-</td><td>2,67</td><td>Хорошо-</td></tr>
-                        <tr><td>70-74</td><td>C+</td><td>2,33</td><td>Удовлетворительно+</td></tr>
-                        <tr><td>65-69</td><td>C</td><td>2,0</td><td>Удовлетворительно</td></tr>
-                        <tr><td>60-64</td><td>C-</td><td>1,67</td><td>Удовлетворительно-</td></tr>
-                        <tr><td>55-59</td><td>D+</td><td>1,33</td><td>Слабо+</td></tr>
-                        <tr><td>50-54</td><td>D</td><td>1,0</td><td>Слабо</td></tr>
-                        <tr><td>0-49</td><td>F</td><td>0</td><td>Неудовлетворительно</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>95-100</strong></td><td class="grade-letter">A</td><td>4,0</td><td>Отлично</td></tr>
+                        <tr><td><strong>90-94</strong></td><td class="grade-letter">A-</td><td>3,67</td><td>Очень хорошо</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>85-89</strong></td><td class="grade-letter">B+</td><td>3,33</td><td>Хорошо+</td></tr>
+                        <tr><td><strong>80-84</strong></td><td class="grade-letter">B</td><td>3,0</td><td>Хорошо</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>75-79</strong></td><td class="grade-letter">B-</td><td>2,67</td><td>Хорошо-</td></tr>
+                        <tr><td><strong>70-74</strong></td><td class="grade-letter">C+</td><td>2,33</td><td>Удовлетворительно+</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>65-69</strong></td><td class="grade-letter">C</td><td>2,0</td><td>Удовлетворительно</td></tr>
+                        <tr><td><strong>60-64</strong></td><td class="grade-letter">C-</td><td>1,67</td><td>Удовлетворительно-</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>55-59</strong></td><td class="grade-letter">D+</td><td>1,33</td><td>Слабо+</td></tr>
+                        <tr><td><strong>50-54</strong></td><td class="grade-letter">D</td><td>1,0</td><td>Слабо</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>0-49</strong></td><td class="grade-letter">F</td><td>0</td><td>Неудовлетворительно</td></tr>
                     </tbody>
                 </table>
             </div>
+            
             <div class="instruction-section">
-                <h4>💾 7. Сохранение и бэкапы</h4>
+                <h4>💾 8. Сохранение и бэкапы</h4>
                 <ul>
-                    <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически</li>
-                    <li><strong>Бэкап:</strong> Сохраняет все группы в один файл</li>
-                    <li><strong>Восстановление:</strong> Загрузите ранее сохраненный файл</li>
+                    <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически в браузере</li>
+                    <li><strong>Ручное сохранение:</strong> Нажмите "💾 Сохранить" для гарантии</li>
+                    <li><strong>Создание бэкапа:</strong> Нажмите "📥 Бэкап" - сохранятся ВСЕ группы в один JSON файл</li>
+                    <li><strong>Восстановление из бэкапа:</strong> Нажмите "📂 Восстановить" и выберите ранее сохраненный файл</li>
+                    <li><strong>Сброс всех данных:</strong> Нажмите "🗑️ Сброс" - удаляет ВСЕ группы и оценки (осторожно!)</li>
                 </ul>
             </div>
+            
+            <div class="instruction-section">
+                <h4>🎨 9. Выбор дизайна</h4>
+                <ul>
+                    <li><strong>Windows 2000</strong> - Классический серый стиль</li>
+                    <li><strong>Windows XP</strong> - Синяя тема Luna</li>
+                    <li><strong>Windows Vista</strong> - Стеклянная тема Aero</li>
+                    <li><strong>Windows 7</strong> - Улучшенная Aero</li>
+                    <li><strong>Windows 8.1</strong> - Плоский дизайн Metro</li>
+                    <li><strong>Windows 10</strong> - Современный дизайн</li>
+                    <li><strong>Mac OS 9</strong> - Классический Platinum</li>
+                    <li><strong>Mac OS X</strong> - Аква со стеклянным эффектом</li>
+                </ul>
+            </div>
+            
             <div class="instruction-footer">
-                <button type="button" onclick="closeInstructions()" class="excel-btn">✅ Понятно, приступим!</button>
+                <button type="button" onclick="closeInstructions()" class="excel-btn">✅ Понятно, приступим к работе!</button>
             </div>
         `;
     } else {
-        content.innerHTML = `
+        c.innerHTML = `
             <div class="instruction-section">
                 <h4>📁 1. Топтарды басқару</h4>
                 <ul>
@@ -1346,68 +1222,98 @@ function renderInstructionsContent() {
                     <li><strong>Жою:</strong> "🗑️" батырмасын басыңыз - топтың барлық деректері жойылады</li>
                 </ul>
             </div>
+            
             <div class="instruction-section">
                 <h4>📋 2. Студенттермен жұмыс</h4>
                 <ul>
-                    <li><strong>Тізімді жүктеу:</strong> "Тізімді жүктеу" батырмасын басыңыз - файлда Т.А.Ә. әр жолда</li>
-                    <li><strong>Қосу:</strong> "➕ Студент қосу" батырмасын басыңыз</li>
-                    <li><strong>Өңдеу:</strong> Т.А.Ә. жанындағы "✏️" батырмасын басыңыз</li>
-                    <li><strong>Жою:</strong> Өңдеу режимінде "Жою" батырмасын басыңыз</li>
+                    <li><strong>Тізімді жүктеу:</strong> "📁 Тізімді жүктеу" (.txt файл, Т.А.Ә. әр жолда)</li>
+                    <li><strong>Студент қосу:</strong> "➕ Студент қосу" батырмасын басыңыз</li>
+                    <li><strong>Өңдеу:</strong> Студент жолындағы "✏️" батырмасын басыңыз</li>
+                    <li><strong>Жою:</strong> Өңдеу режимінде "🗑️ Жою" батырмасын басыңыз</li>
                 </ul>
             </div>
+            
             <div class="instruction-section">
                 <h4>🎤 3. Бағаларды дауыспен енгізу</h4>
                 <ul>
-                    <li><strong>Жылдам енгізу:</strong> "🎤 Жылдам енгізу" батырмасын басып, айтыңыз: "Иванов 85"</li>
-                    <li><strong>Ұяшықта:</strong> Кез келген баға ұяшығындағы 🎤 батырмасын басыңыз</li>
-                    <li><strong>Жаппай енгізу:</strong> Барлық топқа "барлығына 75" деп айтыңыз</li>
-                    <li><strong>Қолдау:</strong> сандар және сөздер (бес, он, жиырма)</li>
+                    <li><strong>Жылдам енгізу:</strong> "🎤 Жылдам енгізу" батырмасын басып айтыңыз: "Иванов 85"</li>
+                    <li><strong>Ұяшықта:</strong> 🎤 батырмасын басып, санды айтыңыз</li>
+                    <li><strong>Жаппай енгізу:</strong> "барлығына 75" деп айтыңыз</li>
                 </ul>
             </div>
+            
             <div class="instruction-section">
-                <h4>📊 4. Рубеждық бағалармен жұмыс</h4>
+                <h4>⌨️ 4. Пернетақта навигациясы</h4>
                 <ul>
-                    <li><strong>Баға енгізу:</strong> Ұяшықтарға 0-ден 100-ге дейінгі бағаларды енгізіңіз</li>
-                    <li><strong>РО саны:</strong> "Семестрдегі РО" өрісіндегі санды өзгертіңіз (20-ға дейін)</li>
-                    <li><strong>Бағандар:</strong> Әр РО-дағы бағандар санын өзгертіңіз</li>
-                    <li><strong>Баған атаулары:</strong> Баған атауларын өңдеңіз (мысалы, күндер немесе тақырыптар)</li>
+                    <li><strong>Enter / ↓</strong> - келесі студентке өту</li>
+                    <li><strong>↑</strong> - алдыңғы студентке өту</li>
+                    <li><strong>→</strong> - келесі бағанға өту</li>
+                    <li><strong>←</strong> - алдыңғы бағанға өту</li>
                 </ul>
             </div>
+            
             <div class="instruction-section">
-                <h4>🏆 5. Қорытынды және үлгерім</h4>
+                <h4>📊 5. Рубеждық бағалармен жұмыс</h4>
                 <ul>
-                    <li><strong>Қорытынды балл:</strong> Барлық РО-ның орташа арифметикалық мәні (тек барлық РО толтырылғанда)</li>
-                    <li><strong>Әріптік баға:</strong> A (95-100) → F (50-ден төмен)</li>
-                    <li><strong>GPA:</strong> 4,0-ден 0-ге дейінгі сандық балама</li>
+                    <li>0-100 аралығындағы бағаларды енгізіңіз</li>
+                    <li>Бос ұяшықтар - студент болмады, есептеуге қосылмайды</li>
+                    <li>РО-дағы бағандар санын өзгертуге болады</li>
+                    <li>Баған атауларын өңдеуге болады (мысалы, күндер)</li>
                 </ul>
             </div>
+            
             <div class="instruction-section">
-                <h4>📈 6. Бағалау шкаласы</h4>
-                <table style="width:100%; font-size:11px;">
+                <h4>🏆 6. Қорытынды және үлгерім</h4>
+                <ul>
+                    <li>РО орташа балы - толтырылған бағандар бойынша есептеледі</li>
+                    <li>Семестр қорытындысы - барлық РО толтырылғанда ғана көрсетіледі</li>
+                    <li>GPA - әріптік бағаның сандық баламасы</li>
+                </ul>
+            </div>
+            
+            <div class="instruction-section">
+                <h4>📈 7. Бағалау шкаласы</h4>
+                <table class="grades-table">
                     <thead><tr><th>Баллдар</th><th>Әріп</th><th>GPA</th><th>Сипаттама</th></tr></thead>
                     <tbody>
-                        <tr><td>95-100</td><td>A</td><td>4,0</td><td>Өте жақсы</td></tr>
-                        <tr><td>90-94</td><td>A-</td><td>3,67</td><td>Өте жақсы</td></tr>
-                        <tr><td>85-89</td><td>B+</td><td>3,33</td><td>Жақсы+</td></tr>
-                        <tr><td>80-84</td><td>B</td><td>3,0</td><td>Жақсы</td></tr>
-                        <tr><td>75-79</td><td>B-</td><td>2,67</td><td>Жақсы-</td></tr>
-                        <tr><td>70-74</td><td>C+</td><td>2,33</td><td>Қанағаттанарлық+</td></tr>
-                        <tr><td>65-69</td><td>C</td><td>2,0</td><td>Қанағаттанарлық</td></tr>
-                        <tr><td>60-64</td><td>C-</td><td>1,67</td><td>Қанағаттанарлық-</td></tr>
-                        <tr><td>55-59</td><td>D+</td><td>1,33</td><td>Әлсіз+</td></tr>
-                        <tr><td>50-54</td><td>D</td><td>1,0</td><td>Әлсіз</td></tr>
-                        <tr><td>0-49</td><td>F</td><td>0</td><td>Қанағаттанарлықсыз</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>95-100</strong></td><td class="grade-letter">A</td><td>4,0</td><td>Өте жақсы</td></tr>
+                        <tr><td><strong>90-94</strong></td><td class="grade-letter">A-</td><td>3,67</td><td>Өте жақсы</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>85-89</strong></td><td class="grade-letter">B+</td><td>3,33</td><td>Жақсы+</td></tr>
+                        <tr><td><strong>80-84</strong></td><td class="grade-letter">B</td><td>3,0</td><td>Жақсы</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>75-79</strong></td><td class="grade-letter">B-</td><td>2,67</td><td>Жақсы-</td></tr>
+                        <tr><td><strong>70-74</strong></td><td class="grade-letter">C+</td><td>2,33</td><td>Қанағаттанарлық+</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>65-69</strong></td><td class="grade-letter">C</td><td>2,0</td><td>Қанағаттанарлық</td></tr>
+                        <tr><td><strong>60-64</strong></td><td class="grade-letter">C-</td><td>1,67</td><td>Қанағаттанарлық-</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>55-59</strong></td><td class="grade-letter">D+</td><td>1,33</td><td>Әлсіз+</td></tr>
+                        <tr><td><strong>50-54</strong></td><td class="grade-letter">D</td><td>1,0</td><td>Әлсіз</td></tr>
+                        <tr style="background:#F0F8FF;"><td><strong>0-49</strong></td><td class="grade-letter">F</td><td>0</td><td>Қанағаттанарлықсыз</td></tr>
                     </tbody>
                 </table>
             </div>
+            
             <div class="instruction-section">
-                <h4>💾 7. Сақтау және көшірмелер</h4>
+                <h4>💾 8. Сақтау және көшірмелер</h4>
                 <ul>
                     <li><strong>Автосақтау:</strong> Барлық өзгерістер автоматты түрде сақталады</li>
-                    <li><strong>Көшірме:</strong> Барлық топтарды бір файлға сақтайды</li>
+                    <li><strong>Көшірме:</strong> Барлық топтарды бір JSON файлға сақтайды</li>
                     <li><strong>Қалпына келтіру:</strong> Бұрын сақталған файлды жүктеңіз</li>
                 </ul>
             </div>
+            
+            <div class="instruction-section">
+                <h4>🎨 9. Дизайн таңдау</h4>
+                <ul>
+                    <li><strong>Windows 2000</strong> - Классикалық сұр стиль</li>
+                    <li><strong>Windows XP</strong> - Көк Luna тақырыбы</li>
+                    <li><strong>Windows Vista</strong> - Aero әйнек эффектісі</li>
+                    <li><strong>Windows 7</strong> - Жетілдірілген Aero</li>
+                    <li><strong>Windows 8.1</strong> - Жазық Metro дизайны</li>
+                    <li><strong>Windows 10</strong> - Заманауи дизайн</li>
+                    <li><strong>Mac OS 9</strong> - Классикалық Platinum</li>
+                    <li><strong>Mac OS X</strong> - Aqua әйнек эффектісі</li>
+                </ul>
+            </div>
+            
             <div class="instruction-footer">
                 <button type="button" onclick="closeInstructions()" class="excel-btn">✅ Түсінікті, кірісейік!</button>
             </div>
@@ -1417,33 +1323,15 @@ function renderInstructionsContent() {
 
 function showInstructions() {
     renderInstructionsContent();
-    const modal = document.getElementById('instructionsModal');
-    if (modal) {
-        modal.style.display = 'block';
-        modal.onclick = function(event) {
-            if (event.target === modal) {
-                closeInstructions();
-            }
-        };
-    }
+    const m = document.getElementById('instructionsModal');
+    if (m) { m.style.display = 'block'; m.onclick = (e) => { if (e.target === m) closeInstructions(); }; }
 }
 
-function closeInstructions() {
-    const modal = document.getElementById('instructionsModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
+function closeInstructions() { const m = document.getElementById('instructionsModal'); if (m) m.style.display = 'none'; }
 
-window.addEventListener('beforeunload', () => {
-    if (currentGroup && students.length > 0) {
-        saveCurrentGroup();
-    }
-});
+window.addEventListener('beforeunload', () => { if (currentGroup && students.length) saveCurrentGroup(); });
 
 loadSavedLanguage();
-if (loadFromLocalStorage()) {
-    console.log('Загружены сохраненные данные');
-} else {
-    initApp();
-}
+loadSavedTheme();
+if (loadFromLocalStorage()) initApp();
+else initApp();
