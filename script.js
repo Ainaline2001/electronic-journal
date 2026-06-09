@@ -68,7 +68,7 @@ const translations = {
         successStudentUpdated: (o, n) => `✅ "${o}" изменен на "${n}"!`,
         successStudentDeleted: (g) => `✅ Студент удален из "${g}"!`,
         successColumnNamesSaved: '✅ Названия колонок сохранены!',
-        errorInvalidScore: 'Введите число 0-100 или оставьте пустым',
+        errorInvalidScore: 'Введите число 0-100 или "Н" (неявка)',
         errorGroupExists: '❌ Группа с таким названием уже существует!',
         errorStudentExists: '❌ Студент с таким ФИО уже существует!',
         errorEnterGroupName: '❌ Введите название группы',
@@ -89,7 +89,9 @@ const translations = {
         noStudentsDesc: 'Нажмите "Загрузить список" или "Добавить студента"',
         noData: 'Загрузите список студентов',
         searchPlaceholder: '🔍 Поиск студента...',
-        gradesCountLabel: (r) => `Оценок в РО-${r}:`
+        gradesCountLabel: (r) => `Оценок в РО-${r}:`,
+        absentMark: 'Н',
+        moodleSaved: '✓ Сохранено в Moodle'
     },
     kz: {
         pageTitle: 'Бағалау журналы (РО)',
@@ -157,7 +159,7 @@ const translations = {
         successStudentUpdated: (o, n) => `✅ "${o}" → "${n}" өзгертілді!`,
         successStudentDeleted: (g) => `✅ Студент "${g}" тобынан жойылды!`,
         successColumnNamesSaved: '✅ Баған атаулары сақталды!',
-        errorInvalidScore: '0-100 аралығындағы сан немесе бос қалдырыңыз',
+        errorInvalidScore: '0-100 аралығындағы сан немесе "Ж" (жоқ) енгізіңіз',
         errorGroupExists: '❌ Мұндай топ бар!',
         errorStudentExists: '❌ Мұндай студент бар!',
         errorEnterGroupName: '❌ Топтың атын енгізіңіз',
@@ -178,7 +180,9 @@ const translations = {
         noStudentsDesc: '"Тізімді жүктеу" немесе "Студент қосу" батырмасын басыңыз',
         noData: 'Студенттер тізімін жүктеңіз',
         searchPlaceholder: '🔍 Студентті іздеу...',
-        gradesCountLabel: (r) => `РО-${r} бағандары:`
+        gradesCountLabel: (r) => `РО-${r} бағандары:`,
+        absentMark: 'Ж',
+        moodleSaved: '✓ Moodle-ге сақталды'
     }
 };
 
@@ -258,12 +262,89 @@ let gradesData = {};
 let columnNames = {};
 let students = [];
 
+// ============ ПАРАМЕТРЫ MOODLE ============
+let isMoodle = false;
+let moodleApiUrl = null;
+let moodleCourseId = null;
+let moodleSesskey = null;
+
 // ============ ГОЛОСОВОЙ ВВОД ============
 let recognition = null;
 let isListening = false;
 let currentVoiceRO = null;
 let currentVoiceCol = null;
 let currentVoiceStudentIndex = null;
+
+// ============ ИНИЦИАЛИЗАЦИЯ MOODLE ============
+function initMoodleParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    isMoodle = urlParams.get('moodle') === '1';
+    moodleApiUrl = urlParams.get('apiurl');
+    moodleCourseId = urlParams.get('courseid');
+    moodleSesskey = urlParams.get('sesskey');
+    
+    // Если есть параметр group, выбираем группу
+    const groupParam = urlParams.get('group');
+    if (groupParam && isMoodle) {
+        setTimeout(() => {
+            const select = document.getElementById('groupSelect');
+            if (select) {
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].text.includes(groupParam) || select.options[i].value === groupParam) {
+                        select.value = select.options[i].value;
+                        switchGroup();
+                        break;
+                    }
+                }
+            }
+        }, 500);
+    }
+}
+
+// ============ СОХРАНЕНИЕ В MOODLE ============
+async function saveToMoodle(groupid, roNumber, columnNumber, userid, value, columnName) {
+    if (!isMoodle || !moodleApiUrl) return false;
+    
+    try {
+        const response = await fetch(moodleApiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                action: 'save_grades',
+                courseid: moodleCourseId,
+                groupid: groupid,
+                ro_number: roNumber,
+                column_number: columnNumber,
+                userid: userid,
+                grade: value,
+                column_name: columnName,
+                sesskey: moodleSesskey
+            })
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            showMoodleSaveIndicator();
+            return true;
+        }
+    } catch(e) {
+        console.error('Ошибка сохранения в Moodle:', e);
+    }
+    return false;
+}
+
+function showMoodleSaveIndicator() {
+    let indicator = document.getElementById('moodleIndicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'moodleIndicator';
+        indicator.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#0066CC; color:white; padding:8px 16px; border-radius:8px; font-size:12px; z-index:1000; opacity:0; transition:opacity 0.3s;';
+        document.body.appendChild(indicator);
+    }
+    indicator.textContent = t('moodleSaved');
+    indicator.style.opacity = '1';
+    setTimeout(() => { indicator.style.opacity = '0'; }, 2000);
+}
 
 function initSpeechRecognition() {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return false;
@@ -814,26 +895,27 @@ function renderTabsContent() {
             const colName = (columnNames[r] && columnNames[r][c]) || t('columnDefault', c);
             paneHtml += `<th>${escapeHtml(colName)}</th>`;
         }
-        paneHtml += `<th>${t('avgRO', r)}</th></tr></thead><tbody>`;
+        paneHtml += `<th>${t('avgRO', r)}</th></td></thead><tbody>`;
         
         for (let sIdx = 0; sIdx < students.length; sIdx++) {
             const student = students[sIdx];
             paneHtml += `<tr>
                 <td>${sIdx + 1}</td>
-                <td class="name-col">${escapeHtml(student)}</td>
-                <td class="action-cell"><button onclick="openEditStudentModal(${sIdx})">✏️</button></td>`;
+                <td class="name-col">${escapeHtml(student)}<\/td>
+                <td class="action-cell"><button onclick="openEditStudentModal(${sIdx})">✏️</button><\/td>`;
             for (let c = 1; c <= colCount; c++) {
                 const val = (gradesData[sIdx] && gradesData[sIdx][r] && gradesData[sIdx][r][c] !== undefined) ? gradesData[sIdx][r][c] : '';
-                paneHtml += `<td><div class="grade-cell"><input type="text" class="score-input" data-s="${sIdx}" data-r="${r}" data-c="${c}" value="${val === '' ? '' : val}" oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value, this)" onkeydown="handleGradeKeydown(event, ${sIdx}, ${r}, ${c}, ${colCount})" placeholder="0-100"><button type="button" class="voice-input-btn" onclick="openVoiceInput(${r}, ${c}, ${sIdx})">🎤</button></div></td>`;
+                paneHtml += `<td><div class="grade-cell"><input type="text" class="score-input" data-s="${sIdx}" data-r="${r}" data-c="${c}" value="${val === '' ? '' : val}" oninput="saveGrade(${sIdx}, ${r}, ${c}, this.value, this)" onkeydown="handleGradeKeydown(event, ${sIdx}, ${r}, ${c}, ${colCount})" placeholder="0-100 или ${t('absentMark')}"><button type="button" class="voice-input-btn" onclick="openVoiceInput(${r}, ${c}, ${sIdx})">🎤</button></div><\/td>`;
             }
-            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}</td></tr>`;
+            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}<\/td>
+            <tr>`;
         }
         paneHtml += `</tbody></table></div></div>`;
         contentContainer.innerHTML += paneHtml;
     }
 
     const isFinalActive = (activeTab === 'final') ? 'active' : '';
-    contentContainer.innerHTML += `<div class="tab-pane ${isFinalActive}" id="pane_final"><div class="table-container"><table id="finalTable"></table></div></div>`;
+    contentContainer.innerHTML += `<div class="tab-pane ${isFinalActive}" id="pane_final"><div class="table-container"><table id="finalTable">追赶</div></div>`;
     if (activeTab === 'final') renderFinalTable();
 }
 
@@ -883,18 +965,33 @@ function changeGradesCount(roIndex, newCount) {
     saveCurrentGroup();
 }
 
+// ============ СОХРАНЕНИЕ ОЦЕНКИ (с поддержкой "Н" и Moodle) ============
 function saveGrade(sIdx, roIndex, colIndex, value, inputElement) {
     let val;
+    let isAbsent = false;
+    
     if (value === '' || value === null) {
         val = undefined;
     } else {
-        val = parseInt(value);
+        const trimmed = value.toString().trim().toUpperCase();
+        if (trimmed === 'Н' || trimmed === 'Н.' || trimmed === 'Ж' || trimmed === 'Ж.') {
+            val = t('absentMark');
+            isAbsent = true;
+        } else {
+            val = parseInt(value);
+        }
     }
     
-    if (!isNaN(val) && val >= 0 && val <= 100) {
+    if (isAbsent || (!isNaN(val) && val >= 0 && val <= 100)) {
         if (!gradesData[sIdx]) gradesData[sIdx] = {};
         if (!gradesData[sIdx][roIndex]) gradesData[sIdx][roIndex] = {};
         gradesData[sIdx][roIndex][colIndex] = val;
+        
+        // Сохраняем в Moodle, если включено
+        if (isMoodle && moodleApiUrl && currentGroup) {
+            const columnName = columnNames[roIndex]?.[colIndex] || t('columnDefault', colIndex);
+            saveToMoodle(currentGroup, roIndex, colIndex, sIdx, val, columnName);
+        }
     } else if (value === '' || value === null) {
         if (gradesData[sIdx] && gradesData[sIdx][roIndex]) {
             delete gradesData[sIdx][roIndex][colIndex];
@@ -910,12 +1007,13 @@ function saveGrade(sIdx, roIndex, colIndex, value, inputElement) {
     saveCurrentGroup();
 }
 
+// ============ РАСЧЕТ СРЕДНЕГО БАЛЛА РО (пропускает "Н") ============
 function calcROAvg(sIdx, roIndex) {
     let sum = 0, count = 0;
     const targetCols = gradesCountConfig[roIndex] || 3;
     for (let c = 1; c <= targetCols; c++) {
         const value = gradesData[sIdx] && gradesData[sIdx][roIndex] && gradesData[sIdx][roIndex][c];
-        if (value !== undefined && value !== null && value !== '') {
+        if (value !== undefined && value !== null && value !== '' && value !== 'Н' && value !== 'Ж') {
             sum += value;
             count++;
         }
@@ -923,11 +1021,12 @@ function calcROAvg(sIdx, roIndex) {
     return count > 0 ? Math.round(sum / count) : '';
 }
 
+// ============ ИТОГОВАЯ ТАБЛИЦА ============
 function renderFinalTable() {
     const table = document.getElementById('finalTable');
     if (!table) return;
     if (students.length === 0) {
-        table.innerHTML = `<tr><td style="text-align:center; padding:40px;">${t('noData')}</td></tr>`;
+        table.innerHTML = `<tr><td style="text-align:center; padding:40px;">${t('noData')}<\/td><\/tr>`;
         return;
     }
     let html = `<thead><tr><th>№</th><th>ФИО Студента</th>`;
@@ -937,10 +1036,12 @@ function renderFinalTable() {
     students.forEach((student, sIdx) => {
         const roValues = [];
         let allROHaveGrades = true;
-        html += `<tr><td>${sIdx + 1}</td><td class="name-col">${escapeHtml(student)}</td>`;
+        html += `<tr>
+            <td>${sIdx + 1}</td>
+            <td class="name-col">${escapeHtml(student)}<\/td>`;
         for (let r = 1; r <= activeROCount; r++) {
             const avg = calcROAvg(sIdx, r);
-            html += `<td class="result">${avg}</td>`;
+            html += `<td class="result">${avg}<\/td>`;
             if (avg === '' || avg === null) {
                 allROHaveGrades = false;
             } else {
@@ -951,13 +1052,13 @@ function renderFinalTable() {
             const semAvg = Math.round(roValues.reduce((a, b) => a + b, 0) / activeROCount);
             const letter = getGradeLetter(semAvg);
             const gpa = getGradePoint(letter);
-            html += `<td class="result avg">${semAvg}</td>
-                     <td class="result letter">${letter}</td>
-                     <td class="result gpa">${gpa}</td>`;
+            html += `<td class="result avg">${semAvg}<\/td>
+                     <td class="result letter">${letter}<\/td>
+                     <td class="result gpa">${gpa}<\/td>`;
         } else {
-            html += `<td class="result avg" style="color:#999;">—</td>
-                     <td class="result letter" style="color:#999;">—</td>
-                     <td class="result gpa" style="color:#999;">—</td>`;
+            html += `<td class="result avg" style="color:#999;">—<\/td>
+                     <td class="result letter" style="color:#999;">—<\/td>
+                     <td class="result gpa" style="color:#999;">—<\/td>`;
         }
         html += `</tr>`;
     });
@@ -1091,234 +1192,24 @@ function updateInfoBar() {
 function renderInstructionsContent() {
     const c = document.getElementById('instructionsContent');
     if (!c) return;
-    
-    if (currentLang === 'ru') {
-        c.innerHTML = `
-            <div class="instruction-section">
-                <h4>📁 1. Управление группами</h4>
-                <ul>
-                    <li><strong>Создание группы:</strong> Нажмите "➕ Новая", введите название группы (например, "ИС-21", "ПД-11")</li>
-                    <li><strong>Переключение между группами:</strong> Выберите нужную группу из выпадающего списка</li>
-                    <li><strong>Переименование группы:</strong> Нажмите "✏️" рядом с названием группы</li>
-                    <li><strong>Удаление группы:</strong> Нажмите "🗑️" - все данные группы будут удалены безвозвратно</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>📋 2. Работа со студентами</h4>
-                <ul>
-                    <li><strong>Загрузка списка из файла:</strong> Нажмите "📁 Загрузить список" - файл должен быть в формате .txt, каждое ФИО на новой строке</li>
-                    <li><strong>Добавление студента вручную:</strong> Нажмите "➕ Добавить студента", введите ФИО в появившемся окне</li>
-                    <li><strong>Редактирование ФИО:</strong> Нажмите "✏️" в строке студента, измените имя и нажмите "Сохранить"</li>
-                    <li><strong>Удаление студента:</strong> В режиме редактирования нажмите "🗑️ Удалить" - все оценки студента будут удалены</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>🎤 3. Голосовой ввод оценок</h4>
-                <ul>
-                    <li><strong>Быстрый ввод:</strong> Нажмите "🎤 Быстрый ввод" и скажите, например: "Иванов 85"</li>
-                    <li><strong>Ввод в конкретной ячейке:</strong> Нажмите кнопку 🎤 в любой ячейке и скажите число</li>
-                    <li><strong>Массовый ввод:</strong> Скажите "всем 75" - оценка поставится всем студентам в текущем РО</li>
-                    <li><strong>Поддерживаемые форматы:</strong> числа (85), слова (восемьдесят пять), или "всем 75"</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>⌨️ 4. Навигация с клавиатуры</h4>
-                <ul>
-                    <li><strong>Enter / ↓</strong> - переход к следующему студенту в той же колонке</li>
-                    <li><strong>↑</strong> - переход к предыдущему студенту</li>
-                    <li><strong>→</strong> - переход к следующей колонке</li>
-                    <li><strong>←</strong> - переход к предыдущей колонке</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>📊 5. Работа с рубежными оценками (РО)</h4>
-                <ul>
-                    <li><strong>Ввод оценок:</strong> Вводите оценки от 0 до 100 в ячейки таблицы</li>
-                    <li><strong>Пустые ячейки:</strong> Если студент отсутствовал, оставьте поле пустым - оно не учитывается в расчете</li>
-                    <li><strong>Количество колонок в РО:</strong> Измените число в поле "Оценок в РО-X" - колонки добавятся или удалятся автоматически</li>
-                    <li><strong>Названия колонок:</strong> Нажмите "✏️ Названия колонок" чтобы заменить "Оц.1" на реальные даты (например, "12.03", "Контрольная")</li>
-                    <li><strong>Количество РО в семестре:</strong> Измените число в поле "РО в семестре" (максимум 20)</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>🏆 6. Итоги и успеваемость</h4>
-                <ul>
-                    <li><strong>Средний балл РО:</strong> Рассчитывается автоматически как среднее арифметическое всех заполненных колонок в этом РО</li>
-                    <li><strong>Итоговый балл за семестр:</strong> Рассчитывается как среднее арифметическое всех РО (только если все РО имеют хотя бы одну оценку)</li>
-                    <li><strong>Буквенная оценка:</strong> Автоматически переводится по шкале (см. таблицу ниже)</li>
-                    <li><strong>GPA:</strong> Числовой эквивалент буквенной оценки (от 4,0 до 0)</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>📈 7. Шкала оценок</h4>
-                <table class="grades-table">
-                    <thead>
-                        <tr>
-                            <th>Баллы</th>
-                            <th>Буква</th>
-                            <th>GPA</th>
-                            <th>Описание</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr style="background:#F0F8FF;"><td><strong>95-100</strong></td><td class="grade-letter">A</td><td>4,0</td><td>Отлично</td></tr>
-                        <tr><td><strong>90-94</strong></td><td class="grade-letter">A-</td><td>3,67</td><td>Очень хорошо</td></tr>
-                        <tr style="background:#F0F8FF;"><td><strong>85-89</strong></td><td class="grade-letter">B+</td><td>3,33</td><td>Хорошо+</td></tr>
-                        <tr><td><strong>80-84</strong></td><td class="grade-letter">B</td><td>3,0</td><td>Хорошо</td></tr>
-                        <tr style="background:#F0F8FF;"><td><strong>75-79</strong></td><td class="grade-letter">B-</td><td>2,67</td><td>Хорошо-</td></tr>
-                        <tr><td><strong>70-74</strong></td><td class="grade-letter">C+</td><td>2,33</td><td>Удовлетворительно+</td></tr>
-                        <tr style="background:#F0F8FF;"><td><strong>65-69</strong></td><td class="grade-letter">C</td><td>2,0</td><td>Удовлетворительно</td></tr>
-                        <tr><td><strong>60-64</strong></td><td class="grade-letter">C-</td><td>1,67</td><td>Удовлетворительно-</td></tr>
-                        <tr style="background:#F0F8FF;"><td><strong>55-59</strong></td><td class="grade-letter">D+</td><td>1,33</td><td>Слабо+</td></tr>
-                        <tr><td><strong>50-54</strong></td><td class="grade-letter">D</td><td>1,0</td><td>Слабо</td></tr>
-                        <tr style="background:#F0F8FF;"><td><strong>0-49</strong></td><td class="grade-letter">F</td><td>0</td><td>Неудовлетворительно</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>💾 8. Сохранение и бэкапы</h4>
-                <ul>
-                    <li><strong>Автосохранение:</strong> Все изменения сохраняются автоматически в браузере</li>
-                    <li><strong>Ручное сохранение:</strong> Нажмите "💾 Сохранить" для гарантии</li>
-                    <li><strong>Создание бэкапа:</strong> Нажмите "📥 Бэкап" - сохранятся ВСЕ группы в один JSON файл</li>
-                    <li><strong>Восстановление из бэкапа:</strong> Нажмите "📂 Восстановить" и выберите ранее сохраненный файл</li>
-                    <li><strong>Сброс всех данных:</strong> Нажмите "🗑️ Сброс" - удаляет ВСЕ группы и оценки (осторожно!)</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>🎨 9. Выбор дизайна</h4>
-                <ul>
-                    <li><strong>Windows 2000</strong> - Классический серый стиль</li>
-                    <li><strong>Windows XP</strong> - Синяя тема Luna</li>
-                    <li><strong>Windows Vista</strong> - Стеклянная тема Aero</li>
-                    <li><strong>Windows 7</strong> - Улучшенная Aero</li>
-                    <li><strong>Windows 8.1</strong> - Плоский дизайн Metro</li>
-                    <li><strong>Windows 10</strong> - Современный дизайн</li>
-                    <li><strong>Mac OS 9</strong> - Классический Platinum</li>
-                    <li><strong>Mac OS X</strong> - Аква со стеклянным эффектом</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-footer">
-                <button type="button" onclick="closeInstructions()" class="excel-btn">✅ Понятно, приступим к работе!</button>
-            </div>
-        `;
-    } else {
-        c.innerHTML = `
-            <div class="instruction-section">
-                <h4>📁 1. Топтарды басқару</h4>
-                <ul>
-                    <li><strong>Топ құру:</strong> "➕ Жаңа" батырмасын басып, топ атын енгізіңіз (мысалы, "ИС-21")</li>
-                    <li><strong>Ауыстыру:</strong> Топты ашылмалы тізімнен таңдаңыз</li>
-                    <li><strong>Атын өзгерту:</strong> Топтың жанындағы "✏️" батырмасын басыңыз</li>
-                    <li><strong>Жою:</strong> "🗑️" батырмасын басыңыз - топтың барлық деректері жойылады</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>📋 2. Студенттермен жұмыс</h4>
-                <ul>
-                    <li><strong>Тізімді жүктеу:</strong> "📁 Тізімді жүктеу" (.txt файл, Т.А.Ә. әр жолда)</li>
-                    <li><strong>Студент қосу:</strong> "➕ Студент қосу" батырмасын басыңыз</li>
-                    <li><strong>Өңдеу:</strong> Студент жолындағы "✏️" батырмасын басыңыз</li>
-                    <li><strong>Жою:</strong> Өңдеу режимінде "🗑️ Жою" батырмасын басыңыз</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>🎤 3. Бағаларды дауыспен енгізу</h4>
-                <ul>
-                    <li><strong>Жылдам енгізу:</strong> "🎤 Жылдам енгізу" батырмасын басып айтыңыз: "Иванов 85"</li>
-                    <li><strong>Ұяшықта:</strong> 🎤 батырмасын басып, санды айтыңыз</li>
-                    <li><strong>Жаппай енгізу:</strong> "барлығына 75" деп айтыңыз</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>⌨️ 4. Пернетақта навигациясы</h4>
-                <ul>
-                    <li><strong>Enter / ↓</strong> - келесі студентке өту</li>
-                    <li><strong>↑</strong> - алдыңғы студентке өту</li>
-                    <li><strong>→</strong> - келесі бағанға өту</li>
-                    <li><strong>←</strong> - алдыңғы бағанға өту</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>📊 5. Рубеждық бағалармен жұмыс</h4>
-                <ul>
-                    <li>0-100 аралығындағы бағаларды енгізіңіз</li>
-                    <li>Бос ұяшықтар - студент болмады, есептеуге қосылмайды</li>
-                    <li>РО-дағы бағандар санын өзгертуге болады</li>
-                    <li>Баған атауларын өңдеуге болады (мысалы, күндер)</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>🏆 6. Қорытынды және үлгерім</h4>
-                <ul>
-                    <li>РО орташа балы - толтырылған бағандар бойынша есептеледі</li>
-                    <li>Семестр қорытындысы - барлық РО толтырылғанда ғана көрсетіледі</li>
-                    <li>GPA - әріптік бағаның сандық баламасы</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>📈 7. Бағалау шкаласы</h4>
-                <table class="grades-table">
-                    <thead><tr><th>Баллдар</th><th>Әріп</th><th>GPA</th><th>Сипаттама</th></tr></thead>
-                    <tbody>
-                        <tr style="background:#F0F8FF;"><td><strong>95-100</strong></td><td class="grade-letter">A</td><td>4,0</td><td>Өте жақсы</td></tr>
-                        <tr><td><strong>90-94</strong></td><td class="grade-letter">A-</td><td>3,67</td><td>Өте жақсы</td></tr>
-                        <tr style="background:#F0F8FF;"><td><strong>85-89</strong></td><td class="grade-letter">B+</td><td>3,33</td><td>Жақсы+</td></tr>
-                        <tr><td><strong>80-84</strong></td><td class="grade-letter">B</td><td>3,0</td><td>Жақсы</td></tr>
-                        <tr style="background:#F0F8FF;"><td><strong>75-79</strong></td><td class="grade-letter">B-</td><td>2,67</td><td>Жақсы-</td></tr>
-                        <tr><td><strong>70-74</strong></td><td class="grade-letter">C+</td><td>2,33</td><td>Қанағаттанарлық+</td></tr>
-                        <tr style="background:#F0F8FF;"><td><strong>65-69</strong></td><td class="grade-letter">C</td><td>2,0</td><td>Қанағаттанарлық</td></tr>
-                        <tr><td><strong>60-64</strong></td><td class="grade-letter">C-</td><td>1,67</td><td>Қанағаттанарлық-</td></tr>
-                        <tr style="background:#F0F8FF;"><td><strong>55-59</strong></td><td class="grade-letter">D+</td><td>1,33</td><td>Әлсіз+</td></tr>
-                        <tr><td><strong>50-54</strong></td><td class="grade-letter">D</td><td>1,0</td><td>Әлсіз</td></tr>
-                        <tr style="background:#F0F8FF;"><td><strong>0-49</strong></td><td class="grade-letter">F</td><td>0</td><td>Қанағаттанарлықсыз</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>💾 8. Сақтау және көшірмелер</h4>
-                <ul>
-                    <li><strong>Автосақтау:</strong> Барлық өзгерістер автоматты түрде сақталады</li>
-                    <li><strong>Көшірме:</strong> Барлық топтарды бір JSON файлға сақтайды</li>
-                    <li><strong>Қалпына келтіру:</strong> Бұрын сақталған файлды жүктеңіз</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-section">
-                <h4>🎨 9. Дизайн таңдау</h4>
-                <ul>
-                    <li><strong>Windows 2000</strong> - Классикалық сұр стиль</li>
-                    <li><strong>Windows XP</strong> - Көк Luna тақырыбы</li>
-                    <li><strong>Windows Vista</strong> - Aero әйнек эффектісі</li>
-                    <li><strong>Windows 7</strong> - Жетілдірілген Aero</li>
-                    <li><strong>Windows 8.1</strong> - Жазық Metro дизайны</li>
-                    <li><strong>Windows 10</strong> - Заманауи дизайн</li>
-                    <li><strong>Mac OS 9</strong> - Классикалық Platinum</li>
-                    <li><strong>Mac OS X</strong> - Aqua әйнек эффектісі</li>
-                </ul>
-            </div>
-            
-            <div class="instruction-footer">
-                <button type="button" onclick="closeInstructions()" class="excel-btn">✅ Түсінікті, кірісейік!</button>
-            </div>
-        `;
-    }
+    c.innerHTML = `<div class="instruction-section"><h4>📁 1. Управление группами</h4><ul><li><strong>Создание группы:</strong> Нажмите "➕ Новая"</li><li><strong>Переключение:</strong> Выберите из списка</li><li><strong>Переименование:</strong> Нажмите "✏️"</li><li><strong>Удаление:</strong> Нажмите "🗑️"</li></ul></div>
+<div class="instruction-section"><h4>📋 2. Работа со студентами</h4><ul><li><strong>Загрузка:</strong> .txt файл с ФИО</li><li><strong>Добавление:</strong> "➕ Добавить студента"</li><li><strong>Редактирование:</strong> "✏️" в строке</li></ul></div>
+<div class="instruction-section"><h4>🎤 3. Голосовой ввод</h4><ul><li>Скажите "Иванов 85"</li><li>"всем 75" для всей группы</li></ul></div>
+<div class="instruction-section"><h4>⌨️ 4. Навигация с клавиатуры</h4><ul><li>Enter/↓: следующий студент</li><li>↑: предыдущий</li><li>→/←: следующая/предыдущая колонка</li></ul></div>
+<div class="instruction-section"><h4>💾 5. Сохранение в Moodle</h4><ul><li>При работе через Moodle оценки автоматически сохраняются в базу данных</li><li>Данные не теряются при очистке кэша</li><li>Доступны с любого компьютера</li></ul></div>
+<div class="instruction-section"><h4>📈 6. Шкала оценок</h4><table><thead><tr><th>Баллы</th><th>Буква</th><th>GPA</th></tr></thead><tbody>
+<tr style="background:#F0F8FF;"><td><strong>95-100</strong></td><td>A</td><td>4,0</td></tr>
+<tr><td><strong>90-94</strong></td><td>A-</td><td>3,67</td></tr>
+<tr style="background:#F0F8FF;"><td><strong>85-89</strong></td><td>B+</td><td>3,33</td></tr>
+<tr><td><strong>80-84</strong></td><td>B</td><td>3,0</td></tr>
+<tr style="background:#F0F8FF;"><td><strong>75-79</strong></td><td>B-</td><td>2,67</td></tr>
+<tr><td><strong>70-74</strong></td><td>C+</td><td>2,33</td></tr>
+<tr style="background:#F0F8FF;"><td><strong>65-69</strong></td><td>C</td><td>2,0</td></tr>
+<tr><td><strong>60-64</strong></td><td>C-</td><td>1,67</td></tr>
+<tr style="background:#F0F8FF;"><td><strong>55-59</strong></td><td>D+</td><td>1,33</td></tr>
+<tr><td><strong>50-54</strong></td><td>D</td><td>1,0</td></tr>
+<tr style="background:#F0F8FF;"><td><strong>0-49</strong></td><td>F</td><td>0</td></tr>
+</tbody></table></div>`;
 }
 
 function showInstructions() {
@@ -1329,9 +1220,11 @@ function showInstructions() {
 
 function closeInstructions() { const m = document.getElementById('instructionsModal'); if (m) m.style.display = 'none'; }
 
+// ============ ИНИЦИАЛИЗАЦИЯ ============
 window.addEventListener('beforeunload', () => { if (currentGroup && students.length) saveCurrentGroup(); });
 
 loadSavedLanguage();
 loadSavedTheme();
+initMoodleParams();
 if (loadFromLocalStorage()) initApp();
 else initApp();
