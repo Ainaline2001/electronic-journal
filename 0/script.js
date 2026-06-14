@@ -230,7 +230,7 @@ function loadSavedLanguage() {
 // ============ ПЕРЕКЛЮЧЕНИЕ ТЕМ ============
 function setTheme(theme) {
     localStorage.setItem('appTheme', theme);
-    document.body.classList.remove('theme-win2k', 'theme-winxp', 'theme-vista', 'theme-win7', 'theme-win81', 'theme-win10', 'theme-macos9', 'theme-macosx', 'theme-ribbon');
+    document.body.classList.remove('theme-win2k', 'theme-winxp', 'theme-vista', 'theme-win7', 'theme-win81', 'theme-win10', 'theme-macos9', 'theme-macosx');
     document.body.classList.add(`theme-${theme}`);
     
     const themes = ['win2k', 'winxp', 'vista', 'win7', 'win81', 'win10', 'macos9', 'macosx', 'ribbon'];
@@ -238,27 +238,6 @@ function setTheme(theme) {
         const btn = document.getElementById(`theme${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (btn) btn.classList.toggle('active', t === theme);
     });
-    
-    // Обновляем Ribbon кнопки
-    updateRibbonThemeButtons();
-    
-    // Показываем/скрываем стандартные контролы
-    const standardControls = document.getElementById('standardControls');
-    const ribbonContainer = document.getElementById('ribbonContainer');
-    if (standardControls && ribbonContainer) {
-        if (theme === 'ribbon') {
-            standardControls.style.display = 'none';
-            ribbonContainer.style.display = 'block';
-            initRibbon();
-        } else {
-            standardControls.style.display = 'flex';
-            ribbonContainer.style.display = 'none';
-        }
-    }
-    
-    renderTabsHeader();
-    renderTabsContent();
-    updateInfoBar();
 }
 
 function loadSavedTheme() {
@@ -268,55 +247,6 @@ function loadSavedTheme() {
     } else {
         setTheme('win2k');
     }
-}
-
-// Ribbon функции
-function initRibbon() {
-    const ribbonTabs = document.querySelectorAll('.ribbon-tab');
-    const ribbonPanels = document.querySelectorAll('.ribbon-panel');
-    
-    ribbonTabs.forEach(tab => {
-        tab.removeEventListener('click', ribbonClickHandler);
-        tab.addEventListener('click', ribbonClickHandler);
-    });
-}
-
-function ribbonClickHandler() {
-    const tabId = this.getAttribute('data-ribbon-tab');
-    const allTabs = document.querySelectorAll('.ribbon-tab');
-    const allPanels = document.querySelectorAll('.ribbon-panel');
-    
-    allTabs.forEach(t => t.classList.remove('active'));
-    this.classList.add('active');
-    
-    allPanels.forEach(panel => panel.style.display = 'none');
-    
-    const activePanel = document.getElementById(`ribbonPanel${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
-    if (activePanel) activePanel.style.display = 'flex';
-}
-
-function updateRibbonThemeButtons() {
-    const ribbonThemeButtons = document.getElementById('ribbonThemeButtons');
-    if (!ribbonThemeButtons) return;
-    
-    const themes = [
-        { id: 'win2k', name: '2000', icon: '🪟' },
-        { id: 'winxp', name: 'XP', icon: '🪟' },
-        { id: 'vista', name: 'Vista', icon: '🪟' },
-        { id: 'win7', name: '7', icon: '🪟' },
-        { id: 'win81', name: '8.1', icon: '🪟' },
-        { id: 'win10', name: '10', icon: '🪟' },
-        { id: 'macos9', name: 'OS 9', icon: '🍎' },
-        { id: 'macosx', name: 'OS X', icon: '💎' },
-        { id: 'ribbon', name: 'Office', icon: '📎' }
-    ];
-    
-    ribbonThemeButtons.innerHTML = themes.map(theme => `
-        <button class="ribbon-btn" onclick="setTheme('${theme.id}')">
-            <span class="icon">${theme.icon}</span>
-            ${theme.name}
-        </button>
-    `).join('');
 }
 
 // ============ ПЕРЕМЕННЫЕ ============
@@ -352,13 +282,14 @@ function applyAllGradeColors() {
     document.querySelectorAll('.score-input').forEach(input => updateGradeColor(input));
 }
 
-// ============ АКТИВНАЯ СТРОКА ============
+// ============ АКТИВНАЯ СТРОКА И ЗАТЕМНЕНИЕ ============
 let currentActiveRow = null;
 
 function setActiveRow(rowElement) {
     if (currentActiveRow) {
         currentActiveRow.classList.remove('active-row');
     }
+    
     if (rowElement) {
         rowElement.classList.add('active-row');
         currentActiveRow = rowElement;
@@ -370,10 +301,13 @@ function setActiveCell(inputElement) {
     document.querySelectorAll('.score-input').forEach(input => {
         input.classList.remove('active-cell');
     });
+    
     if (inputElement) {
         inputElement.classList.add('active-cell');
         const row = inputElement.closest('tr');
-        if (row) setActiveRow(row);
+        if (row) {
+            setActiveRow(row);
+        }
     }
 }
 
@@ -899,6 +833,7 @@ function filterStudents(query) {
     });
 }
 
+// ============ ОСНОВНАЯ ФУНКЦИЯ РЕНДЕРА ТАБЛИЦ ============
 function renderTabsContent() {
     const contentContainer = document.getElementById('tabsContent');
     contentContainer.innerHTML = '';
@@ -947,8 +882,8 @@ function renderTabsContent() {
             
             paneHtml += `<tr>`;
             paneHtml += `<td>${sIdx + 1}</td>`;
-            paneHtml += `<td class="name-col">${escapeHtml(student)}<\/td>`;
-            paneHtml += `<td class="action-cell"><button onclick="openEditStudentModal(${sIdx})" style="background:#3498db;padding:4px 8px;font-size:11px;">✏️</button><\/td>`;
+            paneHtml += `<td class="name-col">${escapeHtml(student)}</td>`;
+            paneHtml += `<td class="action-cell"><button onclick="openEditStudentModal(${sIdx})" style="background:#3498db;padding:4px 8px;font-size:11px;">✏️</button></td>`;
             
             for (let c = 1; c <= colCount; c++) {
                 const val = (savedGrade[c] !== undefined) ? savedGrade[c] : '';
@@ -964,10 +899,10 @@ function renderTabsContent() {
                                     <button type="button" class="voice-input-btn" 
                                             onclick="openVoiceInput(${r}, ${c}, ${sIdx})">🎤</button>
                                 </div>
-                               <\/td>`;
+                              </td>`;
             }
             
-            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}<\/td>`;
+            paneHtml += `<td class="result avg" id="avg_${sIdx}_${r}">${calcROAvg(sIdx, r)}</td>`;
             paneHtml += `</tr>`;
         }
         
@@ -981,7 +916,8 @@ function renderTabsContent() {
     const isFinalActive = (activeTab === 'final') ? 'active' : '';
     contentContainer.innerHTML += `<div class="tab-pane ${isFinalActive}" id="pane_final">
         <div class="table-container">
-            <table id="finalTable">追赶</div>
+            <table id="finalTable"><table>
+        </div>
     </div>`;
     if (activeTab === 'final') renderFinalTable();
     
@@ -1052,6 +988,7 @@ function changeGradesCount(roIndex, newCount) {
     saveCurrentGroup();
 }
 
+// ============ СОХРАНЕНИЕ ОЦЕНКИ ============
 function saveGrade(sIdx, roIndex, colIndex, value, inputElement) {
     let val;
     let isAbsent = false;
@@ -1093,6 +1030,7 @@ function saveGrade(sIdx, roIndex, colIndex, value, inputElement) {
     saveCurrentGroup();
 }
 
+// ============ РАСЧЕТ СРЕДНЕГО БАЛЛА ============
 function calcROAvg(sIdx, roIndex) {
     let sum = 0, count = 0;
     const targetCols = gradesCountConfig[roIndex] || 3;
@@ -1106,6 +1044,7 @@ function calcROAvg(sIdx, roIndex) {
     return count > 0 ? Math.round(sum / count) : '';
 }
 
+// ============ ИТОГОВАЯ ТАБЛИЦА ============
 function renderFinalTable() {
     const table = document.getElementById('finalTable');
     if (!table) return;
@@ -1280,8 +1219,8 @@ function renderInstructionsContent() {
 <div class="instruction-section"><h4>📋 2. Работа со студентами</h4><ul><li><strong>Загрузка:</strong> .txt файл с ФИО</li><li><strong>Добавление:</strong> "➕ Добавить студента"</li><li><strong>Редактирование:</strong> "✏️" в строке</li></ul></div>
 <div class="instruction-section"><h4>🎤 3. Голосовой ввод</h4><ul><li>Скажите "Иванов 85"</li><li>"всем 75" для всей группы</li></ul></div>
 <div class="instruction-section"><h4>⌨️ 4. Навигация с клавиатуры</h4><ul><li>Enter/↓: следующий студент</li><li>↑: предыдущий</li><li>→/←: следующая/предыдущая колонка</li></ul></div>
-<div class="instruction-section"><h4>🎨 5. Выбор дизайна</h4><ul><li>Windows 2000, XP, Vista, 7, 8.1, 10, Mac OS 9, Mac OS X, Office 2010 Ribbon</li></ul></div>
-<div class="instruction-section"><h4>📈 6. Шкала оценок</h4></td><thead><tr><th>Баллы</th><th>Буква</th><th>GPA</th></tr></thead><tbody>
+<div class="instruction-section"><h4>🎨 5. Выбор дизайна</h4><ul><li>Windows 2000, XP, Vista, 7, 8.1, 10, Mac OS 9, Mac OS X</li></ul></div>
+<div class="instruction-section"><h4>📈 6. Шкала оценок</h4></table><thead><tr><th>Баллы</th><th>Буква</th><th>GPA</th></tr></thead><tbody>
 <tr style="background:#F0F8FF;"><td><strong>95-100</strong></td><td class="grade-letter">A<\/td><td>4,0<\/td><td>Отлично<\/td><\/tr>
 <tr><td><strong>90-94<\/strong><\/td><td class="grade-letter">A-<\/td><td>3,67<\/td><td>Очень хорошо<\/td><\/tr>
 <tr style="background:#F0F8FF;"><td><strong>85-89<\/strong><\/td><td class="grade-letter">B+<\/td><td>3,33<\/td><td>Хорошо+<\/td><\/tr>
